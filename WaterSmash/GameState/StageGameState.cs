@@ -12,6 +12,7 @@ namespace Water
     {
         private Dictionary<String, Stage> _stages;
         private Stage _currentStage;
+        private Generator generator;
 
         private GameStateManager gameStateManager;
         AActor player;

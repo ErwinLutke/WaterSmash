@@ -8,7 +8,6 @@ namespace Water
 {
     class Inventory
     {
-        public int size;
         public List<AInventoryObject> items { get; set; }
         
         public Inventory()

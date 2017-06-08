@@ -3,21 +3,10 @@
     public class Generator
     {
 
-        private static Generator instance;
+      //  private static Generator instance;
 
-        private Generator() { }
-
-        public static Generator Factory
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Generator();
-                }
-                return instance;
-            }
-        }
+        public Generator() { }
+        
 
         enum Special
         {
@@ -39,12 +28,12 @@
         }
 
 
-        public static Pickup generatePickup()
-        {
-            return null;
-        }
+        //public void Pickup generatePickup()
+        //{
+        //   // return null;
+        //}
 
-        //public static AEquipable generateEquipable(int type)
+        //public AEquipable generateEquipable(int type)
         //{
         //    AEquipable item = null;
         //    if (type == 1)
