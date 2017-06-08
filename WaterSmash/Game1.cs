@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -32,6 +33,9 @@ namespace Water
             // TODO: Add your initialization logic here
             base.Initialize();
 
+            GameServices.AddService<GraphicsDevice>(GraphicsDevice);
+            GameServices.AddService<ContentManager>(Content);
+
             gameStateManager = new GameStateManager();
 
             gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
@@ -40,7 +44,7 @@ namespace Water
             gameStateManager.Add("menu", new MenuGameState(gameStateManager));
             gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
-            gameStateManager.Change("menu");
+            gameStateManager.Change("worldmap");
         }
 
         /// <summary>
