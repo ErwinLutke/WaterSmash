@@ -32,6 +32,8 @@ namespace Water
             // TODO: Add your initialization logic here
             base.Initialize();
 
+            gameStateManager = new GameStateManager();
+
             gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
             gameStateManager.Add("inventory", new InventoryGameState(gameStateManager));
             gameStateManager.Add("stage", new StageGameState(gameStateManager));

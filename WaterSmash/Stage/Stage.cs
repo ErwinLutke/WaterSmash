@@ -18,7 +18,7 @@ namespace Water
         public Texture2D stageThumbnail { get; private set; }
         public Texture2D stageBackground { get; set; }
 
-        List<AActor> actors;
+        List<AActor> enemies;
 
         public Stage()
         {

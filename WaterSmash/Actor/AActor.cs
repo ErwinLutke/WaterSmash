@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Water
     {
         [DataMember]
         string name { get; set; }
+        Texture2D spriteSheet;
+        ActionStateMachine asm;
 
         [DataMember]
         Inventory inventory;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Water
 {
@@ -19,12 +20,12 @@ namespace Water
             throw new NotImplementedException();
         }
 
-        public void Entered()
+        public void Entered(params object[] args)
         {
             throw new NotImplementedException();
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardState state)
         {
             throw new NotImplementedException();
         }
