@@ -12,7 +12,6 @@ namespace Water
     {
         public EmptyState()
         {
-
         }
 
         public void Draw(GameTime gameTime)
