@@ -7,7 +7,7 @@ namespace Water
     class InventoryGameState : IGameState
     {
         private GameStateManager gameStateManager;
-        AActor player;
+        //AActor player;
 
         public InventoryGameState(GameStateManager gameStateManager)
         {
@@ -16,12 +16,12 @@ namespace Water
 
         public void Draw(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void Entered(params object[] args)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void HandleInput(KeyboardState state)

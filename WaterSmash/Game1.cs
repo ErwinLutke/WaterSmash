@@ -34,13 +34,13 @@ namespace Water
 
             gameStateManager = new GameStateManager();
 
-            gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
+            //gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
             gameStateManager.Add("inventory", new InventoryGameState(gameStateManager));
-            gameStateManager.Add("stage", new StageGameState(gameStateManager));
-            gameStateManager.Add("menu", new MenuGameState(gameStateManager));
-            gameStateManager.Add("pause", new PauseGameState(gameStateManager));
+            //gameStateManager.Add("stage", new StageGameState(gameStateManager));
+            //gameStateManager.Add("menu", new MenuGameState(gameStateManager));
+            //gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
-            gameStateManager.Change("menu");
+            gameStateManager.Change("inventory");
         }
 
         /// <summary>
