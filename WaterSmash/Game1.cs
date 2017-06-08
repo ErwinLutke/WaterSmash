@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -32,13 +33,16 @@ namespace Water
             // TODO: Add your initialization logic here
             base.Initialize();
 
+            GameServices.AddService<GraphicsDevice>(GraphicsDevice);
+            GameServices.AddService<ContentManager>(Content);
+
             gameStateManager = new GameStateManager();
 
             gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
-            //gameStateManager.Add("inventory", new InventoryGameState(gameStateManager));
-            //gameStateManager.Add("stage", new StageGameState(gameStateManager));
-            //gameStateManager.Add("menu", new MenuGameState(gameStateManager));
-            //gameStateManager.Add("pause", new PauseGameState(gameStateManager));
+            gameStateManager.Add("inventory", new InventoryGameState(gameStateManager));
+            gameStateManager.Add("stage", new StageGameState(gameStateManager));
+            gameStateManager.Add("menu", new MenuGameState(gameStateManager));
+            gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
             gameStateManager.Change("worldmap");
         }
