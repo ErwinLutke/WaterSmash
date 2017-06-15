@@ -20,11 +20,15 @@ namespace Water
         public StageGameState(GameStateManager gameStateManager)
         {
             this.gameStateManager = gameStateManager;
+            _stages = new Dictionary<string, Stage>();
+            _stages.Add("1", new Stage());
+            _stages.Add("2", new Stage());
+
         }
 
         public void Draw(GameTime gameTime)
         {
-            throw new NotImplementedException();
+
         }
 
         // Set which stage should be played
@@ -35,17 +39,17 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            throw new NotImplementedException();
+            if (state.IsKeyDown(Keys.Escape)) gameStateManager.Change("worldmap");
         }
 
         public void Leaving()
         {
-            throw new NotImplementedException();
+
         }
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

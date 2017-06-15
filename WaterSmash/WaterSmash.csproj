@@ -139,6 +139,8 @@
     <Compile Include="GameState\WorldMapGameState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Font\edgeracer.ttf" />
+    <None Include="Content\Font\StageName.spritefont" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +150,11 @@
     <None Include="WaterSmash_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\message.png" />
+    <Content Include="Content\Images\sprite.jpg" />
+    <Content Include="Content\Images\stage_selection_1.png" />
+    <Content Include="Content\Images\stage_selection_2.png" />
+    <Content Include="Content\Images\worldmap.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -173,6 +180,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
