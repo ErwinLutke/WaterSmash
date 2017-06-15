@@ -47,7 +47,7 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-            image = content.Load<Texture2D>("sprite");
+            image = content.Load<Texture2D>("worldmap");
          //   player = (AActor)args[0];
         }
 

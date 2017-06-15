@@ -15,10 +15,13 @@ namespace Water
         GameStateManager gameStateManager;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Game1 game;
 
         public Game1()
         {
+            game = this;
             graphics = new GraphicsDeviceManager(this);
+            graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -35,6 +38,8 @@ namespace Water
 
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
+            GameServices.AddService<Game1>(game);
+
 
             gameStateManager = new GameStateManager();
 
@@ -44,7 +49,7 @@ namespace Water
             gameStateManager.Add("menu", new MenuGameState(gameStateManager));
             gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
-            gameStateManager.Change("worldmap");
+            gameStateManager.Change("menu");
         }
 
         /// <summary>
