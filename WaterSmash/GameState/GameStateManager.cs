@@ -13,8 +13,10 @@ namespace Water
         Dictionary<string, IGameState> _stateDict = new Dictionary<string, IGameState>();
 
         IGameState _current = new EmptyState();
+        IGameState _previous;
 
         public IGameState Current { get { return _current; } }
+        public IGameState Previous { get { return _previous; } }
 
         public void Add(string id, IGameState state) { _stateDict.Add(id, state); }
         public void Remove(string id) { _stateDict.Remove(id); }
@@ -25,6 +27,7 @@ namespace Water
         {
             _current.Leaving();
             IGameState next = _stateDict[id];
+            _previous = _current;
             next.Entered(args);
             _current = next;
         }

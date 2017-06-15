@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace Water
 {
@@ -115,6 +116,10 @@ namespace Water
                 {
                     player = (Player)args[0];
                 }
+            }
+            if(gameStateManager.Previous is MenuGameState)
+            {
+                Debug.WriteLine("came from menu, OOOEOOEOEEE");
             }
         }
 
