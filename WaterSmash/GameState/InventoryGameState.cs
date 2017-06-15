@@ -7,6 +7,8 @@ namespace Water
     class InventoryGameState : IGameState
     {
         private GameStateManager gameStateManager;
+        private GraphicsDeviceManager graphics;
+        
         //AActor player;
 
         public InventoryGameState(GameStateManager gameStateManager)
@@ -21,7 +23,7 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-            
+            graphics = GameServices.GetService<GraphicsDeviceManager>();
         }
 
         public void HandleInput(KeyboardState state)
