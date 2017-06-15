@@ -18,7 +18,7 @@ namespace Water
         ActionStateMachine asm;
 
         [DataMember]
-        Inventory inventory;
+        protected Inventory inventory;
 
 
         ActionStateMachine fsm = new ActionStateMachine();

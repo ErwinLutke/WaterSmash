@@ -19,6 +19,7 @@ namespace Water
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
