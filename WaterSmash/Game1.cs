@@ -13,12 +13,13 @@ namespace Water
     {
         KeyboardState state;
         GameStateManager gameStateManager;
-        GraphicsDeviceManager graphics;
+        GraphicsDeviceManager graphicsDeviceManager;
         SpriteBatch spriteBatch;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            graphicsDeviceManager = new GraphicsDeviceManager(this);
+            graphicsDeviceManager.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -32,7 +33,7 @@ namespace Water
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-
+            
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
 
