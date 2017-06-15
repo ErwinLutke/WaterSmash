@@ -12,26 +12,32 @@ namespace Water
     {
         public EmptyState()
         {
+
         }
 
         public void Draw(GameTime gameTime)
         {
+            
         }
 
         public void Entered(params object[] args)
         {
+            
         }
 
         public void HandleInput(KeyboardState state)
         {
+            
         }
 
         public void Leaving()
         {
+           
         }
 
         public void Update(GameTime gameTime)
         {
+            
         }
     }
 }
