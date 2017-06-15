@@ -13,8 +13,8 @@ namespace Water
 
         protected ContentManager content = GameServices.GetService<ContentManager>();
 
-        public Boolean isSelected { get; set; }
+        public Boolean isSelected { get; set; } // Holds wether item is selected or not - used for inventory
 
-        public Vector2 position { get; set; }
+        public Vector2 position { get; set; } // Holds position of item - used for inventory
     }
 }

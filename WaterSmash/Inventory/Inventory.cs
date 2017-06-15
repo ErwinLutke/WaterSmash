@@ -10,30 +10,30 @@ namespace Water
 {
     class Inventory
     {
-        public List<AInventoryObject> items { get; set; }
+        public List<AEquipable> items { get; set; } // Holds items 
 
-        public List<Texture2D> slots { get; }
+        public List<Texture2D> slots { get; } // Holds inventory slots
 
         private ContentManager content = GameServices.GetService<ContentManager>();
         
         public Inventory()
         {
-            items = new List<AInventoryObject>();
+            items = new List<AEquipable>();
             slots = new List<Texture2D>();
         
             // ADD EMPTY INVENTORY SLOTS
-            for(int i = 0; i < 42; i++)
+            for(int i = 0; i < 30; i++)
             {
                 slots.Add(content.Load<Texture2D>("inventory\\inventory_slot"));
             }
         }
 
-        public void AddInventoryObject(AInventoryObject item)
+        public void AddInventoryObject(AEquipable item)
         {
             items.Add(item);
         }
 
-        public void RemInventoryObject(AInventoryObject item)
+        public void RemInventoryObject(AEquipable item)
         {
             items.Remove(item);
         }
