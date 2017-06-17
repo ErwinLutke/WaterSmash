@@ -69,6 +69,7 @@ namespace Water
                 spriteBatch.DrawString(spriteFont, "Level: " + player.equippedCap.level, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedCap.attack, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedCap.defense, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
+                spriteBatch.Draw(player.equippedCap.texture, new Rectangle((viewport.Width / 100) * 15 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedCap.texture.Width, player.equippedCap.texture.Height), Color.White);
             }
             //Check if player currently has a label equipped
             if(player.equippedLabel != null)
@@ -78,6 +79,8 @@ namespace Water
                 spriteBatch.DrawString(spriteFont, "Level: " + player.equippedLabel.level, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedLabel.attack, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedLabel.defense, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
+                spriteBatch.Draw(player.equippedLabel.texture, new Rectangle((viewport.Width / 100) * 35 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedLabel.texture.Width, player.equippedLabel.texture.Height), Color.White);
+
             }
 
 
