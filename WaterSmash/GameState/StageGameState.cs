@@ -49,8 +49,10 @@ namespace Water
             {
                 player = new Player();
             }
-            
+
+            player.loadTextures();
             player.position = new Vector2(50, 50); // Set player starting position
+            player.actionStateMachine.Change("stand");
             Debug.WriteLine(player);
 
         }

@@ -54,10 +54,6 @@ namespace Water
             actionStateMachine.Add("attack", new AttackAction(this));
             actionStateMachine.Add("throw", new ThrowAction(this));
             actionStateMachine.Add("crouch", new CrouchAction(this));
-            actionStateMachine.Change("stand");
-
-            texture = content.Load<Texture2D>("inventory\\lable");
-            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
         }
 
 
@@ -66,6 +62,11 @@ namespace Water
             return inventory;
         }
 
+        public void loadTextures()
+        {
+            texture = content.Load<Texture2D>("inventory\\lable");
+            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+        }
 
         public void HandleInput(KeyboardState state)
         {

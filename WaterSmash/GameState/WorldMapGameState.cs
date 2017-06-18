@@ -94,6 +94,7 @@ namespace Water
         {
             loadContent();
             MediaPlayer.Play(worldMusic);
+            MediaPlayer.IsRepeating = true;
 
             if (player == null)
             {
@@ -106,6 +107,7 @@ namespace Water
                     player = new Player();
                 }
             }
+
             if(gameStateManager.Previous is MenuGameState)
             {
                 Debug.WriteLine("came from menu, OOOEOOEOEEE");
@@ -289,6 +291,7 @@ namespace Water
                 gameStateManager.Change("inventory", player);
                 lockKey(Keys.I);
             }
+
             // Play the stage if it is selectable
             else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             {
