@@ -29,11 +29,11 @@ namespace Water
         {
             if (state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Space))
             {
-                velocity.X = 3f; // add velocity, go right
+                velocity.X = 3f; // add velocity, lean right
             }
             else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Space))
             {
-                velocity.X = -3f; // substract velocity, go left
+                velocity.X = -3f; // substract velocity, lean left
             }
             else // if no space key pressed
             {

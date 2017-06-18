@@ -24,23 +24,36 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Right))
+            if(state.IsKeyDown(Keys.Space))
             {
-                position.X += 2f; // Increment X position (move right)
+                _actionStateMachine.Change("jump");
+            }
+            else if (state.IsKeyDown(Keys.Down))
+            {
+                _actionStateMachine.Change("crouch");
+            }
+            else if (state.IsKeyDown(Keys.Right))
+            {
+                MoveRight();
             }
             else if (state.IsKeyDown(Keys.Left))
             {
-                position.X -= 2f; // Decrement X position (Move left)
-            }
-            else if (state.IsKeyDown(Keys.Space))
-            {
-                _actionStateMachine.Change("jump");
+                MoveLeft();
             }
             else
             {
                 _actionStateMachine.Change("stand");
             }
+        }
 
+        public void MoveRight()
+        {
+            position.X += 2f; // Increment X position (move right)
+        }
+
+        public void MoveLeft()
+        {
+            position.X -= 2f; // Decrement X position (Move left)
         }
 
         public void Update(GameTime gameTime)

@@ -31,6 +31,10 @@ namespace Water
             {
                 _actionStateMachine.Change("jump");
             }
+            else if (state.IsKeyDown(Keys.Down))
+            {
+                _actionStateMachine.Change("crouch");
+            }
             else if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
             {
                 _actionStateMachine.Change("move"); 
