@@ -14,22 +14,23 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
         }
 
         public void HandleInput()
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
 
         public void Leaving()
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
     }
 }
