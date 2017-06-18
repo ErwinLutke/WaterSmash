@@ -148,6 +148,15 @@
     <None Include="WaterSmash_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\audio\worldmap.mp3" />
+    <Content Include="Content\Images\fog.png" />
+    <Content Include="Content\Images\message.png" />
+    <Content Include="Content\Images\sprite.jpg" />
+    <Content Include="Content\Images\stages\stage_1\worldmap_preview_1.png" />
+    <Content Include="Content\Images\stages\stage_1\worldmap_selected_1.png" />
+    <Content Include="Content\Images\stages\stage_2\worldmap_preview_2.png" />
+    <Content Include="Content\Images\stages\stage_2\worldmap_selected_2.png" />
+    <Content Include="Content\Images\worldmap.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -172,6 +181,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\Font\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -31,6 +31,10 @@ namespace Water
             this.gameStateManager = gameStateManager;
             spriteBatch = new SpriteBatch(graphics);
             
+            _stages = new Dictionary<string, Stage>();
+            _stages.Add("1", new Stage());
+            _stages.Add("2", new Stage());
+
         }
 
         public void Draw(GameTime gameTime)
@@ -41,7 +45,7 @@ namespace Water
         // Set which stage should be played
         public void Entered(params object[] args)
         {
-            //_currentStage = _stages[args[0].ToString()];
+            _currentStage = _stages[args[0].ToString()];
 
             startPosition = new Vector2(0, graphics.Viewport.Width / 2); // Set player starting position
 
@@ -52,7 +56,7 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-
+            if (state.IsKeyDown(Keys.Escape)) gameStateManager.Change("worldmap");
         }
 
         public void Leaving()

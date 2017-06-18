@@ -13,15 +13,13 @@ namespace Water
     {
         KeyboardState state;
         GameStateManager gameStateManager;
-        GraphicsDeviceManager graphics;
+        GraphicsDeviceManager graphicsDeviceManager;
         SpriteBatch spriteBatch;
-        Game1 game;
 
         public Game1()
         {
-            game = this;
-            graphics = new GraphicsDeviceManager(this);
-            graphics.ToggleFullScreen();
+            graphicsDeviceManager = new GraphicsDeviceManager(this);
+            graphicsDeviceManager.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -35,21 +33,19 @@ namespace Water
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-
+            
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
-            GameServices.AddService<Game1>(game);
-
 
             gameStateManager = new GameStateManager();
 
-            //gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
+            gameStateManager.Add("worldmap", new WorldMapGameState(gameStateManager));
             gameStateManager.Add("inventory", new InventoryGameState(gameStateManager));
             gameStateManager.Add("stage", new StageGameState(gameStateManager));
-            //gameStateManager.Add("menu", new MenuGameState(gameStateManager));
-            //gameStateManager.Add("pause", new PauseGameState(gameStateManager));
+            gameStateManager.Add("menu", new MenuGameState(gameStateManager));
+            gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
-            gameStateManager.Change("stage");
+            gameStateManager.Change("worldmap");
         }
 
         /// <summary>
