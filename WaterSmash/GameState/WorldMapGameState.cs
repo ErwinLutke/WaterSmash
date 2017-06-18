@@ -150,14 +150,30 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            // Moves the viewport
+            handleViewPortMovement(state);
+
+            // Check if we can press the specified key again
+            checkInputLock(state, Keys.Enter);
+            checkInputLock(state, Keys.Escape);
+            checkInputLock(state, Keys.I);
+
+            // set the oldstate as the current state to prepare for the next state
+            oldState = state;
+        }
+
+        /// <summary>
+        /// Handles the movement of the viewport, what button does what
+        /// </summary>
+        /// <param name="state">The current state of the keyboard</param>
+        private void handleViewPortMovement(KeyboardState state)
+        {
             if (state.IsKeyDown(Keys.Up)) currentLoc.Y -= 1;
             else if (state.IsKeyDown(Keys.Down)) currentLoc.Y += 1;
             if (state.IsKeyDown(Keys.Left)) currentLoc.X -= 1;
             else if (state.IsKeyDown(Keys.Right)) currentLoc.X += 1;
 
             // Zoom in
-            if(state.IsKeyDown(Keys.OemPlus))
+            if (state.IsKeyDown(Keys.OemPlus))
             {
                 viewPortSize.X -= 5;
                 viewPortSize.Y -= 5;
@@ -175,23 +191,23 @@ namespace Water
                 gameStateManager.Change("menu");
                 lockKey(Keys.Escape);
             }
+            // Go the inventory
+            else if (!keyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
+            {
+                gameStateManager.Change("inventory");
+                lockKey(Keys.I);
+            }
             // Play the stage if it is selectable
             else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             {
-                if(selectedStage != 0)
+                if (selectedStage != 0)
                 {
                     gameStateManager.Change("stage", selectedStage);
                     lockKey(Keys.Enter);
                 }
             }
-
-            // Check if we can press the specified key again
-            checkInputLock(state, Keys.Enter);
-            checkInputLock(state, Keys.Escape);
-
-            // set the oldstate as the current state to prepare for the next state
-            oldState = state;
         }
+
 
         public void Leaving()
         {
