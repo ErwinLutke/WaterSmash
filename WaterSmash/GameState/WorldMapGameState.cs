@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Media;
 
 namespace Water
 {
@@ -29,13 +30,15 @@ namespace Water
         /// <summary>
         /// Holds all stagenames
         /// </summary>
-        List<string> _stageNames = new List<string>();
+        List<StageData> stageData = new List<StageData>();
 
         /// <summary>
         /// Reference to the player
         /// </summary>
         [DataMember]
         Player player;
+
+        private Song worldMusic;
 
         /// <summary>
         /// Reference to the gameStateManager
@@ -46,19 +49,16 @@ namespace Water
         /// Holds all image files for easy reference. Will be loaded by the contentManager
         /// </summary>
         Dictionary<string, Texture2D> images = new Dictionary<string, Texture2D>();
-
-        /// <summary>
-        /// Holds all locations of the diffent stages
-        /// </summary>
-        List<stageLocation> stageLocations = new List<stageLocation>();
-
+       
         /// <summary>
         /// Holds the current location of the viewport
         /// </summary>
-        //private Point currentLoc = new Point(20, 575);
-        private Point currentLoc = new Point(0, 0);
+        private Point currentLoc = new Point(130, 295);
 
-        private Point viewPortSize = new Point(320, 320);
+        /// <summary>
+        /// Sets the size of the viewport (this is how zoomed in we are in the worldmap)
+        /// </summary>
+        private Point viewPortSize = new Point(150, 150);
 
         /// <summary>
         /// Holds the stage that is highlighted, 0 if no stage is highlighted
@@ -74,14 +74,7 @@ namespace Water
             this.gameStateManager = gameStateManager;
             this.spriteBatch = new SpriteBatch(graphicsDevice);
 
-            // TEMP - set some stage names
-            _stageNames.Add("stage 1 - yoshi");
-            _stageNames.Add("stage 2 - Bowser thingie");
-
-            // TEMP - set location for stage 1
-            // 
-            stageLocations.Add(new stageLocation(new Point(50 - (viewPortSize.X / 2), 600 - (viewPortSize.Y / 2)), new Point(300 - (viewPortSize.X / 2), 850 - (viewPortSize.Y / 2))));
-            stageLocations.Add(new stageLocation(new Point(350 - (viewPortSize.X / 2), 520 - (viewPortSize.Y / 2)), new Point(560 - (viewPortSize.X / 2), 720 - (viewPortSize.Y / 2))));
+            loadStageData();
         }
 
         public void Draw(GameTime gameTime) 
@@ -89,26 +82,53 @@ namespace Water
             int width = graphicsDevice.Viewport.Bounds.Width;
             int height = graphicsDevice.Viewport.Bounds.Height;
 
-            spriteBatch.Begin();
-            Rectangle sourceRect = new Rectangle(currentLoc.X, currentLoc.Y, viewPortSize.X, viewPortSize.Y);
-            spriteBatch.Draw(images["bg"], graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
+            // Begin drawing and disable AA for pixally art
+            spriteBatch.Begin(SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                null, null, null, null);
+
+            // We only want to draw a certain part of the worldmap depending on the zoom level (viewPortSize)
+            Rectangle sourceRect = new Rectangle(currentLoc.X - (viewPortSize.X / 2), currentLoc.Y - (viewPortSize.Y / 2), viewPortSize.X, viewPortSize.Y);
+            spriteBatch.Draw(images["worldmap"], graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
+            spriteBatch.Draw(images["fog"], graphicsDevice.Viewport.Bounds, Color.White);
 
             // If we are on a selectable stage, draw the highlight of the stage
-            if(selectedStage != 0)
+            if (selectedStage != 0)
             {
-                Rectangle messageRect = new Rectangle(new Point(width / 2 - 200, height / 2 - 100), new Point(400, 200));
-                spriteBatch.Draw(images["stage_selection_" + selectedStage.ToString()], graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
-                spriteBatch.Draw(images["message"], messageRect, Color.White);
-                float nameWidth = stageNameFont.MeasureString(_stageNames[selectedStage - 1]).X;
-                spriteBatch.DrawString(stageNameFont, _stageNames[selectedStage - 1], new Vector2((width / 2) - (nameWidth / 2), height / 2), Color.White);                      
+                // draw the selection highlight of a stage
+                spriteBatch.Draw(stageData[selectedStage - 1].selected, graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
+              
+                // get the widths and height of the text to draw on screen
+                float stageWidth = stageNameFont.MeasureString("-= Stage " + stageData[selectedStage - 1].level + " =-").X;
+                float nameHeight = stageNameFont.MeasureString(stageData[selectedStage - 1].name).Y;
+                float nameWidth = stageNameFont.MeasureString(stageData[selectedStage - 1].name).X;
+                
+                // create black outline
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) - 2, (height / 2) - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) + 2, (height / 2) - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) + 2, (height / 2) + 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) - 2, (height / 2) + 2), Color.Black);
+                // draw text containing which state this is
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2), (height / 2)), Color.White);
+
+                // create black outline
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) - 2, (height / 2) + nameHeight - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) + 2, (height / 2) + nameHeight - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) + 2, (height / 2) + nameHeight + 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) - 2, (height / 2) + nameHeight + 2), Color.Black);
+                // draw text containing the name of the stage
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2), (height / 2) + nameHeight), Color.White);
             }
+
             spriteBatch.End();
         }
-
+        
 
         public void Entered(params object[] args)
         {
             loadContent();
+            MediaPlayer.Play(worldMusic);
 
             if (player == null)
             {
@@ -123,28 +143,54 @@ namespace Water
             }
         }
 
+        /// <summary>
+        /// Holds the previous keyboardstate. used to check if a key is pressed or not
+        /// </summary>
+        KeyboardState oldState;
+
         public void HandleInput(KeyboardState state)
         {
-            // Go the menu
-            if (state.IsKeyDown(Keys.Escape))
+            // Moves the viewport
+            if (state.IsKeyDown(Keys.Up)) currentLoc.Y -= 1;
+            else if (state.IsKeyDown(Keys.Down)) currentLoc.Y += 1;
+            if (state.IsKeyDown(Keys.Left)) currentLoc.X -= 1;
+            else if (state.IsKeyDown(Keys.Right)) currentLoc.X += 1;
+
+            // Zoom in
+            if(state.IsKeyDown(Keys.OemPlus))
             {
-                gameStateManager.Change("menu");
+                viewPortSize.X -= 5;
+                viewPortSize.Y -= 5;
+            }
+            // zoom out
+            else if (state.IsKeyDown(Keys.OemMinus))
+            {
+                viewPortSize.X += 5;
+                viewPortSize.Y += 5;
             }
 
-            // Moves the viewport
-            if (state.IsKeyDown(Keys.Up)) currentLoc.Y -= 5;
-            if (state.IsKeyDown(Keys.Down)) currentLoc.Y += 5;
-            if (state.IsKeyDown(Keys.Left)) currentLoc.X -= 5;
-            if (state.IsKeyDown(Keys.Right)) currentLoc.X += 5;
-
+            // Go the menu
+            if (!keyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
+            {
+                gameStateManager.Change("menu");
+                lockKey(Keys.Escape);
+            }
             // Play the stage if it is selectable
-            if(state.IsKeyDown(Keys.Enter))
+            else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             {
                 if(selectedStage != 0)
                 {
                     gameStateManager.Change("stage", selectedStage);
+                    lockKey(Keys.Enter);
                 }
             }
+
+            // Check if we can press the specified key again
+            checkInputLock(state, Keys.Enter);
+            checkInputLock(state, Keys.Escape);
+
+            // set the oldstate as the current state to prepare for the next state
+            oldState = state;
         }
 
         public void Leaving()
@@ -156,8 +202,8 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
+            // check if the viewport contains a stage
             selectedStage = getStageInView();
-
         }
 
 
@@ -167,14 +213,14 @@ namespace Water
         /// <returns>Returns stage number, else returns 0</returns>
         private int getStageInView()
         {
-            foreach (stageLocation area in stageLocations)
+            foreach (StageData stage in stageData)
             {
-                if (currentLoc.X > area.start.X 
-                    && currentLoc.X < area.end.X 
-                    && currentLoc.Y > area.start.Y 
-                    && currentLoc.Y < area.end.Y)
+                if (currentLoc.X > stage.startLocation.X 
+                    && currentLoc.X < stage.endLocation.X 
+                    && currentLoc.Y > stage.startLocation.Y 
+                    && currentLoc.Y < stage.endLocation.Y)
                 {
-                    return stageLocations.IndexOf(area) + 1;
+                    return stage.level;
                 }
 
             }
@@ -182,39 +228,132 @@ namespace Water
         }
 
         /// <summary>
+        /// Holds the key that has been pressed
+        /// </summary>
+        private Keys pressedKey;
+
+        /// <summary>
+        /// Used to check if a key has been pressed
+        /// </summary>
+        private bool keyPressed = false;
+
+        /// <summary>
+        /// Locks the specified key so that it can only be pressed once
+        /// </summary>
+        /// <param name="key">The key to lock</param>
+        private void lockKey(Keys key)
+        {
+            pressedKey = key;
+            keyPressed = true;
+        }
+
+        /// <summary>
+        /// Checks if the key is no longer being pressed and releases its lock
+        /// </summary>
+        /// <param name="state">The current keyboardstate to check against the key</param>
+        /// <param name="key">The key to check</param>
+        private void checkInputLock(KeyboardState state, Keys key)
+        {
+            if (keyPressed && pressedKey == key && !state.IsKeyDown(key) && !oldState.IsKeyDown(key))
+            {
+                keyPressed = false;
+            }
+        }
+
+
+        /// <summary>
         /// Loads all neccesary content. Graphics and audio
         /// </summary>
         private void loadContent()
         {
-            images.Add("bg", contentManager.Load<Texture2D>("Images/worldmap"));
+            images.Add("worldmap", contentManager.Load<Texture2D>("Images/worldmap"));
+            images.Add("fog", contentManager.Load<Texture2D>("Images/fog"));
             images.Add("message", contentManager.Load<Texture2D>("Images/message"));
-            images.Add("stage_selection_1", contentManager.Load<Texture2D>("Images/stage_selection_1"));
-            images.Add("stage_selection_2", contentManager.Load<Texture2D>("Images/stage_selection_2"));
 
             stageNameFont = contentManager.Load<SpriteFont>("Font/StageName");
+
+            worldMusic = contentManager.Load<Song>("audio/worldmap");
+
+            foreach (StageData stage in stageData)
+            {
+                stage.selected = contentManager.Load<Texture2D>("Images/stages/stage_" + stage.level + "/worldmap_selected_" + stage.level);
+                stage.preview = contentManager.Load<Texture2D>("Images/stages/stage_" + stage.level + "/worldmap_preview_" + stage.level);
+            }
+        }
+
+        /// <summary>
+        /// Loads all data necessary for the stages
+        /// 
+        /// NOTE - should be gotten from xml
+        /// </summary>
+        private void loadStageData()
+        {
+            StageData stage_1 = new StageData();
+            StageData stage_2 = new StageData();
+
+            stage_1.level = 1;
+            stage_1.name = "The Docks";
+            stage_1.description = "First stage";
+            stage_1.records = new List<string>();
+            stage_1.startLocation = new Point(130, 255);
+            stage_1.endLocation = new Point(190, 295);
+
+            stage_2.level = 2;
+            stage_2.name = "Cabin in the woods";
+            stage_2.description = "Second stage";
+            stage_2.records = new List<string>();
+            stage_2.startLocation = new Point(180, 175);
+            stage_2.endLocation = new Point(240, 215);
+
+            stageData.Add(stage_1);
+            stageData.Add(stage_2);
         }
     }
 
 
     /// <summary>
-    /// Holds data for where a stage is on the worldmap
+    /// Holds all information of a stage necessary for the worldmap
     /// </summary>
-    class stageLocation
+    class StageData
     {
         /// <summary>
         /// This holds the starting coordinates (Top left)
         /// </summary>
-        public Point start;
+        public Point startLocation;
 
         /// <summary>
         /// This holds the ending coordinates (Bottom right)
         /// </summary>
-        public Point end;
+        public Point endLocation;
 
-        public stageLocation(Point start, Point end)
-        {
-            this.start = start;
-            this.end = end;
-        }
+        /// <summary>
+        /// The name of the stage
+        /// </summary>
+        public string name;
+
+        /// <summary>
+        /// The description of the stage
+        /// </summary>
+        public string description;
+
+        /// <summary>
+        /// Which stage it is
+        /// </summary>
+        public int level;
+
+        /// <summary>
+        /// Holds the highlight to render when the stage is hovered on
+        /// </summary>
+        public Texture2D selected;
+
+        /// <summary>
+        /// Holds the preview to show when the stage is hovered on
+        /// </summary>
+        public Texture2D preview;
+
+        /// <summary>
+        /// Holds the records of the stage
+        /// </summary>
+        public List<string> records;
     }
 }
