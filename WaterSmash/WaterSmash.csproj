@@ -107,6 +107,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameServices.cs" />
+    <Compile Include="GameState\Button.cs" />
     <Compile Include="GameState\InventoryGameState.cs" />
     <Compile Include="GameState\MenuGameState.cs" />
     <Compile Include="GameState\PauseGameState.cs" />
