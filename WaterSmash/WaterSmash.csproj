@@ -139,6 +139,7 @@
     <Compile Include="GameState\WorldMapGameState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Font\StageName.spritefont" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -182,9 +183,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\Font\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
