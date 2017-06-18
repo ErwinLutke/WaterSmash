@@ -31,12 +31,11 @@ namespace Water
         public int attack { get; set; }
         public int defense { get; set;}
 
+        public Vector2 position { get; set; } // Holds current position of actor
 
-        public Vector2 position { get; set; }
+        public bool isJumping { get; set; } // used for controlling the switch to other movements in ASM
 
         public Texture2D texture { get; set; }
-
-        public IAction currentAction { get; set; }
 
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
@@ -47,7 +46,7 @@ namespace Water
         public AActor()
         {
             inventory = new Inventory();
-            fsm = new ActionStateMachine();
+            fsm = new ActionStateMachine(this);
 
             spriteBatch = new SpriteBatch(graphics);
 
@@ -76,6 +75,10 @@ namespace Water
             Viewport viewport = graphics.Viewport;
 
             spriteBatch.DrawString(spriteFont, fsm.currentAction.ToString(), new Vector2(100, 100), Color.Black);
+
+            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
+
+            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.Black);
 
             spriteBatch.Draw(texture, position, Color.White);
 

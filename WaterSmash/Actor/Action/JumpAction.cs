@@ -6,15 +6,12 @@ namespace Water
 {
     internal class JumpAction : IAction
     {
-        private AActor actor;
+        private AActor actor; // Holds current actor
+            
+        private bool hasJumped = false; // Holds wether actor has jumped
 
-        public bool hasJumped = true;
-
-        private Vector2 position;
-        private Vector2 velocity;
-        private Vector2 startPosition;
-
-        KeyboardState oldState;
+        private Vector2 position; // Holds actor's position
+        private Vector2 velocity; // Holds air movement velocity
 
         public JumpAction(AActor actor)
         {
@@ -38,51 +35,58 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            position = actor.position;
+            position = actor.position; // Set current position
+            position += velocity; 
 
-            position += velocity;
+            KeyboardState state = Keyboard.GetState();
 
-            KeyboardState newState = Keyboard.GetState();
-
-            if(newState.IsKeyDown(Keys.Right) && newState.IsKeyDown(Keys.Space))
+            if(state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Space)) 
             {
-                velocity.X = 3f;
+                velocity.X = 3f; // add velocity, go right
             }
-            else if (newState.IsKeyDown(Keys.Left) && newState.IsKeyDown(Keys.Space))
+            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Space))
             {
-                velocity.X = -3f;
+                velocity.X = -3f; // substract velocity, go left
             }
-            else
+            else // if no space key pressed
             {
-                velocity.X = 0;
+                if (state.IsKeyDown(Keys.Left)) // continue going left if left key is pressed
+                {
+                    velocity.X = -3f;
+                }
+                else if (state.IsKeyDown(Keys.Right)) // continue going to right if right key is pressed
+                {
+                    velocity.X = 3f;
+                }
+                else // if no space or left or right key is pressed, stay at same position
+                {
+                    velocity.X = 0;
+                }
             }
 
-            if(newState.IsKeyDown(Keys.Space) && hasJumped == false)
+            if (hasJumped == false) // player is not currently jumping
             {
-                position.Y -= 10f;
-                velocity.Y = -5f;
-                hasJumped = true;
+                position.Y -= 10f; // substract from Y -> go up
+                velocity.Y = -5f; // velocity kicks in to not be a rocket
+                actor.isJumping = true; // set isJumping in actor to true -> used for controlling the switch to other movements
+                hasJumped = true; // set hasJumped to true to avoid double jumping
             }
 
-            if(newState.IsKeyUp(Keys.Space) || hasJumped == true)
+            if(state.IsKeyUp(Keys.Space) || hasJumped == true)
             {
                 float i = 1;
                 velocity.Y += 0.15f * i;
             }
 
-            if(position.Y + actor.texture.Height >= 900)
-            {
-                hasJumped = false;
-            }
-
-            if(hasJumped == false)
-            {
-                velocity.Y = 0f;
+            // CHANGE 960 ACCORDING TO HITBOX SHIT
+            if(position.Y >= 960) // if back on the ground
+            {         
+                hasJumped = false; // set hasJumped on false so that player is able to jump again
+                velocity.Y = 0f; // Reset velocity
+                actor.isJumping = false; // set isJumping in actor to false -> used for controlling the switch to other movements
             }
 
             actor.position = position;
-
-            //oldState = newState;
         }
     }
 }

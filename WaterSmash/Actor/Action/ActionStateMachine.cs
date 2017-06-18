@@ -10,6 +10,15 @@ namespace Water
 
         public IAction currentAction; // Holds current action
 
+        public AActor actor; // Holds current actor
+
+        public ActionStateMachine(){}
+
+        public ActionStateMachine(AActor actor)
+        {
+            this.actor = actor;
+        }
+
         public void Add(string name, IAction action)
         {
             _actionDict.Add(name, action); 
@@ -29,19 +38,24 @@ namespace Water
         {
             KeyboardState state = Keyboard.GetState();
 
-            if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right))
+            if (state.IsKeyDown(Keys.Space)) // If space is pressed
             {
-                Change("move");
+                Change("jump"); // Change to JumpAction
             }
-            //else if (state.IsKeyDown(Keys.Space))
-            //{
-            //    Change("jump");
-            //}
+            else if(state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
+            {
+                if(!actor.isJumping) // Check if actor is jumping, cannot change to move mid air
+                {
+                    Change("move"); // Change to MoveAction
+                }                 
+            }
             else
             {
-                Change("stand");
+                if (!actor.isJumping) // Check if actor is jumping, cannot change to move mid air
+                {
+                    Change("stand"); // Change to StandAction
+                }
             }
-
             currentAction.Update(gameTime);
         }
 
