@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
@@ -16,19 +12,21 @@ namespace Water
     [DataContract]
     class WorldMapGameState : IGameState
     {
-        SpriteFont stageNameFont;
         GraphicsDevice graphicsDevice = GameServices.GetService<GraphicsDevice>();
         ContentManager contentManager = GameServices.GetService<ContentManager>();
+
+        SpriteFont stageNameFont;
         SpriteBatch spriteBatch;
 
         /// <summary>
         /// Holds how many stages are playable
+        /// NOT USED YET
         /// </summary>
         [DataMember]
         int stageProgress { get; set; }
        
         /// <summary>
-        /// Holds all stagenames
+        /// Holds all data of the stages
         /// </summary>
         List<StageData> stageData = new List<StageData>();
 
@@ -38,6 +36,9 @@ namespace Water
         [DataMember]
         Player player;
 
+        /// <summary>
+        /// The background music
+        /// </summary>
         private Song worldMusic;
 
         /// <summary>
@@ -66,9 +67,21 @@ namespace Water
         private int selectedStage = 0;
 
         /// <summary>
-        /// Creates a worldmap state thath handles
+        /// Holds the previous keyboardstate. used to check if a key is pressed or not
         /// </summary>
-        /// <param name="gameStateManager"></param>
+        KeyboardState oldState;
+
+        /// <summary>
+        /// Holds the key that has been pressed
+        /// </summary>
+        private Keys pressedKey;
+
+        /// <summary>
+        /// Used to check if a key has been pressed
+        /// </summary>
+        private bool keyPressed = false;
+
+
         public WorldMapGameState(GameStateManager gameStateManager)
         {
             this.gameStateManager = gameStateManager;
@@ -77,7 +90,48 @@ namespace Water
             loadStageData();
         }
 
-        public void Draw(GameTime gameTime) 
+        public void Entered(params object[] args)
+        {
+            loadContent();
+            MediaPlayer.Play(worldMusic);
+
+            if (player == null)
+            {
+                if (args.Length > 0)
+                {
+                    player = (Player)args[0];
+                }
+                else
+                {
+                    player = new Player();
+                }
+            }
+            if(gameStateManager.Previous is MenuGameState)
+            {
+                Debug.WriteLine("came from menu, OOOEOOEOEEE");
+            }
+        }
+
+        public void HandleInput(KeyboardState state)
+        {
+            handleViewPortMovement(state);
+
+            // Check if we can press the specified key again
+            checkInputLock(state, Keys.Enter);
+            checkInputLock(state, Keys.Escape);
+            checkInputLock(state, Keys.I);
+
+            // set the oldstate as the current state to prepare for the next state
+            oldState = state;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            // check if the viewport contains a stage
+            selectedStage = getStageInView();
+        }
+
+        public void Draw(GameTime gameTime)
         {
             int width = graphicsDevice.Viewport.Bounds.Width;
             int height = graphicsDevice.Viewport.Bounds.Height;
@@ -98,12 +152,12 @@ namespace Water
             {
                 // draw the selection highlight of a stage
                 spriteBatch.Draw(stageData[selectedStage - 1].selected, graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
-              
+
                 // get the widths and height of the text to draw on screen
                 float stageWidth = stageNameFont.MeasureString("-= Stage " + stageData[selectedStage - 1].level + " =-").X;
                 float nameHeight = stageNameFont.MeasureString(stageData[selectedStage - 1].name).Y;
                 float nameWidth = stageNameFont.MeasureString(stageData[selectedStage - 1].name).X;
-                
+
                 // create black outline
                 spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) - 2, (height / 2) - 2), Color.Black);
                 spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) + 2, (height / 2) - 2), Color.Black);
@@ -123,91 +177,6 @@ namespace Water
 
             spriteBatch.End();
         }
-        
-
-        public void Entered(params object[] args)
-        {
-            loadContent();
-            MediaPlayer.Play(worldMusic);
-
-            if (player == null)
-            {
-                if (args.Length > 0)
-                {
-                    player = (Player)args[0];
-                }
-            }
-            if(gameStateManager.Previous is MenuGameState)
-            {
-                Debug.WriteLine("came from menu, OOOEOOEOEEE");
-            }
-        }
-
-        /// <summary>
-        /// Holds the previous keyboardstate. used to check if a key is pressed or not
-        /// </summary>
-        KeyboardState oldState;
-
-        public void HandleInput(KeyboardState state)
-        {
-            handleViewPortMovement(state);
-
-            // Check if we can press the specified key again
-            checkInputLock(state, Keys.Enter);
-            checkInputLock(state, Keys.Escape);
-            checkInputLock(state, Keys.I);
-
-            // set the oldstate as the current state to prepare for the next state
-            oldState = state;
-        }
-
-        /// <summary>
-        /// Handles the movement of the viewport, what button does what
-        /// </summary>
-        /// <param name="state">The current state of the keyboard</param>
-        private void handleViewPortMovement(KeyboardState state)
-        {
-            if (state.IsKeyDown(Keys.Up)) currentLoc.Y -= 1;
-            else if (state.IsKeyDown(Keys.Down)) currentLoc.Y += 1;
-            if (state.IsKeyDown(Keys.Left)) currentLoc.X -= 1;
-            else if (state.IsKeyDown(Keys.Right)) currentLoc.X += 1;
-
-            // Zoom in
-            if (state.IsKeyDown(Keys.OemPlus))
-            {
-                viewPortSize.X -= 5;
-                viewPortSize.Y -= 5;
-            }
-            // zoom out
-            else if (state.IsKeyDown(Keys.OemMinus))
-            {
-                viewPortSize.X += 5;
-                viewPortSize.Y += 5;
-            }
-
-            // Go the menu
-            if (!keyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
-            {
-                gameStateManager.Change("menu");
-                lockKey(Keys.Escape);
-            }
-            // Go the inventory
-            else if (!keyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
-            {
-                gameStateManager.Change("inventory");
-                lockKey(Keys.I);
-            }
-            // Play the stage if it is selectable
-            else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
-            {
-                if (selectedStage != 0)
-                {
-                    gameStateManager.Change("stage", selectedStage);
-                    lockKey(Keys.Enter);
-                }
-            }
-        }
-
 
         public void Leaving()
         {
@@ -215,13 +184,6 @@ namespace Water
             images.Clear();
             contentManager.Unload();
         }
-
-        public void Update(GameTime gameTime)
-        {
-            // check if the viewport contains a stage
-            selectedStage = getStageInView();
-        }
-
 
         /// <summary>
         /// Checks if the viewport is on a selectable stage
@@ -242,40 +204,6 @@ namespace Water
             }
             return 0;
         }
-
-        /// <summary>
-        /// Holds the key that has been pressed
-        /// </summary>
-        private Keys pressedKey;
-
-        /// <summary>
-        /// Used to check if a key has been pressed
-        /// </summary>
-        private bool keyPressed = false;
-
-        /// <summary>
-        /// Locks the specified key so that it can only be pressed once
-        /// </summary>
-        /// <param name="key">The key to lock</param>
-        private void lockKey(Keys key)
-        {
-            pressedKey = key;
-            keyPressed = true;
-        }
-
-        /// <summary>
-        /// Checks if the key is no longer being pressed and releases its lock
-        /// </summary>
-        /// <param name="state">The current keyboardstate to check against the key</param>
-        /// <param name="key">The key to check</param>
-        private void checkInputLock(KeyboardState state, Keys key)
-        {
-            if (keyPressed && pressedKey == key && !state.IsKeyDown(key) && !oldState.IsKeyDown(key))
-            {
-                keyPressed = false;
-            }
-        }
-
 
         /// <summary>
         /// Loads all neccesary content. Graphics and audio
@@ -324,13 +252,83 @@ namespace Water
             stageData.Add(stage_1);
             stageData.Add(stage_2);
         }
+
+        /// <summary>
+        /// Handles the movement of the viewport, what button does what
+        /// </summary>
+        /// <param name="state">The current state of the keyboard</param>
+        private void handleViewPortMovement(KeyboardState state)
+        {
+            if (state.IsKeyDown(Keys.Up)) currentLoc.Y -= 1;
+            else if (state.IsKeyDown(Keys.Down)) currentLoc.Y += 1;
+            if (state.IsKeyDown(Keys.Left)) currentLoc.X -= 1;
+            else if (state.IsKeyDown(Keys.Right)) currentLoc.X += 1;
+
+            // Zoom in
+            if (state.IsKeyDown(Keys.OemPlus))
+            {
+                viewPortSize.X -= 5;
+                viewPortSize.Y -= 5;
+            }
+            // zoom out
+            else if (state.IsKeyDown(Keys.OemMinus))
+            {
+                viewPortSize.X += 5;
+                viewPortSize.Y += 5;
+            }
+
+            // Go the menu
+            if (!keyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
+            {
+                gameStateManager.Change("menu");
+                lockKey(Keys.Escape);
+            }
+            // Go the inventory
+            else if (!keyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
+            {
+                gameStateManager.Change("inventory", player);
+                lockKey(Keys.I);
+            }
+            // Play the stage if it is selectable
+            else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+            {
+                if (selectedStage != 0)
+                {
+                    gameStateManager.Change("stage", selectedStage, player);
+                    lockKey(Keys.Enter);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Locks the specified key so that it can only be pressed once
+        /// </summary>
+        /// <param name="key">The key to lock</param>
+        private void lockKey(Keys key)
+        {
+            pressedKey = key;
+            keyPressed = true;
+        }
+
+        /// <summary>
+        /// Checks if the key is no longer being pressed and releases its lock
+        /// </summary>
+        /// <param name="state">The current keyboardstate to check against the key</param>
+        /// <param name="key">The key to check</param>
+        private void checkInputLock(KeyboardState state, Keys key)
+        {
+            if (keyPressed && pressedKey == key && !state.IsKeyDown(key) && !oldState.IsKeyDown(key))
+            {
+                keyPressed = false;
+            }
+        }
     }
 
 
     /// <summary>
     /// Holds all information of a stage necessary for the worldmap
     /// </summary>
-    class StageData
+    internal class StageData
     {
         /// <summary>
         /// This holds the starting coordinates (Top left)

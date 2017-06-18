@@ -5,17 +5,17 @@ namespace Water
 {
     interface IGameState
     {
-        // Handles all game logic
-        void Update(GameTime gameTime);
+        // Called before entering the state
+        void Entered(params object[] args);
 
         // Handles all player input
         void HandleInput(KeyboardState state);
 
+        // Handles all game logic
+        void Update(GameTime gameTime);
+
         // Handles drawing of textures and sprite
         void Draw(GameTime gameTime);
-
-        // Called before entering the state
-        void Entered(params object[] args);
 
         // Called when changing state
         void Leaving();

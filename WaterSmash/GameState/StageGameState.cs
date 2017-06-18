@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace Water
 {
@@ -20,7 +21,7 @@ namespace Water
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
 
-        AActor player = new Player();
+        AActor player;
 
         SpriteBatch spriteBatch;
 
@@ -37,36 +38,43 @@ namespace Water
 
         }
 
-        public void Draw(GameTime gameTime)
-        {
-            player.Draw(gameTime);
-        }
-
         // Set which stage should be played
         public void Entered(params object[] args)
         {
-            _currentStage = _stages[args[0].ToString()];
-
-            startPosition = new Vector2(0, graphics.Viewport.Width / 2); // Set player starting position
-
-            player.position = startPosition; // Parse starting position to player
-
+            if (args.Length > 0)
+            {
+                _currentStage = _stages[args[0].ToString()];
+                player = (Player)args[1];
+            } else
+            {
+                player = new Player();
+            }
+            
+            player.position = new Vector2(50, 50); // Set player starting position
+            Debug.WriteLine(player);
 
         }
 
         public void HandleInput(KeyboardState state)
         {
             if (state.IsKeyDown(Keys.Escape)) gameStateManager.Change("worldmap");
+            player.HandleInput(state);
+        }
+
+
+        public void Update(GameTime gameTime)
+        {
+            player.Update(gameTime);
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            player.Draw(gameTime);
         }
 
         public void Leaving()
         {
 
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            player.Update(gameTime);
         }
     }
 }

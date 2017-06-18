@@ -17,13 +17,12 @@ namespace Water
         [DataMember]
         string name { get; set; }
         Texture2D spriteSheet;
-
-        ActionStateMachine asm;
+        
 
         [DataMember]
         protected Inventory inventory;
 
-        public ActionStateMachine fsm;
+        public ActionStateMachine actionStateMachine;
 
         bool _isInvunerable = false;
 
@@ -33,7 +32,6 @@ namespace Water
 
         public Vector2 position { get; set; } // Holds current position of actor
 
-        public bool isJumping { get; set; } // used for controlling the switch to other movements in ASM
 
         public Texture2D texture { get; set; }
 
@@ -46,17 +44,17 @@ namespace Water
         public AActor()
         {
             inventory = new Inventory();
-            fsm = new ActionStateMachine(this);
+            actionStateMachine = new ActionStateMachine();
 
             spriteBatch = new SpriteBatch(graphics);
 
-            fsm.Add("move", new MoveAction(this));
-            fsm.Add("stand", new StandAction(this));
-            fsm.Add("jump", new JumpAction(this));
-            fsm.Add("attack", new AttackAction(this));
-            fsm.Add("throw", new ThrowAction(this));
-            fsm.Add("crouch", new CrouchAction(this));
-            fsm.Change("stand");
+            actionStateMachine.Add("move", new MoveAction(this));
+            actionStateMachine.Add("stand", new StandAction(this));
+            actionStateMachine.Add("jump", new JumpAction(this));
+            actionStateMachine.Add("attack", new AttackAction(this));
+            actionStateMachine.Add("throw", new ThrowAction(this));
+            actionStateMachine.Add("crouch", new CrouchAction(this));
+            actionStateMachine.Change("stand");
 
             texture = content.Load<Texture2D>("inventory\\lable");
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
@@ -68,13 +66,24 @@ namespace Water
             return inventory;
         }
 
+
+        public void HandleInput(KeyboardState state)
+        {
+            actionStateMachine.HandleInput(state);
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            actionStateMachine.Update(gameTime);
+        }
+
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
 
             Viewport viewport = graphics.Viewport;
 
-            spriteBatch.DrawString(spriteFont, fsm.currentAction.ToString(), new Vector2(100, 100), Color.Black);
+            spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
 
             spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
 
@@ -85,15 +94,6 @@ namespace Water
             spriteBatch.End();
         }
 
-        public void Update(GameTime gameTime)
-        {
-            fsm.Update(gameTime);
-        }
-
-        public void HandleInput()
-        {
-            fsm.HandleInput();
-        }
 
     }
 }

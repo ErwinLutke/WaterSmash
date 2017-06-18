@@ -21,7 +21,8 @@ namespace Water
         Texture2D bottle;   // Holds bottle texture image
         Texture2D textArea; // Holds textarea
 
-        Player player = new Player(); // Player instance used for testing purposes
+        //Player player = new Player(); // Player instance used for testing purposes
+        Player player;
 
         private AEquipable current; // Holds current selected item
 
@@ -153,6 +154,18 @@ namespace Water
 
         public void Entered(params object[] args)
         {
+            if (player == null)
+            {
+                if (args.Length > 0)
+                {
+                    player = (Player)args[0];
+                }
+                else
+                {
+                    player = new Player();
+                }
+            }
+
             // Get background image
             bg = content.Load<Texture2D>("inventory\\bg");
             // Get bottle image 
@@ -246,8 +259,7 @@ namespace Water
                     player.GetInventory().RemInventoryObject(current);
                 }
             }
-
-            Draw(gameTime);
+            
 
             oldState = newState;
         }

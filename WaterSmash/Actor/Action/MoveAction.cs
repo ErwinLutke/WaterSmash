@@ -6,35 +6,24 @@ namespace Water
 {
     internal class MoveAction : IAction
     {
-        private AActor actor;   // Holds an actor
-            
+        private AActor _actor;
+        private ActionStateMachine _actionStateMachine;
+
         private Vector2 position; // Holds current actor position
 
         public MoveAction(AActor actor)
         {
-            this.actor = actor;
+            _actor = actor;
+            _actionStateMachine = actor.actionStateMachine;
         }
-
+        
         public void Entered(params object[] args)
         {
+            position = _actor.position; // Set or update current actor position
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardState state)
         {
-
-        }
-
-        public void Leaving()
-        {
-
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            position = actor.position; // Set or update current actor position
-
-            KeyboardState state = Keyboard.GetState();
-
             if (state.IsKeyDown(Keys.Right))
             {
                 position.X += 2f; // Increment X position (move right)
@@ -43,10 +32,26 @@ namespace Water
             {
                 position.X -= 2f; // Decrement X position (Move left)
             }
+            else if (state.IsKeyDown(Keys.Space))
+            {
+                _actionStateMachine.Change("jump");
+            }
+            else
+            {
+                _actionStateMachine.Change("stand");
+            }
 
-            actor.position = position; // Update position in actor
-
-            actor.Draw(gameTime);
         }
+
+        public void Update(GameTime gameTime)
+        {
+            _actor.position = position; // Update position in actor
+        }
+
+        public void Leaving()
+        {
+
+        }
+
     }
 }

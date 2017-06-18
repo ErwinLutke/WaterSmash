@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Actor\AActor.cs" />
     <Compile Include="Actor\Action\AttackAction.cs" />
+    <Compile Include="Actor\Action\EmptyAction.cs" />
     <Compile Include="Actor\Boss.cs" />
     <Compile Include="Actor\Action\CrouchAction.cs" />
     <Compile Include="Actor\Enemy.cs" />

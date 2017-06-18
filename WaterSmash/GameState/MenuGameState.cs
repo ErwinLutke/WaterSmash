@@ -15,7 +15,6 @@ namespace Water
         private GameStateManager gameStateManager;
         GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         ContentManager content = GameServices.GetService<ContentManager>();
-        Game1 game = GameServices.GetService<Game1>();
         SpriteBatch spriteBatch;
         Texture2D image;
         List<Button> buttons = new List<Button>();
@@ -137,7 +136,7 @@ namespace Water
                     }
                     if (CurrentButton == buttons[2])
                     {
-                        game.Exit();
+                        App.Current.Exit();
                     }
 
                 }

@@ -6,7 +6,8 @@ namespace Water
 {
     internal class JumpAction : IAction
     {
-        private AActor actor; // Holds current actor
+        private AActor _actor; // Holds current actor
+        private ActionStateMachine _actionStateMachine;
             
         private bool hasJumped = false; // Holds wether actor has jumped
 
@@ -15,32 +16,18 @@ namespace Water
 
         public JumpAction(AActor actor)
         {
-            this.actor = actor;
+            _actor = actor;
+            _actionStateMachine = _actor.actionStateMachine;
         }
 
         public void Entered(params object[] args)
         {
-            
+            position = _actor.position; // Set current position
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardState state)
         {
-
-        }
-
-        public void Leaving()
-        {
-
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            position = actor.position; // Set current position
-            position += velocity; 
-
-            KeyboardState state = Keyboard.GetState();
-
-            if(state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Space)) 
+            if (state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Space))
             {
                 velocity.X = 3f; // add velocity, go right
             }
@@ -64,29 +51,41 @@ namespace Water
                 }
             }
 
-            if (hasJumped == false) // player is not currently jumping
-            {
-                position.Y -= 10f; // substract from Y -> go up
-                velocity.Y = -5f; // velocity kicks in to not be a rocket
-                actor.isJumping = true; // set isJumping in actor to true -> used for controlling the switch to other movements
-                hasJumped = true; // set hasJumped to true to avoid double jumping
-            }
-
-            if(state.IsKeyUp(Keys.Space) || hasJumped == true)
+            if (state.IsKeyUp(Keys.Space) || hasJumped == true)
             {
                 float i = 1;
                 velocity.Y += 0.15f * i;
             }
+        }
 
+        public void Update(GameTime gameTime)
+        {
+            position += velocity; 
+         
+
+            if (hasJumped == false) // player is not currently jumping
+            {
+                position.Y -= 10f; // substract from Y -> go up
+                velocity.Y = -5f; // velocity kicks in to not be a rocket
+                hasJumped = true; // set hasJumped to true to avoid double jumping
+            }
+        
             // CHANGE 960 ACCORDING TO HITBOX SHIT
-            if(position.Y >= 960) // if back on the ground
+            if(position.Y >= 400) // if back on the ground
             {         
                 hasJumped = false; // set hasJumped on false so that player is able to jump again
                 velocity.Y = 0f; // Reset velocity
-                actor.isJumping = false; // set isJumping in actor to false -> used for controlling the switch to other movements
-            }
+                _actionStateMachine.Change("stand");
+           }
 
-            actor.position = position;
+            _actor.position = position;
         }
+
+
+        public void Leaving()
+        {
+
+        }
+
     }
 }

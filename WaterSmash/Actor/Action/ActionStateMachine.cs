@@ -7,61 +7,44 @@ namespace Water
     class ActionStateMachine
     {
         Dictionary<string, IAction> _actionDict = new Dictionary<string, IAction>(); // Holds available actions
+        IAction currentAction = new EmptyAction();
 
-        public IAction currentAction; // Holds current action
-
-        public AActor actor; // Holds current actor
-
-        public ActionStateMachine(){}
-
-        public ActionStateMachine(AActor actor)
-        {
-            this.actor = actor;
-        }
-
+        public IAction Current { get { return currentAction; } }
         public void Add(string name, IAction action)
         {
             _actionDict.Add(name, action); 
+        }
+        public void Remove(string name)
+        {
+            _actionDict.Remove(name);
+        }
+        public void Clear()
+        {
+            _actionDict.Clear();
         }
 
         /// <summary>
         /// Change current action
         /// </summary>
         /// <param name="name"></param>
-        public void Change(string name)
+        public void Change(string name, params object[] args)
         {
-            currentAction = _actionDict[name];
+            currentAction.Leaving();
+            IAction next = _actionDict[name];
+            next.Entered(args);
+            currentAction = next;
+        }
+
+        public void HandleInput(KeyboardState state)
+        {
+            currentAction.HandleInput(state);
         }
 
         // Update current action according to keys pressed
         public void Update(GameTime gameTime)
         {
-            KeyboardState state = Keyboard.GetState();
-
-            if (state.IsKeyDown(Keys.Space)) // If space is pressed
-            {
-                Change("jump"); // Change to JumpAction
-            }
-            else if(state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
-            {
-                if(!actor.isJumping) // Check if actor is jumping, cannot change to move mid air
-                {
-                    Change("move"); // Change to MoveAction
-                }                 
-            }
-            else
-            {
-                if (!actor.isJumping) // Check if actor is jumping, cannot change to move mid air
-                {
-                    Change("stand"); // Change to StandAction
-                }
-            }
             currentAction.Update(gameTime);
         }
 
-        public void HandleInput()
-        {
-
-        }
     }
 }
