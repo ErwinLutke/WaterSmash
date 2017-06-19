@@ -15,7 +15,6 @@ namespace Water
         private GameStateManager gameStateManager;
         GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         ContentManager content = GameServices.GetService<ContentManager>();
-        Game1 game = GameServices.GetService<Game1>();
         SpriteBatch spriteBatch;
         Texture2D image;
         List<Button> buttons = new List<Button>();
@@ -28,7 +27,7 @@ namespace Water
         public MenuGameState(GameStateManager gameStateManager)
         {
             
-            addButtons();
+            //addButtons();
             this.gameStateManager = gameStateManager;
             
         }
@@ -37,7 +36,7 @@ namespace Water
         {
             spriteBatch.Begin();
 
-            spriteBatch.Draw(image, new Rectangle(0, 0, 800, 480), Color.White);
+            spriteBatch.Draw(image, new Rectangle(0, 0, graphics.Viewport.Width,graphics.Viewport.Height), Color.White);
 
             
 
@@ -46,8 +45,6 @@ namespace Water
             {
                 button.Draw(spriteBatch);
             }
-            //buttons.Draw(spriteBatch);
-            //start.Update();
         }
 
         private void addButtons()
@@ -57,41 +54,40 @@ namespace Water
             Vector2 screenCenter = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
             
 
-            Rectangle button = new Rectangle((viewport.Width / 2) - (306/2), 50, 306, 64);
+            Rectangle button = new Rectangle((viewport.Width / 2) - (306/2), 150, 306, 64);
             Texture2D play = content.Load<Texture2D>("play_default");
-            Texture2D playHover = content.Load<Texture2D>("play_hover");
+            Texture2D playHover = content.Load<Texture2D>("play_selected");
             buttons.Add(new Button(button, play, playHover, play, true));
 
 
-            Texture2D newGame = content.Load<Texture2D>("play_default");
-            Texture2D newGameHover = content.Load<Texture2D>("play_hover");
-            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 150, 306, 64), newGame, newGameHover, newGame, false));
+            Texture2D newGame = content.Load<Texture2D>("newgame_default");
+            Texture2D newGameHover = content.Load<Texture2D>("newgame_selected");
+            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 250, 306, 64), newGame, newGameHover, newGame, false));
 
 
 
-            Texture2D loadGame = content.Load<Texture2D>("play_default");
-            Texture2D loadGameHover = content.Load<Texture2D>("play_hover");
-            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 250, 306, 64), loadGame, loadGameHover, loadGame, false));
+            Texture2D loadGame = content.Load<Texture2D>("loadgame_default");
+            Texture2D loadGameHover = content.Load<Texture2D>("loadgame_selected");
+            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 350, 306, 64), loadGame, loadGameHover, loadGame, false));
 
 
 
-            Texture2D saveGame = content.Load<Texture2D>("play_default");
-            Texture2D saveGameHover = content.Load<Texture2D>("play_hover");
-            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 350, 306, 64), saveGame, saveGameHover, saveGame, false));
+            Texture2D saveGame = content.Load<Texture2D>("savegame_default");
+            Texture2D saveGameHover = content.Load<Texture2D>("savegame_selected");
+            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 450, 306, 64), saveGame, saveGameHover, saveGame, false));
 
 
-            Texture2D quit = content.Load<Texture2D>("play_default");
-            Texture2D quitHover = content.Load<Texture2D>("play_hover");
-            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 450, 306, 64), quit, quitHover, quit, false));
+            Texture2D quit = content.Load<Texture2D>("quit_default");
+            Texture2D quitHover = content.Load<Texture2D>("quit_selected");
+            buttons.Add(new Button(new Rectangle((viewport.Width / 2) - (306 / 2), 550, 306, 64), quit, quitHover, quit, false));
         }
 
         public void Entered(params object[] args)
         {
+            addButtons();
             CurrentButton = buttons[0];
             this.spriteBatch = new SpriteBatch(graphics);
-            image = content.Load<Texture2D>("start");
-            Texture2D play = content.Load<Texture2D>("play_default");
-            Texture2D playHover = content.Load<Texture2D>("play_hover");
+            image = content.Load<Texture2D>("menu_bg_v2");
             
         }
         bool keylock = false;
@@ -131,25 +127,33 @@ namespace Water
                     {
                         gameStateManager.Change("worldmap", new Player());
                     }
-                    if(CurrentButton == buttons[1])
+                    else if(CurrentButton == buttons[1])
                     {
                         gameStateManager.Change("worldmap");
                     }
-                    if (CurrentButton == buttons[2])
+                    else if (CurrentButton == buttons[2])
                     {
-                        game.Exit();
+                        //load game code here
+                    }
+                    else if (CurrentButton == buttons[3])
+                    {
+                        //save game code here
+                    }
+                    else if (CurrentButton == buttons[4])
+                    {
+                        App.Current.Exit();
                     }
 
                 }
             }
             oldState = state;
-            //wait();
         }
 
         
         public void Leaving()
         {
             content.Unload();
+            buttons.Clear();
         }
 
         public void Update(GameTime gameTime)
