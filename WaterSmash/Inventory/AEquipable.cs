@@ -2,6 +2,8 @@
 {
     abstract class AEquipable : AInventoryObject, IDroppable
     {
+        public bool isEquipped = false;
+
         enum Special
         {
             NONE = 0,
@@ -26,9 +28,9 @@
         Grade grade { get; set; }
         Special special { get; set; }
 
-        int level { get; }
-        int attack { get; }
-        int defense { get; }
+        public int level { get; }
+        public int attack { get; }
+        public int defense { get; }
 
         public AEquipable (int attack, int defense, int level, int grade, int special)
         {

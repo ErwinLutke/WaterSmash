@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace Water
 {
@@ -15,39 +18,63 @@ namespace Water
         private Generator generator;
 
         private GameStateManager gameStateManager;
+        private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
+        private ContentManager content = GameServices.GetService<ContentManager>();
+
         AActor player;
+
+        SpriteBatch spriteBatch;
+
+        private Vector2 startPosition; // Holds player starting position 
 
         public StageGameState(GameStateManager gameStateManager)
         {
             this.gameStateManager = gameStateManager;
+            spriteBatch = new SpriteBatch(graphics);
+            
             _stages = new Dictionary<string, Stage>();
             _stages.Add("1", new Stage());
             _stages.Add("2", new Stage());
 
         }
 
-        public void Draw(GameTime gameTime)
-        {
-
-        }
-
         // Set which stage should be played
         public void Entered(params object[] args)
         {
-            _currentStage = _stages[args[0].ToString()];
+            if (args.Length > 0)
+            {
+                _currentStage = _stages[args[0].ToString()];
+                player = (Player)args[1];
+            } else
+            {
+                player = new Player();
+            }
+
+            player.loadTextures();
+            player.position = new Vector2(50, 50); // Set player starting position
+            player.actionStateMachine.Change("stand");
+            Debug.WriteLine(player);
+
         }
 
         public void HandleInput(KeyboardState state)
         {
             if (state.IsKeyDown(Keys.Escape)) gameStateManager.Change("worldmap");
+            player.HandleInput(state);
+        }
+
+
+        public void Update(GameTime gameTime)
+        {
+            player.Update(gameTime);
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            player.Draw(gameTime);
         }
 
         public void Leaving()
-        {
-
-        }
-
-        public void Update(GameTime gameTime)
         {
 
         }

@@ -13,16 +13,13 @@ namespace Water
     {
         KeyboardState state;
         GameStateManager gameStateManager;
-        GraphicsDeviceManager graphics;
+        GraphicsDeviceManager graphicsDeviceManager;
         SpriteBatch spriteBatch;
-        Game1 game;
-
 
         public Game1()
         {
-            game = this;
-            graphics = new GraphicsDeviceManager(this);
-            graphics.ToggleFullScreen();
+            graphicsDeviceManager = new GraphicsDeviceManager(this);
+            graphicsDeviceManager.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -36,11 +33,9 @@ namespace Water
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-
+            
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
-
-
 
             gameStateManager = new GameStateManager();
 
@@ -50,7 +45,7 @@ namespace Water
             gameStateManager.Add("menu", new MenuGameState(gameStateManager));
             gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
-            gameStateManager.Change("menu");
+            gameStateManager.Change("worldmap");
         }
 
         /// <summary>
@@ -82,7 +77,7 @@ namespace Water
         protected override void Update(GameTime gameTime)
         {
             // TODO: Add your update logic here
-
+            
             state = Keyboard.GetState();
             gameStateManager.Update(gameTime);
             gameStateManager.HandleInput(state);

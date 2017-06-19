@@ -1,35 +1,57 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Water
 {
     internal class MoveAction : IAction
     {
-        private AActor actor;
+        private AActor _actor;
+        private ActionStateMachine _actionStateMachine;
+
+        private Vector2 position; // Holds current actor position
 
         public MoveAction(AActor actor)
         {
-            this.actor = actor;
+            _actor = actor;
+            _actionStateMachine = actor.actionStateMachine;
         }
-
+        
         public void Entered(params object[] args)
         {
-            throw new NotImplementedException();
+            position = _actor.position; // Set or update current actor position
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardState state)
         {
-            throw new NotImplementedException();
-        }
+            if (state.IsKeyDown(Keys.Right))
+            {
+                position.X += 2f; // Increment X position (move right)
+            }
+            else if (state.IsKeyDown(Keys.Left))
+            {
+                position.X -= 2f; // Decrement X position (Move left)
+            }
+            else if (state.IsKeyDown(Keys.Space))
+            {
+                _actionStateMachine.Change("jump");
+            }
+            else
+            {
+                _actionStateMachine.Change("stand");
+            }
 
-        public void Leaving()
-        {
-            throw new NotImplementedException();
         }
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            _actor.position = position; // Update position in actor
         }
+
+        public void Leaving()
+        {
+
+        }
+
     }
 }

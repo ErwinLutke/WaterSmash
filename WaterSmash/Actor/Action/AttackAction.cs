@@ -1,35 +1,39 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Water
 {
     internal class AttackAction : IAction
     {
-        private AActor aActor;
+        private AActor _actor;
+        private ActionStateMachine _actionStateMachine;
 
-        public AttackAction(AActor aActor)
+        public AttackAction(AActor actor)
         {
-            this.aActor = aActor;
+            _actor = actor;
+            _actionStateMachine = actor.actionStateMachine;
         }
 
         public void Entered(params object[] args)
         {
-            throw new NotImplementedException();
+
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardState state)
         {
-            throw new NotImplementedException();
-        }
 
-        public void Leaving()
-        {
-            throw new NotImplementedException();
         }
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+
         }
+
+        public void Leaving()
+        {
+
+        }
+
     }
 }

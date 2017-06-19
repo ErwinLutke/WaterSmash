@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Actor\AActor.cs" />
     <Compile Include="Actor\Action\AttackAction.cs" />
+    <Compile Include="Actor\Action\EmptyAction.cs" />
     <Compile Include="Actor\Boss.cs" />
     <Compile Include="Actor\Action\CrouchAction.cs" />
     <Compile Include="Actor\Enemy.cs" />
@@ -139,7 +140,6 @@
     <Compile Include="GameState\WorldMapGameState.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Font\edgeracer.ttf" />
     <None Include="Content\Font\StageName.spritefont" />
     <None Include="project.json" />
   </ItemGroup>
@@ -150,11 +150,15 @@
     <None Include="WaterSmash_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\audio\worldmap.mp3" />
+    <Content Include="Content\Images\fog.png" />
     <Content Include="Content\Images\message.png" />
     <Content Include="Content\Images\sprite.jpg" />
-    <Content Include="Content\Images\stage_selection_1.png" />
-    <Content Include="Content\Images\stage_selection_2.png" />
-    <Content Include="Content\Images\worldmap.jpg" />
+    <Content Include="Content\Images\stages\stage_1\worldmap_preview_1.png" />
+    <Content Include="Content\Images\stages\stage_1\worldmap_selected_1.png" />
+    <Content Include="Content\Images\stages\stage_2\worldmap_preview_2.png" />
+    <Content Include="Content\Images\stages\stage_2\worldmap_selected_2.png" />
+    <Content Include="Content\Images\worldmap.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
