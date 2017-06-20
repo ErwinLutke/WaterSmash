@@ -32,9 +32,9 @@ namespace Water
 
         public Vector2 position { get; set; } // Holds current position of actor
 
-
-        public Texture2D texture { get; set; }
-
+        public Dictionary<string, SpriteAnimation> spriteAnimations;
+        public string currentSpriteAnimation;
+        
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
 
@@ -45,9 +45,8 @@ namespace Water
         {
             inventory = new Inventory();
             actionStateMachine = new ActionStateMachine();
-
-            spriteBatch = new SpriteBatch(graphics);
-
+            spriteAnimations = new Dictionary<string, SpriteAnimation>();
+            
             actionStateMachine.Add("move", new MoveAction(this));
             actionStateMachine.Add("stand", new StandAction(this));
             actionStateMachine.Add("jump", new JumpAction(this));
@@ -56,18 +55,17 @@ namespace Water
             actionStateMachine.Add("crouch", new CrouchAction(this));
         }
 
+        // TEMP - debugging
+        public void load()
+        {
+            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+        }
 
         public Inventory GetInventory()
         {
             return inventory;
         }
-
-        public void loadTextures()
-        {
-            texture = content.Load<Texture2D>("inventory\\lable");
-            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
-        }
-
+    
         public void HandleInput(KeyboardState state)
         {
             actionStateMachine.HandleInput(state);
@@ -76,23 +74,26 @@ namespace Water
         public void Update(GameTime gameTime)
         {
             actionStateMachine.Update(gameTime);
+            spriteAnimations[currentSpriteAnimation].Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            //Rectangle sprite = new Rectangle(26, 24, 55, 106);
+            //Rectangle playerPos = new Rectangle(position.ToPoint().X, position.ToPoint().Y - sprite.Height, sprite.Width, sprite.Height);
 
-            Viewport viewport = graphics.Viewport;
+            //Viewport viewport = graphics.Viewport;
 
-            spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
+            // TEMP - debugging
+            spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.White);
+            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.White);
+            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.White);
 
-            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
+            //Rectangle rect = new Rectangle(position.ToPoint().X, position.ToPoint().Y - texture.Height, texture.Width, texture.Height);
+            //spriteBatch.Draw(texture, rect, Color.White);
 
-            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.Black);
+            spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, position);
 
-            spriteBatch.Draw(texture, position, Color.White);
-
-            spriteBatch.End();
         }
 
 

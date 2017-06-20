@@ -20,6 +20,7 @@ namespace Water
         public void Entered(params object[] args)
         {
             position = _actor.position; // Set or update current actor position
+            _actor.currentSpriteAnimation = "move";
         }
 
         public void HandleInput(KeyboardState state)
@@ -50,7 +51,7 @@ namespace Water
 
         public void Leaving()
         {
-
+            _actor.spriteAnimations["move"].Reset();
         }
 
     }

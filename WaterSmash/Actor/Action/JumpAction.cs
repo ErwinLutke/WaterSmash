@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Water
 {
@@ -71,8 +72,9 @@ namespace Water
             }
         
             // CHANGE 960 ACCORDING TO HITBOX SHIT
-            if(position.Y >= 400) // if back on the ground
-            {         
+            if(position.Y > 258) // if back on the ground
+            {
+                position.Y = 258;
                 hasJumped = false; // set hasJumped on false so that player is able to jump again
                 velocity.Y = 0f; // Reset velocity
                 _actionStateMachine.Change("stand");

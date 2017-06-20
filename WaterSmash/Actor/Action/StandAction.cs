@@ -17,7 +17,7 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-
+            _actor.currentSpriteAnimation = "stand";
         }
 
         public void Update(GameTime gameTime)
@@ -39,7 +39,7 @@ namespace Water
 
         public void Leaving()
         {
-
+            _actor.spriteAnimations["stand"].Reset();
         }
     }
 }
