@@ -22,12 +22,15 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-
+            if (_actor.isThrowing)
+            {
+                _actor.throwAction.Update(gameTime);
+            }
         }
 
         public void HandleInput(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Space)) 
+            if (state.IsKeyDown(Keys.Up)) 
             {
                 _actionStateMachine.Change("jump");
             }
@@ -38,6 +41,10 @@ namespace Water
             else if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
             {
                 _actionStateMachine.Change("move"); 
+            }
+            else if (state.IsKeyDown(Keys.Space))
+            {
+                _actionStateMachine.Change("throw");
             }
         }
 

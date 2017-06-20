@@ -32,10 +32,12 @@ namespace Water
 
         public Vector2 position { get; set; } // Holds current position of actor
 
+        public ThrowAction throwAction;
+        public Boolean isThrowing;
 
         public Texture2D texture { get; set; }
 
-        SpriteBatch spriteBatch;
+        public SpriteBatch spriteBatch;
         SpriteFont spriteFont;
 
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
@@ -48,6 +50,7 @@ namespace Water
 
             spriteBatch = new SpriteBatch(graphics);
 
+           
             actionStateMachine.Add("move", new MoveAction(this));
             actionStateMachine.Add("stand", new StandAction(this));
             actionStateMachine.Add("jump", new JumpAction(this));
@@ -92,9 +95,28 @@ namespace Water
 
             spriteBatch.Draw(texture, position, Color.White);
 
+
+            if (actionStateMachine.Current is ThrowAction)
+            {
+                throwAction = (ThrowAction)actionStateMachine.Current;
+            }
+
+            if (throwAction != null)
+            {
+                isThrowing = true;
+                spriteBatch.Draw(throwAction.bottle, throwAction.bottlePosition, Color.White);
+                spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(200, 300), Color.White);
+                spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(300, 300), Color.White);
+
+                if (throwAction.bottlePosition.X > 400)
+                {
+                    throwAction = null;
+                    isThrowing = false;
+                    throwAction.bottle = null;
+                }
+            }
+            
             spriteBatch.End();
         }
-
-
     }
 }

@@ -40,7 +40,7 @@ namespace Water
             {
                 Crouch();
             }
-            else if (state.IsKeyDown(Keys.Space))
+            else if (state.IsKeyDown(Keys.Up))
             {
                 _actionStateMachine.Change("jump");
             }
