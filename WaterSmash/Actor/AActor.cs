@@ -43,14 +43,19 @@ namespace Water
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
 
+        /// <summary>
+        /// Health Bar
+        /// </summary>
+        Texture2D healthTexture;
+        Rectangle healthRect;
         public AActor()
         {
-            inventory = new Inventory();
+            health = 100;
+            inventory = new Inventory(30);
             actionStateMachine = new ActionStateMachine();
 
             spriteBatch = new SpriteBatch(graphics);
-
-           
+         
             actionStateMachine.Add("move", new MoveAction(this));
             actionStateMachine.Add("stand", new StandAction(this));
             actionStateMachine.Add("jump", new JumpAction(this));
@@ -69,6 +74,8 @@ namespace Water
         {
             texture = content.Load<Texture2D>("inventory\\lable");
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+
+            healthTexture = content.Load<Texture2D>("healthbar");
         }
 
         public void HandleInput(KeyboardState state)
@@ -79,6 +86,8 @@ namespace Water
         public void Update(GameTime gameTime)
         {
             actionStateMachine.Update(gameTime);
+
+            healthRect = new Rectangle((int)position.X - (texture.Width / 2), (int)position.Y - 50, health, 20);
         }
 
         public void Draw(GameTime gameTime)
@@ -95,6 +104,8 @@ namespace Water
 
             spriteBatch.Draw(texture, position, Color.White);
 
+            spriteBatch.Draw(healthTexture, healthRect, Color.Red);
+
 
             if (actionStateMachine.Current is ThrowAction)
             {
@@ -107,13 +118,6 @@ namespace Water
                 spriteBatch.Draw(throwAction.bottle, throwAction.bottlePosition, Color.White);
                 spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(200, 300), Color.White);
                 spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(300, 300), Color.White);
-
-                if (throwAction.bottlePosition.X > 400)
-                {
-                    throwAction = null;
-                    isThrowing = false;
-                    throwAction.bottle = null;
-                }
             }
             
             spriteBatch.End();

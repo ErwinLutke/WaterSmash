@@ -31,6 +31,14 @@ namespace Water
         {
             this.gameStateManager = gameStateManager;
             spriteBatch = new SpriteBatch(graphics);
+            generator = new Generator();
+
+            // TEMP FOR GENERATOR TESTING
+            //for(int i = 0; i < 10; i++)
+            //{
+            //    AEquipable cap = generator.generateEquipable(1);
+            //    AEquipable label = generator.generateEquipable(2);
+            //}
             
             _stages = new Dictionary<string, Stage>();
             _stages.Add("1", new Stage());
