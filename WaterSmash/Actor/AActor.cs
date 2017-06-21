@@ -12,37 +12,51 @@ using System.Threading.Tasks;
 namespace Water
 {
     [DataContract]
-    abstract class AActor : GameObject
+    abstract class AActor
     {
         [DataMember]
         string name { get; set; }
+        Texture2D spriteSheet;
+        
 
         [DataMember]
         protected Inventory inventory;
 
-        public int health { get; set; }
-        public int attack { get; set; }
-        public int defense { get; set; }
+        public ActionStateMachine actionStateMachine;
 
         bool _isInvunerable = false;
 
+        public int health { get; set; }
+        public int attack { get; set; }
+        public int defense { get; set;}
 
-        public ActionStateMachine actionStateMachine;
+        public Vector2 position { get; set; } // Holds current position of actor
 
-        public Dictionary<string, SpriteAnimation> spriteAnimations;
-        public string currentSpriteAnimation;
-        
+        public ThrowAction throwAction;
+        public Boolean isThrowing;
+        public Double elapsedTimeAfterThrow;
 
-        // TEMP - debugging
+        public Texture2D texture { get; set; }
+
+        public SpriteBatch spriteBatch;
         SpriteFont spriteFont;
+
+        private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
 
+        /// <summary>
+        /// Health Bar
+        /// </summary>
+        Texture2D healthTexture;
+        Rectangle healthRect;
         public AActor()
         {
-            inventory = new Inventory();
+            health = 100;
+            inventory = new Inventory(30);
             actionStateMachine = new ActionStateMachine();
-            spriteAnimations = new Dictionary<string, SpriteAnimation>();
-            
+
+            spriteBatch = new SpriteBatch(graphics);
+         
             actionStateMachine.Add("move", new MoveAction(this));
             actionStateMachine.Add("stand", new StandAction(this));
             actionStateMachine.Add("jump", new JumpAction(this));
@@ -51,62 +65,88 @@ namespace Water
             actionStateMachine.Add("crouch", new CrouchAction(this));
         }
 
-        // TEMP - debugging
-        public void load()
-        {
-            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
-        }
 
         public Inventory GetInventory()
         {
             return inventory;
         }
-    
+
+        public void loadTextures()
+        {
+            texture = content.Load<Texture2D>("inventory\\lable");
+            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+
+            healthTexture = content.Load<Texture2D>("healthbar");
+        }
+
         public void HandleInput(KeyboardState state)
         {
             actionStateMachine.HandleInput(state);
         }
 
-        int timeSinceLastFrame;
         public void Update(GameTime gameTime)
         {
             actionStateMachine.Update(gameTime);
-            spriteAnimations[currentSpriteAnimation].Update(gameTime);
 
-            if (this is Enemy)
+            healthRect = new Rectangle((int)position.X - (texture.Width / 2), (int)position.Y - 50, health, 20);
+
+            if (isThrowing)
             {
-                timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
-                if (timeSinceLastFrame > 2000)
+                throwAction.Update(gameTime);
+            }
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            spriteBatch.Begin();
+
+            Viewport viewport = graphics.Viewport;
+
+            spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
+
+            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
+
+            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.Black);
+
+            spriteBatch.Draw(texture, position, Color.White);
+
+            spriteBatch.Draw(healthTexture, healthRect, Color.Red);
+
+
+            if(!isThrowing)
+            {
+                if (elapsedTimeAfterThrow == 0 || (gameTime.TotalGameTime.TotalSeconds - elapsedTimeAfterThrow) > 1.5)
                 {
-                    timeSinceLastFrame -= 2000;
-                    actionStateMachine.Change("attack");
+                    if (actionStateMachine.Current is ThrowAction)
+                    {
+                        //throwAction = (ThrowAction)actionStateMachine.Current;
+
+                        throwAction = new ThrowAction(this);
+                        throwAction.Entered();
+                        throwAction.Throw();
+                        isThrowing = true;
+                    }
                 }
             }
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //Rectangle sprite = new Rectangle(26, 24, 55, 106);
-            //Rectangle playerPos = new Rectangle(position.ToPoint().X, position.ToPoint().Y - sprite.Height, sprite.Width, sprite.Height);
-
-            //Viewport viewport = graphics.Viewport;
-            if (this is Player)
+            else if (isThrowing)
             {
-                // TEMP - debugging
-                spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.White);
-                spriteBatch.DrawString(spriteFont, "X " + Position.X.ToString(), new Vector2(100, 200), Color.White);
-                spriteBatch.DrawString(spriteFont, "Y " + Position.Y.ToString(), new Vector2(200, 200), Color.White);
-            } else
-            {
-                spriteBatch.DrawString(spriteFont, health.ToString(), new Vector2(300, 100), Color.White);
+                if (throwAction.bottlePosition.X > 1000)
+                {
+                    //throwAction.bottle.Dispose();
+                    throwAction = null;
+                    isThrowing = false;
+                    elapsedTimeAfterThrow = gameTime.TotalGameTime.TotalSeconds;
+                }
+                else
+                {
+                    spriteBatch.Draw(throwAction.bottle, throwAction.bottlePosition, Color.White);
+                    spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(200, 300), Color.White);
+                    spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(300, 300), Color.White);
+                }
             }
-            //Rectangle rect = new Rectangle(position.ToPoint().X, position.ToPoint().Y - texture.Height, texture.Width, texture.Height);
-            //spriteBatch.Draw(texture, rect, Color.White);
 
-            spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, Position);
-            Size = spriteAnimations[currentSpriteAnimation].Size;
+
+            spriteBatch.End();
         }
-
-
     }
 }

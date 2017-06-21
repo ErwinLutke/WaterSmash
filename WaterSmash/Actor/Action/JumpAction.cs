@@ -31,13 +31,17 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Space))
+            if (state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Up))
             {
-                velocity.X = 3f; // add velocity, go right
+                velocity.X = 3f; // add velocity, lean right
             }
-            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Space))
+            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Up))
             {
-                velocity.X = -3f; // substract velocity, go left
+                velocity.X = -3f; // substract velocity, lean left
+            }
+            else if (state.IsKeyDown(Keys.Space))
+            {
+                _actionStateMachine.Change("throw");
             }
             else // if no space key pressed
             {
@@ -55,7 +59,7 @@ namespace Water
                 }
             }
 
-            if (state.IsKeyUp(Keys.Space) || hasJumped == true)
+            if (state.IsKeyUp(Keys.Up) || hasJumped == true)
             {
                 float i = 1;
                 velocity.Y += 0.15f * i;
