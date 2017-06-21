@@ -66,11 +66,10 @@ namespace Water
 
         public void Crouch()
         {
-            if(!state.IsKeyDown(Keys.Down))
-            {
-                _actionStateMachine.Change("stand");
-            }
-
+            //if (!state.IsKeyDown(Keys.Down))
+            //{
+            //    _actionStateMachine.Change("stand");
+            //}
         }
 
         public void Update(GameTime gameTime)
@@ -81,7 +80,7 @@ namespace Water
         public void Leaving()
         {
             _actor.spriteAnimations["crouch"].Reset();
-            _actor.texture = content.Load<Texture2D>("inventory\\lable");
+            //_actor.texture = content.Load<Texture2D>("inventory\\lable");
         }
     }
 }

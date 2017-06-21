@@ -29,9 +29,6 @@ namespace Water
 
         }
 
-
-        KeyboardState oldState;
-
         public void HandleInput(KeyboardState state)
         {
             if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Space) && !oldState.IsKeyDown(Keys.Space))
@@ -58,9 +55,6 @@ namespace Water
             {
                 _actionStateMachine.Change("crouch");
             }
-                // change to MoveAction
-                _actionStateMachine.Change("move"); 
-            }
             else if (oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
             {
                 // Change to ThrowAction if actor is currently not throwing
@@ -70,12 +64,9 @@ namespace Water
                 } 
             }
 
-            oldState = state;
-        }
-
             _keyLocker.CheckInputLock(state, Keys.Space);
             _keyLocker.CheckInputLock(state, Keys.Z);
-            
+
             oldState = state;
         }
 

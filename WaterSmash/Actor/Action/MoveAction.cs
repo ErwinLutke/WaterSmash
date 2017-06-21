@@ -27,7 +27,6 @@ namespace Water
             _actor.currentSpriteAnimation = "move";
         }
 
-        KeyboardState oldState;
         public void HandleInput(KeyboardState state)
         {
             if(state.IsKeyDown(Keys.Up))
@@ -61,22 +60,19 @@ namespace Water
             {
                 _actionStateMachine.Change("crouch");
             }
+            else if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
+            {
+                _actionStateMachine.Change("attack");
+                _keyLocker.LockKey(Keys.Z);
+            }
             else
             {
                 // Switch to StandAction
                 _actionStateMachine.Change("stand");
             }
 
-            if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
-            {
-                _actionStateMachine.Change("attack");
-                _keyLocker.LockKey(Keys.Z);
-            }
-
             _keyLocker.CheckInputLock(state, Keys.Space);
             _keyLocker.CheckInputLock(state, Keys.Z);
-
-            oldState = state;
 
             oldState = state;
         }
