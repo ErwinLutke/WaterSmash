@@ -93,6 +93,7 @@ namespace Water
 
             // y position placement for inventory slots
             int y = 40;
+
             foreach(Texture2D slot in player.GetInventory().slots)
             {
                 // When 6 inventory slots are placed, start new line
