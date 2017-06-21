@@ -66,6 +66,10 @@ namespace Water
 
         public void Crouch()
         {
+            if(!state.IsKeyDown(Keys.Down))
+            {
+                _actionStateMachine.Change("stand");
+            }
 
         }
 
@@ -76,6 +80,7 @@ namespace Water
 
         public void Leaving()
         {
+            _actor.spriteAnimations["crouch"].Reset();
             _actor.texture = content.Load<Texture2D>("inventory\\lable");
         }
     }
