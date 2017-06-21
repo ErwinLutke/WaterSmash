@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<stages>
+  <stage>
+    <id>stage_001</id>
+    <name>Awareness</name>
+    <enemies>
+      <id>enemy_001</id>
+      <id>enemy_002</id>
+    </enemies>
+    <boss>
+      <id>boss_001</id>
+    </boss>
+  </stage>
+  <stage>
+    <id>stage_002</id>
+    <name>Panic</name>
+  </stage>
+  <stage>
+    <id>stage_003</id>
+    <name>Detection</name>
+  </stage>
+</stages>
