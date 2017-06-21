@@ -67,6 +67,20 @@ namespace Water
             OPAF = 5
         }
 
+        public Inventory generateInventory()
+        {
+            Inventory inventory = new Inventory(4);
+
+            rnd = new Random(Guid.NewGuid().GetHashCode());
+
+            for(int i = 0; i < inventory.capacity; i++)
+            {
+                inventory.AddInventoryObject(generateEquipable(rnd.Next(2)));
+            }
+
+            return inventory;
+        }
+
         /// <summary>
         /// Generatie random pickup dropped by enemies 
         /// Can be either health or mana 

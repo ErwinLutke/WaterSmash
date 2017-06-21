@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Water
 {
-    class Inventory
+    public class Inventory
     {
         public List<AEquipable> items { get; set; } // Holds items 
 
