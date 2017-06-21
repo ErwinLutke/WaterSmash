@@ -18,8 +18,6 @@ namespace Water
         SpriteFont stageNameFont;
         SpriteBatch spriteBatch;
 
-        KeyLocker keyLocker;
-
         /// <summary>
         /// Holds how many stages are playable
         /// NOT USED YET
@@ -73,12 +71,21 @@ namespace Water
         /// </summary>
         KeyboardState oldState;
 
+        /// <summary>
+        /// Holds the key that has been pressed
+        /// </summary>
+        private Keys pressedKey;
+
+        /// <summary>
+        /// Used to check if a key has been pressed
+        /// </summary>
+        private bool keyPressed = false;
+
+
         public WorldMapGameState(GameStateManager gameStateManager)
         {
             this.gameStateManager = gameStateManager;
-
-            spriteBatch = new SpriteBatch(graphicsDevice);
-            keyLocker = new KeyLocker();
+            this.spriteBatch = new SpriteBatch(graphicsDevice);
 
             loadStageData();
         }
@@ -103,18 +110,8 @@ namespace Water
 
             if(gameStateManager.Previous is MenuGameState)
             {
-                // load player here
                 Debug.WriteLine("came from menu, OOOEOOEOEEE");
             }
-            else if(gameStateManager.Previous is StageGameState)
-            {
-                if(args.Length > 0)
-                {
-                    stageData[selectedStage - 1].record = (string)args[0];
-                }
-            }
-
-           
         }
 
         public void HandleInput(KeyboardState state)
@@ -122,9 +119,9 @@ namespace Water
             handleViewPortMovement(state);
 
             // Check if we can press the specified key again
-            keyLocker.CheckInputLock(state, Keys.Enter);
-            keyLocker.CheckInputLock(state, Keys.Escape);
-            keyLocker.CheckInputLock(state, Keys.I);
+            checkInputLock(state, Keys.Enter);
+            checkInputLock(state, Keys.Escape);
+            checkInputLock(state, Keys.I);
 
             // set the oldstate as the current state to prepare for the next state
             oldState = state;
@@ -159,36 +156,25 @@ namespace Water
                 spriteBatch.Draw(stageData[selectedStage - 1].selected, graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
 
                 // get the widths and height of the text to draw on screen
-                float stageLevelWidth = stageNameFont.MeasureString("-= Stage " + stageData[selectedStage - 1].level + " =-").X;
-                float stageNameHeight = stageNameFont.MeasureString(stageData[selectedStage - 1].name).Y;
-                float stageNameWidth = stageNameFont.MeasureString(stageData[selectedStage - 1].name).X;
-                float stageRecordWidth = stageNameFont.MeasureString("Best Record: " + stageData[selectedStage - 1].record).X;
+                float stageWidth = stageNameFont.MeasureString("-= Stage " + stageData[selectedStage - 1].level + " =-").X;
+                float nameHeight = stageNameFont.MeasureString(stageData[selectedStage - 1].name).Y;
+                float nameWidth = stageNameFont.MeasureString(stageData[selectedStage - 1].name).X;
 
                 // create black outline
-                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageLevelWidth / 2) - 2, (height / 2) - 2 - stageNameHeight * 6), Color.Black);
-                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageLevelWidth / 2) + 2, (height / 2) - 2 - stageNameHeight * 6), Color.Black);
-                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageLevelWidth / 2) + 2, (height / 2) + 2 - stageNameHeight * 6), Color.Black);
-                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageLevelWidth / 2) - 2, (height / 2) + 2 - stageNameHeight * 6), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) - 2, (height / 2) - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) + 2, (height / 2) - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) + 2, (height / 2) + 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2) - 2, (height / 2) + 2), Color.Black);
                 // draw text containing which state this is
-                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageLevelWidth / 2), (height / 2) - stageNameHeight * 6), Color.White);
+                spriteBatch.DrawString(stageNameFont, "-= Stage " + stageData[selectedStage - 1].level + " =-", new Vector2((width / 2) - (stageWidth / 2), (height / 2)), Color.White);
 
                 // create black outline
-                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (stageNameWidth / 2) - 2, (height / 2) - 2 - stageNameHeight * 5), Color.Black);
-                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (stageNameWidth / 2) + 2, (height / 2) - 2 - stageNameHeight * 5), Color.Black);
-                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (stageNameWidth / 2) + 2, (height / 2) + 2 - stageNameHeight * 5), Color.Black);
-                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (stageNameWidth / 2) - 2, (height / 2) + 2 - stageNameHeight * 5), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) - 2, (height / 2) + nameHeight - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) + 2, (height / 2) + nameHeight - 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) + 2, (height / 2) + nameHeight + 2), Color.Black);
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2) - 2, (height / 2) + nameHeight + 2), Color.Black);
                 // draw text containing the name of the stage
-                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (stageNameWidth / 2), (height / 2) - stageNameHeight * 5), Color.White);
-
-                // create black outline
-                spriteBatch.DrawString(stageNameFont, "Best Record: " + stageData[selectedStage - 1].record, new Vector2((width / 2) - (stageRecordWidth / 2) - 2, (height / 2) - 2 - stageNameHeight * 4), Color.Black);
-                spriteBatch.DrawString(stageNameFont, "Best Record: " + stageData[selectedStage - 1].record, new Vector2((width / 2) - (stageRecordWidth / 2) + 2, (height / 2) - 2 - stageNameHeight * 4), Color.Black);
-                spriteBatch.DrawString(stageNameFont, "Best Record: " + stageData[selectedStage - 1].record, new Vector2((width / 2) - (stageRecordWidth / 2) + 2, (height / 2) + 2 - stageNameHeight * 4), Color.Black);
-                spriteBatch.DrawString(stageNameFont, "Best Record: " + stageData[selectedStage - 1].record, new Vector2((width / 2) - (stageRecordWidth / 2) - 2, (height / 2) + 2 - stageNameHeight * 4), Color.Black);
-                // draw text containing the record of the stage
-                spriteBatch.DrawString(stageNameFont, "Best Record: " + stageData[selectedStage - 1].record, new Vector2((width / 2) - (stageRecordWidth / 2), (height / 2) - stageNameHeight * 4), Color.White);
-
-                
+                spriteBatch.DrawString(stageNameFont, stageData[selectedStage - 1].name, new Vector2((width / 2) - (nameWidth / 2), (height / 2) + nameHeight), Color.White);
             }
 
             spriteBatch.End();
@@ -254,14 +240,14 @@ namespace Water
             stage_1.level = 1;
             stage_1.name = "The Docks";
             stage_1.description = "First stage";
-            stage_1.record = "--'--\"---";
+            stage_1.records = new List<string>();
             stage_1.startLocation = new Point(130, 255);
             stage_1.endLocation = new Point(190, 295);
 
             stage_2.level = 2;
             stage_2.name = "Cabin in the woods";
             stage_2.description = "Second stage";
-            stage_2.record = "--'--\"---";
+            stage_2.records = new List<string>();
             stage_2.startLocation = new Point(180, 175);
             stage_2.endLocation = new Point(240, 215);
 
@@ -294,29 +280,51 @@ namespace Water
             }
 
             // Go the menu
-            if (!keyLocker.KeyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
+            if (!keyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
             {
                 gameStateManager.Change("menu");
-                keyLocker.LockKey(Keys.Escape);
+                lockKey(Keys.Escape);
             }
             // Go the inventory
-            else if (!keyLocker.KeyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
+            else if (!keyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
             {
                 gameStateManager.Change("inventory", player);
-                keyLocker.LockKey(Keys.I);
+                lockKey(Keys.I);
             }
 
             // Play the stage if it is selectable
-            else if (!keyLocker.KeyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+            else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             {
                 if (selectedStage != 0)
                 {
                     gameStateManager.Change("stage", selectedStage, player);
-                    keyLocker.LockKey(Keys.Enter);
+                    lockKey(Keys.Enter);
                 }
             }
         }
 
+        /// <summary>
+        /// Locks the specified key so that it can only be pressed once
+        /// </summary>
+        /// <param name="key">The key to lock</param>
+        private void lockKey(Keys key)
+        {
+            pressedKey = key;
+            keyPressed = true;
+        }
+
+        /// <summary>
+        /// Checks if the key is no longer being pressed and releases its lock
+        /// </summary>
+        /// <param name="state">The current keyboardstate to check against the key</param>
+        /// <param name="key">The key to check</param>
+        private void checkInputLock(KeyboardState state, Keys key)
+        {
+            if (keyPressed && pressedKey == key && !state.IsKeyDown(key) && !oldState.IsKeyDown(key))
+            {
+                keyPressed = false;
+            }
+        }
     }
 
 
@@ -361,8 +369,8 @@ namespace Water
         public Texture2D preview;
 
         /// <summary>
-        /// Holds the record of the stage
+        /// Holds the records of the stage
         /// </summary>
-        public string record;
+        public List<string> records;
     }
 }

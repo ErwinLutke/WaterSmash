@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Water
 {
@@ -12,7 +11,6 @@ namespace Water
             
         private bool hasJumped = false; // Holds wether actor has jumped
 
-        private Vector2 ground;
         private Vector2 position; // Holds actor's position
         private Vector2 velocity; // Holds air movement velocity
 
@@ -26,9 +24,7 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-            position = _actor.Position; // Set current position
-            ground = position;
-            _actor.currentSpriteAnimation = "jump";
+            position = _actor.position; // Set current position
         }
 
         public void HandleInput(KeyboardState state)
@@ -90,21 +86,20 @@ namespace Water
             }
         
             // CHANGE 960 ACCORDING TO HITBOX SHIT
-            if(position.Y > ground.Y) // if back on the ground
-            {
-                position.Y = ground.Y;
+            if(position.Y >= 400) // if back on the ground
+            {         
                 hasJumped = false; // set hasJumped on false so that player is able to jump again
                 velocity.Y = 0f; // Reset velocity
                 _actionStateMachine.Change("stand");
             }
 
-            _actor.Position = position;
+            _actor.position = position;
         }
 
 
         public void Leaving()
         {
-            _actor.spriteAnimations["jump"].Reset();
+
         }
 
     }
