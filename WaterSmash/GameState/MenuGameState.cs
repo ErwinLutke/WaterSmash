@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Media;
 
 namespace Water
 {
@@ -20,7 +21,12 @@ namespace Water
         List<Button> buttons = new List<Button>();
         Button CurrentButton;
         int index = 0;
+        /// <summary>
+        /// The background music
+        /// </summary>
+        private Song menuMusic;
 
+        private Song guiClick;
 
 
 
@@ -88,7 +94,9 @@ namespace Water
             CurrentButton = buttons[0];
             this.spriteBatch = new SpriteBatch(graphics);
             image = content.Load<Texture2D>("menu_bg_v2");
+            menuMusic =content.Load<Song>("audio/worldmap");
             
+
         }
         bool keylock = false;
         KeyboardState oldState;
@@ -101,6 +109,7 @@ namespace Water
                     if (index < buttons.Count()-1)
                     {
                         index++;
+                        CurrentButton.Play();
                         CurrentButton.setSelected(false);
                         CurrentButton = buttons[index];
                         CurrentButton.setSelected(true);                       
@@ -115,6 +124,7 @@ namespace Water
                     if (index > 0)
                     {
                         index--;
+                        CurrentButton.Play();
                         CurrentButton.setSelected(false);
                         CurrentButton = buttons[index];
                         CurrentButton.setSelected(true); 

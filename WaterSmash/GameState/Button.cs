@@ -7,11 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Media;
 
 namespace Water
 {
     class Button
     {
+        Song buttonSound;
+        ContentManager content = GameServices.GetService<ContentManager>();
         public enum State
         {
             None,
@@ -34,8 +37,10 @@ namespace Water
 
         public Button(Rectangle rectangle, Texture2D noneTexture, Texture2D hoverTexture, Texture2D pressedTexture, bool selected)
         {
+            buttonSound = content.Load<Song>("audio/2nd_click_rear");
             _rectangle = rectangle;
             _textures = new Dictionary<State, Texture2D>
+            
         {
             { State.None, noneTexture },
             { State.Hover, hoverTexture },
@@ -50,10 +55,12 @@ namespace Water
 
             if (selected)
             {
+                
                 _state = State.Hover;
             }
             else
             {
+                
                 _state = State.None;
             }
         }
@@ -69,6 +76,11 @@ namespace Water
             s.Begin();  
             s.Draw(_textures[_state], _rectangle, Color.White);
             s.End();   
+        }
+        public void Play()
+        {
+            MediaPlayer.Play(buttonSound);
+            MediaPlayer.IsRepeating = false;
         }
 
     }
