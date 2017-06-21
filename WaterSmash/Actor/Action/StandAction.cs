@@ -8,7 +8,6 @@ namespace Water
     {
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
-        private KeyLocker _keyLocker;
 
         private KeyboardState oldState;
 
@@ -16,12 +15,11 @@ namespace Water
         {
             _actor = actor;
             _actionStateMachine = actor.actionStateMachine;
-            _keyLocker = new KeyLocker();
         }
 
         public void Entered(params object[] args)
         {
-            _actor.currentSpriteAnimation = "stand";
+
         }
 
         public void Update(GameTime gameTime)
@@ -29,16 +27,12 @@ namespace Water
 
         }
 
-
-        KeyboardState oldState;
-
         public void HandleInput(KeyboardState state)
         {
-            if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Space) && !oldState.IsKeyDown(Keys.Space))
+            if (state.IsKeyDown(Keys.Up)) 
             {
                 // Change to JumpAction
                 _actionStateMachine.Change("jump");
-                _keyLocker.LockKey(Keys.Space);
             }
             else if (state.IsKeyDown(Keys.Down))
             {
@@ -47,17 +41,6 @@ namespace Water
             }
             else if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
             {
-                _actionStateMachine.Change("move");
-            }            
-            else if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
-            {
-                _actionStateMachine.Change("attack");
-                _keyLocker.LockKey(Keys.Z);
-            }
-            else if (state.IsKeyDown(Keys.Down))
-            {
-                _actionStateMachine.Change("crouch");
-            }
                 // change to MoveAction
                 _actionStateMachine.Change("move"); 
             }
@@ -73,15 +56,9 @@ namespace Water
             oldState = state;
         }
 
-            _keyLocker.CheckInputLock(state, Keys.Space);
-            _keyLocker.CheckInputLock(state, Keys.Z);
-            
-            oldState = state;
-        }
-
         public void Leaving()
         {
-            _actor.spriteAnimations["stand"].Reset();
+
         }
     }
 }

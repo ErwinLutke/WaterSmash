@@ -9,10 +9,6 @@ namespace Water
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
 
-        private Vector2 position; // Holds actor's position
-
-        private int timeSinceLastFrame;
-
         public AttackAction(AActor actor)
         {
             _actor = actor;
@@ -21,8 +17,7 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-            position = _actor.Position; // Set current position
-            _actor.currentSpriteAnimation = "attack";
+
         }
 
         public void HandleInput(KeyboardState state)
@@ -32,19 +27,11 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            _actor.Position = position; // Update position in actor
 
-            timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
-            if (timeSinceLastFrame > 200)
-            {
-                timeSinceLastFrame -= 200;
-                _actionStateMachine.Change("stand");
-            }
         }
 
         public void Leaving()
         {
-            _actor.spriteAnimations["attack"].Reset();
 
         }
 

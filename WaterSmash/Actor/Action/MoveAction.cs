@@ -8,7 +8,6 @@ namespace Water
     {
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
-        private KeyLocker _keyLocker;
 
         private Vector2 position; // Holds current actor position
 
@@ -18,16 +17,13 @@ namespace Water
         {
             _actor = actor;
             _actionStateMachine = actor.actionStateMachine;
-            _keyLocker = new KeyLocker();
         }
         
         public void Entered(params object[] args)
         {
-            position = _actor.Position; // Set or update current actor position
-            _actor.currentSpriteAnimation = "move";
+            position = _actor.position; // Set or update current actor position
         }
 
-        KeyboardState oldState;
         public void HandleInput(KeyboardState state)
         {
             if(state.IsKeyDown(Keys.Up))
@@ -57,26 +53,11 @@ namespace Water
             {
                 MoveLeft();
             }
-            else if (state.IsKeyDown(Keys.Down))
-            {
-                _actionStateMachine.Change("crouch");
-            }
             else
             {
                 // Switch to StandAction
                 _actionStateMachine.Change("stand");
             }
-
-            if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
-            {
-                _actionStateMachine.Change("attack");
-                _keyLocker.LockKey(Keys.Z);
-            }
-
-            _keyLocker.CheckInputLock(state, Keys.Space);
-            _keyLocker.CheckInputLock(state, Keys.Z);
-
-            oldState = state;
 
             oldState = state;
         }
@@ -95,12 +76,12 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            _actor.Position = position; // Update position in actor
+            _actor.position = position; // Update position in actor
         }
 
         public void Leaving()
         {
-            _actor.spriteAnimations["move"].Reset();
+
         }
 
     }
