@@ -9,6 +9,8 @@ namespace Water
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
 
+        private Vector2 position; // Holds actor's position
+
         public CrouchAction(AActor actor)
         {
             _actor = actor;
@@ -17,11 +19,16 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-
+            position = _actor.Position; // Set current position
+            _actor.currentSpriteAnimation = "crouch";
         }
 
         public void HandleInput(KeyboardState state)
         {
+            if(!state.IsKeyDown(Keys.Down))
+            {
+                _actionStateMachine.Change("stand");
+            }
 
         }
 
@@ -32,7 +39,7 @@ namespace Water
 
         public void Leaving()
         {
-
+            _actor.spriteAnimations["crouch"].Reset();
         }
     }
 }

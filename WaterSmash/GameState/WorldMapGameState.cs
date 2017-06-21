@@ -18,6 +18,8 @@ namespace Water
         SpriteFont stageNameFont;
         SpriteBatch spriteBatch;
 
+        KeyLocker keyLocker;
+
         /// <summary>
         /// Holds how many stages are playable
         /// NOT USED YET
@@ -71,21 +73,12 @@ namespace Water
         /// </summary>
         KeyboardState oldState;
 
-        /// <summary>
-        /// Holds the key that has been pressed
-        /// </summary>
-        private Keys pressedKey;
-
-        /// <summary>
-        /// Used to check if a key has been pressed
-        /// </summary>
-        private bool keyPressed = false;
-
-
         public WorldMapGameState(GameStateManager gameStateManager)
         {
             this.gameStateManager = gameStateManager;
-            this.spriteBatch = new SpriteBatch(graphicsDevice);
+
+            spriteBatch = new SpriteBatch(graphicsDevice);
+            keyLocker = new KeyLocker();
 
             loadStageData();
         }
@@ -129,9 +122,9 @@ namespace Water
             handleViewPortMovement(state);
 
             // Check if we can press the specified key again
-            checkInputLock(state, Keys.Enter);
-            checkInputLock(state, Keys.Escape);
-            checkInputLock(state, Keys.I);
+            keyLocker.CheckInputLock(state, Keys.Enter);
+            keyLocker.CheckInputLock(state, Keys.Escape);
+            keyLocker.CheckInputLock(state, Keys.I);
 
             // set the oldstate as the current state to prepare for the next state
             oldState = state;
@@ -301,51 +294,29 @@ namespace Water
             }
 
             // Go the menu
-            if (!keyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
+            if (!keyLocker.KeyPressed && state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
             {
                 gameStateManager.Change("menu");
-                lockKey(Keys.Escape);
+                keyLocker.LockKey(Keys.Escape);
             }
             // Go the inventory
-            else if (!keyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
+            else if (!keyLocker.KeyPressed && state.IsKeyDown(Keys.I) && !oldState.IsKeyDown(Keys.I))
             {
                 gameStateManager.Change("inventory", player);
-                lockKey(Keys.I);
+                keyLocker.LockKey(Keys.I);
             }
 
             // Play the stage if it is selectable
-            else if (!keyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+            else if (!keyLocker.KeyPressed && state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             {
                 if (selectedStage != 0)
                 {
                     gameStateManager.Change("stage", selectedStage, player);
-                    lockKey(Keys.Enter);
+                    keyLocker.LockKey(Keys.Enter);
                 }
             }
         }
 
-        /// <summary>
-        /// Locks the specified key so that it can only be pressed once
-        /// </summary>
-        /// <param name="key">The key to lock</param>
-        private void lockKey(Keys key)
-        {
-            pressedKey = key;
-            keyPressed = true;
-        }
-
-        /// <summary>
-        /// Checks if the key is no longer being pressed and releases its lock
-        /// </summary>
-        /// <param name="state">The current keyboardstate to check against the key</param>
-        /// <param name="key">The key to check</param>
-        private void checkInputLock(KeyboardState state, Keys key)
-        {
-            if (keyPressed && pressedKey == key && !state.IsKeyDown(key) && !oldState.IsKeyDown(key))
-            {
-                keyPressed = false;
-            }
-        }
     }
 
 

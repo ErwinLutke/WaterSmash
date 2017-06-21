@@ -12,33 +12,29 @@ using System.Threading.Tasks;
 namespace Water
 {
     [DataContract]
-    abstract class AActor
+    abstract class AActor : GameObject
     {
         [DataMember]
         string name { get; set; }
-        Texture2D spriteSheet;
-        
 
         [DataMember]
         protected Inventory inventory;
 
-        public ActionStateMachine actionStateMachine;
+        public int health { get; set; }
+        public int attack { get; set; }
+        public int defense { get; set; }
 
         bool _isInvunerable = false;
 
-        public int health { get; set; }
-        public int attack { get; set; }
-        public int defense { get; set;}
 
-        public Vector2 position { get; set; } // Holds current position of actor
+        public ActionStateMachine actionStateMachine;
 
         public Dictionary<string, SpriteAnimation> spriteAnimations;
         public string currentSpriteAnimation;
         
-        SpriteBatch spriteBatch;
-        SpriteFont spriteFont;
 
-        private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
+        // TEMP - debugging
+        SpriteFont spriteFont;
         private ContentManager content = GameServices.GetService<ContentManager>();
 
         public AActor()
@@ -71,29 +67,44 @@ namespace Water
             actionStateMachine.HandleInput(state);
         }
 
+        int timeSinceLastFrame;
         public void Update(GameTime gameTime)
         {
             actionStateMachine.Update(gameTime);
             spriteAnimations[currentSpriteAnimation].Update(gameTime);
+
+            if (this is Enemy)
+            {
+                timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
+                if (timeSinceLastFrame > 2000)
+                {
+                    timeSinceLastFrame -= 2000;
+                    actionStateMachine.Change("attack");
+                }
+            }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             //Rectangle sprite = new Rectangle(26, 24, 55, 106);
             //Rectangle playerPos = new Rectangle(position.ToPoint().X, position.ToPoint().Y - sprite.Height, sprite.Width, sprite.Height);
 
             //Viewport viewport = graphics.Viewport;
-
-            // TEMP - debugging
-            spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.White);
-            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.White);
-            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.White);
-
+            if (this is Player)
+            {
+                // TEMP - debugging
+                spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.White);
+                spriteBatch.DrawString(spriteFont, "X " + Position.X.ToString(), new Vector2(100, 200), Color.White);
+                spriteBatch.DrawString(spriteFont, "Y " + Position.Y.ToString(), new Vector2(200, 200), Color.White);
+            } else
+            {
+                spriteBatch.DrawString(spriteFont, health.ToString(), new Vector2(300, 100), Color.White);
+            }
             //Rectangle rect = new Rectangle(position.ToPoint().X, position.ToPoint().Y - texture.Height, texture.Width, texture.Height);
             //spriteBatch.Draw(texture, rect, Color.White);
 
-            spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, position);
-
+            spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, Position);
+            Size = spriteAnimations[currentSpriteAnimation].Size;
         }
 
 

@@ -8,12 +8,13 @@ namespace Water
     {
         public Texture2D Texture { get; set; }
         public int Speed { get; set; }
+        public Vector2 Size { get; set; }
       
         private int sequenceStep;
         private int totalFrames;
 
         private int timeSinceLastFrame = 0;
-        private int millisecondsPerFrame = 200;
+        private int millisecondsPerFrame = 2000;
 
         private List<int> spriteSequence;
 
@@ -53,6 +54,7 @@ namespace Water
             int width = Texture.Width / totalFrames;
             int height = Texture.Height;
             int column = spriteSequence[sequenceStep];
+            Size = new Vector2(width, height);
 
             Rectangle sourceRectangle = new Rectangle(width * column, 0, width, height);
             Rectangle destinationRectangle = new Rectangle((int)location.X, (int)location.Y - height, width, height);
