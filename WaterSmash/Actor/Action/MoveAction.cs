@@ -32,7 +32,7 @@ namespace Water
             {
                 _actionStateMachine.Change("crouch");
             }
-            else if (state.IsKeyDown(Keys.Space))
+            else if(state.IsKeyDown(Keys.Space))
             {
                 _actionStateMachine.Change("throw");
             }
@@ -64,10 +64,10 @@ namespace Water
         {
             _actor.position = position; // Update position in actor
 
-            if (_actor.isThrowing)
-            {
-                _actor.throwAction.Update(gameTime);
-            }
+            //if (_actor.isThrowing)
+            //{
+            //    _actor.throwAction.Update(gameTime);
+            //}
         }
 
         public void Leaving()

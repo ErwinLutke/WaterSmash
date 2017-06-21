@@ -38,25 +38,28 @@ namespace Water
         public void Entered(params object[] args)
         {
             content = GameServices.GetService<ContentManager>();
+            
             graphics = GameServices.GetService<GraphicsDevice>();
 
             spriteBatch = new SpriteBatch(graphics);
 
             bottle = content.Load<Texture2D>("Images\\Actions\\bottleThrow");
 
-            velocity.X = 25f;
-
-            bottlePosition = _actor.position;
-            bottlePosition.Y -= _actor.texture.Height;
-
-            startPosition = bottlePosition;
+            //if (!_actor.isThrowing)
+            //{
+            //    Throw();
+            //}
         }
 
         public void HandleInput(KeyboardState state)
         {
             KeyboardState newState = state;
 
-            if (state.IsKeyDown(Keys.Up))
+            if (oldState.IsKeyUp(Keys.Space) && newState.IsKeyDown(Keys.Space))
+            {
+                Throw();
+            }
+            else if (state.IsKeyDown(Keys.Up))
             {
                 _actionStateMachine.Change("jump");
             }
@@ -68,8 +71,26 @@ namespace Water
             {
                 _actionStateMachine.Change("move");
             }
+            else
+            {
+                _actionStateMachine.Change("stand");
+            }
 
             oldState = newState;
+        }
+
+        public void Throw()
+        {
+            if(!_actor.isThrowing)
+            {
+                velocity.X = 25f;
+
+                bottlePosition = _actor.position;
+                bottlePosition.Y -= _actor.texture.Height;
+
+                startPosition = bottlePosition;
+            }
+
         }
 
         public void Leaving()

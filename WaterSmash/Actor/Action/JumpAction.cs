@@ -35,6 +35,10 @@ namespace Water
             {
                 velocity.X = -3f; // substract velocity, lean left
             }
+            else if (state.IsKeyDown(Keys.Space))
+            {
+                _actionStateMachine.Change("throw");
+            }
             else // if no space key pressed
             {
                 if (state.IsKeyDown(Keys.Left)) // continue going left if left key is pressed

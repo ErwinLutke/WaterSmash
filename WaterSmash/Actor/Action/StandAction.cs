@@ -22,10 +22,7 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            if (_actor.isThrowing)
-            {
-                _actor.throwAction.Update(gameTime);
-            }
+            
         }
 
         public void HandleInput(KeyboardState state)
