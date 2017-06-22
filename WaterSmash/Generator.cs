@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+
 namespace Water
 {
     public class Generator
@@ -44,7 +49,7 @@ namespace Water
             "of the Undertakers' Invocation of Flesh",
         };
 
-        public Generator() { }
+        public Generator() { setSpriteAnimations(); }
         
 
         enum Special
@@ -165,6 +170,50 @@ namespace Water
                 }
             }
             return item;
+        }
+
+        /// <summary>
+        /// Genereer een nieuwe enemy, afhankelijk van de dificulty
+        /// </summary>
+        /// <param name="dificulty">dificulty of the enemy</param>
+        /// <returns>enemy with given dificulty, higher is stronger</returns>
+        public object enemyGenerator(int dificulty, Vector2 pos)
+        {
+
+            int baseHealth = 10;
+            int baseAttack = 4;
+            int baseDefence = 5;
+
+
+            Enemy spawn = new Enemy();
+            spawn.name = "enemieiei";
+            //spawn.inventory = generateInventory();
+            spawn.health = baseHealth * dificulty;
+            spawn.attack = baseAttack * dificulty;
+            spawn.defense = baseDefence * dificulty;
+            spawn.Position = pos;
+
+            spawn.spriteAnimations = spriteAnimations["enemy"];
+            spawn.actionStateMachine.Change("stand");
+
+            return spawn;
+        }
+        /// <summary>
+        /// set sprite animations for the enemy.
+        /// </summary>
+        Dictionary<string, Dictionary<string, SpriteAnimation>> spriteAnimations;
+        private void setSpriteAnimations()
+        {
+            ContentManager content = GameServices.GetService<ContentManager>();
+
+            spriteAnimations = new Dictionary<string, Dictionary<string, SpriteAnimation>>();
+            spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
+            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
+            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/attack"), 1, 15));
+            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
+            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
+            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
+            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
         }
 
     }

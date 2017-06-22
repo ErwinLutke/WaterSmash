@@ -15,10 +15,10 @@ namespace Water
     abstract class AActor : GameObject
     {
         [DataMember]
-        string name { get; set; }
+        public string name { get; set; }
 
         [DataMember]
-        protected Inventory inventory;
+        public Inventory inventory;
 
         public int health { get; set; }
         public int attack { get; set; }
