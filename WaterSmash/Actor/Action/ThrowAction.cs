@@ -56,7 +56,7 @@ namespace Water
         public void Entered(params object[] args)
         {
             content = GameServices.GetService<ContentManager>();
-            
+
             graphics = GameServices.GetService<GraphicsDevice>();
 
             spriteBatch = new SpriteBatch(graphics);
@@ -65,7 +65,7 @@ namespace Water
 
             Throw();
 
-            if(args.Length > 0)
+            if (args.Length > 0)
             {
                 // Save previous action to switch back to after throw
                 prevAction = args[0].ToString();
@@ -81,7 +81,7 @@ namespace Water
 
         public void Throw()
         {
-            bottlePosition = _actor.position;
+            bottlePosition = _actor.Position;
 
             startPosition = bottlePosition;
 
@@ -94,7 +94,7 @@ namespace Water
             }
             else if (_actor.direction == AActor.Direction.LEFT)
             {
-                velocity.X = -25f;             
+                velocity.X = -25f;
             }
 
         }

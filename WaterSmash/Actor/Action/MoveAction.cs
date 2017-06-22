@@ -18,15 +18,15 @@ namespace Water
             _actor = actor;
             _actionStateMachine = actor.actionStateMachine;
         }
-        
+
         public void Entered(params object[] args)
         {
-            position = _actor.position; // Set or update current actor position
+            position = _actor.Position; // Set or update current actor position
         }
 
         public void HandleInput(KeyboardState state)
         {
-            if(state.IsKeyDown(Keys.Up))
+            if (state.IsKeyDown(Keys.Up))
             {
                 // Switch to JumpAction
                 _actionStateMachine.Change("jump");
@@ -36,7 +36,7 @@ namespace Water
                 // Switch to CrouchAction
                 _actionStateMachine.Change("crouch");
             }
-            else if(oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
+            else if (oldState.IsKeyUp(Keys.X) && state.IsKeyDown(Keys.X))
             {
                 // if actor currently is throwing, cannot switch to trowAction
                 if (!_actor.isThrowing)
@@ -76,7 +76,7 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            _actor.position = position; // Update position in actor
+            _actor.Position = position; // Update position in actor
         }
 
         public void Leaving()
