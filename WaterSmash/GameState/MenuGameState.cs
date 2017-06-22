@@ -57,7 +57,7 @@ namespace Water
         {
             Viewport viewport = graphics.Viewport;
 
-            Vector2 screenCenter = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
+            //Vector2 screenCenter = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
             
 
             Rectangle button = new Rectangle((viewport.Width / 2) - (306/2), 150, 306, 64);

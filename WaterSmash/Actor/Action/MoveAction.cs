@@ -30,11 +30,11 @@ namespace Water
         {
             if (state.IsKeyDown(Keys.Right))
             {
-                position.X += 2f; // Increment X position (move right)
+                moveRight();
             }
             else if (state.IsKeyDown(Keys.Left))
             {
-                position.X -= 2f; // Decrement X position (Move left)
+                moveLeft();
             }
             else if (state.IsKeyDown(Keys.Space))
             {
@@ -59,7 +59,15 @@ namespace Water
             _keyLocker.CheckInputLock(state, Keys.Z);
 
             oldState = state;
+        }
 
+        private void moveLeft()
+        {
+            position.X -= 2f; // Decrement X position (Move left)
+        }
+        private void moveRight()
+        {
+            position.X += 2f; // Increment X position (move right)
         }
 
         public void Update(GameTime gameTime)

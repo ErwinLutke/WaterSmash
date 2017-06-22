@@ -98,8 +98,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actor\AActor.cs" />
+    <Compile Include="Actor\Action\AIController.cs" />
     <Compile Include="Actor\Action\AttackAction.cs" />
     <Compile Include="Actor\Action\EmptyAction.cs" />
+    <Compile Include="Actor\Action\MoveLeftAction.cs" />
     <Compile Include="Actor\Boss.cs" />
     <Compile Include="Actor\Action\CrouchAction.cs" />
     <Compile Include="Actor\Enemy.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="GameState\InventoryGameState.cs" />
     <Compile Include="GameState\MenuGameState.cs" />
     <Compile Include="GameState\PauseGameState.cs" />
+    <Compile Include="GameState\test.cs" />
     <Compile Include="Inventory\Cap.cs" />
     <Compile Include="GameState\EmptyState.cs" />
     <Compile Include="GamePage.xaml.cs">
@@ -172,6 +175,7 @@
     <Content Include="Content\Images\stages\stage_1\worldmap_selected_1.png" />
     <Content Include="Content\Images\stages\stage_2\worldmap_preview_2.png" />
     <Content Include="Content\Images\stages\stage_2\worldmap_selected_2.png" />
+    <Content Include="Content\Images\stages\testobj.png" />
     <Content Include="Content\Images\worldmap.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

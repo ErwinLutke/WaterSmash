@@ -63,7 +63,7 @@ namespace Water
             spriteBatch.DrawString(spriteFont, "Current equipped label: ", new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 2), Color.Black);
 
             //Check if player currently has a cap equipped
-            if(player.equippedCap != null)
+            if (player.equippedCap != null)
             {
                 //Draw information about current equipped cap
                 spriteBatch.DrawString(spriteFont, player.equippedCap.name, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 4), Color.Black);
@@ -73,7 +73,7 @@ namespace Water
                 spriteBatch.Draw(player.equippedCap.texture, new Rectangle((viewport.Width / 100) * 15 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedCap.texture.Width, player.equippedCap.texture.Height), Color.White);
             }
             //Check if player currently has a label equipped
-            if(player.equippedLabel != null)
+            if (player.equippedLabel != null)
             {
                 //Draw information about current equipped cap
                 spriteBatch.DrawString(spriteFont, player.equippedLabel.name, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 4), Color.Black);
@@ -94,10 +94,10 @@ namespace Water
             // y position placement for inventory slots
             int y = 40;
 
-            foreach(Texture2D slot in player.GetInventory().slots)
+            foreach (Texture2D slot in player.GetInventory().slots)
             {
                 // When 6 inventory slots are placed, start new line
-                if(count == 6)
+                if (count == 6)
                 {
                     y += slot.Height;
                     count = 0;
@@ -110,7 +110,7 @@ namespace Water
                 spriteBatch.Draw(slot, new Rectangle(x, y, slot.Width, slot.Height), Color.White);
 
                 // Check for items in items list
-                if(itemPointer < player.GetInventory().items.Count)
+                if (itemPointer < player.GetInventory().items.Count)
                 {
                     // Check if item to draw is equipped -> items that are equipped are out of inventory, so not drawn here
                     if (!player.GetInventory().items[itemPointer].isEquipped)
@@ -142,7 +142,7 @@ namespace Water
 
             // Draw textarea to display current information about selected item
             spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), player.GetInventory().slots[0].Height * 6, player.GetInventory().slots[0].Width * 6, textArea.Height), Color.White);
-   
+
             // Draw information about current selected item
             spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
             spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
@@ -177,15 +177,15 @@ namespace Water
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
 
             // Set first item as selected item
-            if(player.GetInventory().items.Count != 0)
+            if (player.GetInventory().items.Count != 0)
             {
                 player.GetInventory().items[0].isSelected = true;
-            }        
+            }
         }
 
         public void HandleInput(KeyboardState state)
         {
-            
+
         }
 
         public void Leaving()
@@ -227,23 +227,23 @@ namespace Water
                     current = player.GetInventory().items[index - 1];
                     // Set select new current item
                     current.isSelected = true;
-                    
+
                 }
             }
             // Check if 'F' key is pressed
-            else if(oldState.IsKeyUp(Keys.F) && newState.IsKeyDown(Keys.F))
+            else if (oldState.IsKeyUp(Keys.F) && newState.IsKeyDown(Keys.F))
             {
                 // Check if current not is null
-                if(current != null)
+                if (current != null)
                 {
                     // Check if current is instance of Cap
-                    if(current is Cap)
+                    if (current is Cap)
                     {
                         // Equip Cap
                         player.equipCap((Cap)current);
                     }
                     // Check if current is instance of Label
-                    else if(current is Label)
+                    else if (current is Label)
                     {
                         // Equip Label
                         player.equipLabel((Label)current);
@@ -251,7 +251,7 @@ namespace Water
                 }
             }
             // Check if 'Delete' key is pressed
-            else if(oldState.IsKeyUp(Keys.Delete) && newState.IsKeyDown(Keys.Delete))
+            else if (oldState.IsKeyUp(Keys.Delete) && newState.IsKeyDown(Keys.Delete))
             {
                 // Check if current not is null
                 if (current != null)
@@ -260,7 +260,7 @@ namespace Water
                     player.GetInventory().RemInventoryObject(current);
                 }
             }
-            
+
 
             oldState = newState;
         }

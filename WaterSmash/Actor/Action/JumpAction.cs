@@ -9,7 +9,7 @@ namespace Water
     {
         private AActor _actor; // Holds current actor
         private ActionStateMachine _actionStateMachine;
-            
+
         private bool hasJumped = false; // Holds wether actor has jumped
 
         private Vector2 ground;
@@ -31,17 +31,13 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Up))
+            if (state.IsKeyDown(Keys.Right) && state.IsKeyDown(Keys.Space))
             {
-                velocity.X = 3f; // add velocity, lean right
+                velocity.X = 3f; // add velocity, go right
             }
-            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Up))
+            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Space))
             {
-                velocity.X = -3f; // substract velocity, lean left
-            }
-            else if (state.IsKeyDown(Keys.Space))
-            {
-                _actionStateMachine.Change("throw");
+                velocity.X = -3f; // substract velocity, go left
             }
             else // if no space key pressed
             {
@@ -59,7 +55,7 @@ namespace Water
                 }
             }
 
-            if (state.IsKeyUp(Keys.Up) || hasJumped == true)
+            if (state.IsKeyUp(Keys.Space) || hasJumped == true)
             {
                 float i = 1;
                 velocity.Y += 0.15f * i;
@@ -68,8 +64,8 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            position += velocity; 
-         
+            position += velocity;
+
 
             if (hasJumped == false) // player is not currently jumping
             {
@@ -77,15 +73,15 @@ namespace Water
                 velocity.Y = -5f; // velocity kicks in to not be a rocket
                 hasJumped = true; // set hasJumped to true to avoid double jumping
             }
-        
+
             // CHANGE 960 ACCORDING TO HITBOX SHIT
-            if(position.Y > ground.Y) // if back on the ground
+            if (position.Y > ground.Y) // if back on the ground
             {
                 position.Y = ground.Y;
                 hasJumped = false; // set hasJumped on false so that player is able to jump again
                 velocity.Y = 0f; // Reset velocity
                 _actionStateMachine.Change("stand");
-           }
+            }
 
             _actor.Position = position;
         }
