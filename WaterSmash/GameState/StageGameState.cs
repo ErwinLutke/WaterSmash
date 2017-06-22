@@ -131,15 +131,6 @@ namespace Water
             spriteAnimations["player"].Add("hurt", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/hurt"), 1, 10));
             spriteAnimations["player"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
 
-            spriteAnimations["player"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
-            spriteAnimations["player"]["move"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
-            spriteAnimations["player"]["jump"].setSpriteSequence(new List<int>() { 0, 1 });
-            spriteAnimations["player"]["attack"].setSpriteSequence(new List<int>() { 0 });
-            spriteAnimations["player"]["crouch"].setSpriteSequence(new List<int>() { 0 });
-            spriteAnimations["player"]["hurt"].setSpriteSequence(new List<int>() { 0 });
-            spriteAnimations["player"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
-
-
             player.spriteAnimations = spriteAnimations["player"];
 
             // TEMP - debugging purpose
@@ -211,7 +202,9 @@ namespace Water
 
             spriteBatch.Draw(rect, coor, Color.White);
 
-            player.Draw(spriteBatch);
+            player.Draw(gameTime);
+
+            //player.Draw(spriteBatch);
             //enemy.Draw(spriteBatch);
             if (boundingBox)
             {
@@ -222,13 +215,14 @@ namespace Water
 
             foreach (GameObject obc in GameObjects)
             {
-                obc.Draw(spriteBatch);
+           //     obc.Draw(spriteBatch);
             }
             if (enemies.Count > 0)
             {
                 foreach (Enemy enemy in enemies)
                 {
-                    enemy.Draw(spriteBatch);
+                 //   enemy.Draw(gameTime);
+                  //  enemy. .D=(spriteBatch);
                 }
             }
 
@@ -422,13 +416,18 @@ namespace Water
                 }
             }
         }
-        Texture2D rect = new Texture2D(graphics, 100, 10);
+        
+        Texture2D rect;
         Color[] data;
-        Vector2 coor = new Vector2(250,10);
+        Vector2 coor;
         
 
         public void progressBar()
         {
+
+            rect = new Texture2D(graphics, 100, 10);
+            
+            coor = new Vector2(250, 10);
             for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
             rect.SetData(data);
 

@@ -81,7 +81,7 @@ namespace Water
 
         public void Throw()
         {
-            bottlePosition = _actor.position;
+            bottlePosition = _actor.Position;
 
             startPosition = bottlePosition;
 

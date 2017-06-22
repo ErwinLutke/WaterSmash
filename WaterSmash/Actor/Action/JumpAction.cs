@@ -97,7 +97,7 @@ namespace Water
                 _actionStateMachine.Change("stand");
             }
 
-            _actor.position = position;
+            _actor.Position = position;
         }
 
 

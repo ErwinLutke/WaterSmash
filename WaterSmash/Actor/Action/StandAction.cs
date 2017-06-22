@@ -8,6 +8,7 @@ namespace Water
     {
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
+        private KeyLocker _keyLocker;
 
         private KeyboardState oldState;
 

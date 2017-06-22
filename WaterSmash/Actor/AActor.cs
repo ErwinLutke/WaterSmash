@@ -59,7 +59,7 @@ namespace Water
         public Direction direction { get; set; }
 
         public Direction directionAtThrow { get; set; }
-        public Texture2D texture { get; set; }
+
         public SpriteBatch spriteBatch;
         SpriteFont spriteFont;
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
@@ -77,7 +77,7 @@ namespace Water
             direction = Direction.RIGHT;    // Sets starting direction
 
             health = 100;
-            inventory = new Inventory(30);
+            inventory = new Inventory();
             actionStateMachine = new ActionStateMachine();
                         spriteAnimations = new Dictionary<string, SpriteAnimation>();
             
@@ -100,16 +100,16 @@ namespace Water
 
         public void load()
         {
-            texture = content.Load<Texture2D>("inventory\\lable");
+         //   texture = content.Load<Texture2D>("inventory\\lable");
 
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
 
-            healthTexture = content.Load<Texture2D>("healthbar");
+            healthTexture = content.Load<Texture2D>("play_default");
         }
 
-        public void HandleInput(KeyboardState state)
+        public virtual void HandleInput(object state)
         {
-            actionStateMachine.HandleInput(state);
+            actionStateMachine.HandleInput((KeyboardState)state);
         }
 
         public void Update(GameTime gameTime)
@@ -117,7 +117,7 @@ namespace Water
             actionStateMachine.Update(gameTime);
             spriteAnimations[currentSpriteAnimation].Update(gameTime);
 
-            healthRect = new Rectangle((int)position.X - (texture.Width / 2), (int)position.Y - 50, health, 20);
+          //  healthRect = new Rectangle((int)Position.X - (texture.Width / 2), (int)Position.Y - 50, health, 20);
 
             // If Actor currently throwing -> update throwAction whatever the current actionstate is
             if (isThrowing)
@@ -142,9 +142,9 @@ namespace Water
             spriteBatch.DrawString(spriteFont, "Direction " + direction.ToString(), new Vector2(300, 400), Color.Black);
             // ------------------------- TEMP -------------------------//
 
-            spriteBatch.Draw(texture, position, Color.White);
+           // spriteBatch.Draw(texture, Position, Color.White);
 
-            spriteBatch.Draw(healthTexture, healthRect, Color.Red);
+          //  spriteBatch.Draw(healthTexture, healthRect, Color.Red);
 
             // Check if actor currently is throwing
             if(!isThrowing)
@@ -197,10 +197,10 @@ namespace Water
                 }
             }
 
-            spriteBatch.End();
             spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, Position);
             Size = spriteAnimations[currentSpriteAnimation].Size;
-       
+            spriteBatch.End();
+
         }
     }
 }
