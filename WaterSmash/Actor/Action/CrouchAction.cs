@@ -21,8 +21,8 @@ namespace Water
 
         public void Entered(params object[] args)
         {
-            position = _actor.position; // Set or update current actor position
-            _actor.texture = content.Load<Texture2D>("inventory\\cap");
+            position = _actor.Position; // Set or update current actor position
+            _actor.currentSpriteAnimation = "crouch";
         }
 
         public void HandleInput(KeyboardState state)
@@ -35,10 +35,6 @@ namespace Water
             {
                 CrouchLeft();
             }
-            else if(state.IsKeyDown(Keys.Down))
-            {
-                Crouch();
-            }
             else if (state.IsKeyDown(Keys.Space))
             {
                 _actionStateMachine.Change("jump");
@@ -47,7 +43,7 @@ namespace Water
             {
                 _actionStateMachine.Change("move");
             }
-            else
+            else if (!state.IsKeyDown(Keys.Down))
             {
                 _actionStateMachine.Change("stand");
             }
@@ -65,16 +61,12 @@ namespace Water
 
         public void Crouch()
         {
-            if(!state.IsKeyDown(Keys.Down))
-            {
-                _actionStateMachine.Change("stand");
-            }
-
+            _actionStateMachine.Change("crouch");
         }
 
         public void Update(GameTime gameTime)
         {
-            _actor.position = position; // Update position in actor
+            _actor.Position = position; // Update position in actor
         }
 
         public void Leaving()
