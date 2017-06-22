@@ -106,9 +106,6 @@ namespace Water
         public void load()
         {
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
-            texture = content.Load<Texture2D>("inventory\\lable");
-
-            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
 
             healthTexture = content.Load<Texture2D>("healthbar");
         }
@@ -173,7 +170,7 @@ namespace Water
             //spriteBatch.DrawString(spriteFont, "Direction " + direction.ToString(), new Vector2(300, 400), Color.Black);
             // ------------------------- TEMP -------------------------//
 
-            spriteBatch.Draw(texture, Position, Color.White);
+            //spriteBatch.Draw(texture, Position, Color.White);
 
             spriteBatch.Draw(healthTexture, healthRect, Color.Red);
 

@@ -11,7 +11,7 @@ namespace Water
     class GameObject
     {
 
-        protected Texture2D texture;
+        public Texture2D texture;
 
         public Vector2 Size { get; set; }
         public Vector2 Position { get; set; } // Holds current position of actor
