@@ -45,6 +45,5 @@ namespace Water
         {
             currentAction.Update(gameTime);
         }
-
     }
 }
