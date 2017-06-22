@@ -1,6 +1,0 @@
-﻿namespace Water
-{
-    interface IDroppable
-    {
-    }
-}
