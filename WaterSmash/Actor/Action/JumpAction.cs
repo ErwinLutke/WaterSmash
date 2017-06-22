@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Water
 {
@@ -15,6 +14,8 @@ namespace Water
         private Vector2 ground;
         private Vector2 position; // Holds actor's position
         private Vector2 velocity; // Holds air movement velocity
+
+        KeyboardState oldState;
 
         public JumpAction(AActor actor)
         {
@@ -35,19 +36,30 @@ namespace Water
             {
                 velocity.X = 3f; // add velocity, lean right
             }
-            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Space))
+            else if (state.IsKeyDown(Keys.Left) && state.IsKeyDown(Keys.Up))
             {
                 velocity.X = -3f; // substract velocity, lean left
+            }
+            else if (oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
+            {
+                // if actor currently is throwing, cannot switch to trowAction
+                if(!_actor.isThrowing)
+                {
+                    _actionStateMachine.Change("throw", "jump");
+                }
             }
             else // if no space key pressed
             {
                 if (state.IsKeyDown(Keys.Left)) // continue going left if left key is pressed
                 {
                     velocity.X = -3f;
+                    
+                    _actor.direction = AActor.Direction.LEFT; // Set current facing direction
                 }
                 else if (state.IsKeyDown(Keys.Right)) // continue going to right if right key is pressed
                 {
                     velocity.X = 3f;
+                    _actor.direction = AActor.Direction.RIGHT; // Set current facing direction
                 }
                 else // if no space or left or right key is pressed, stay at same position
                 {
@@ -60,6 +72,8 @@ namespace Water
                 float i = 1;
                 velocity.Y += 0.15f * i;
             }
+
+            oldState = state;
         }
 
         public void Update(GameTime gameTime)
@@ -81,9 +95,9 @@ namespace Water
                 hasJumped = false; // set hasJumped on false so that player is able to jump again
                 velocity.Y = 0f; // Reset velocity
                 _actionStateMachine.Change("stand");
-           }
+            }
 
-            _actor.Position = position;
+            _actor.position = position;
         }
 
 

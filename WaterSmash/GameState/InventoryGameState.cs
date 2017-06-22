@@ -92,10 +92,13 @@ namespace Water
             int itemPointer = 0;
 
             // y position placement for inventory slots
-            int y = 40;
-
-            foreach(Texture2D slot in player.GetInventory().slots)
+            int y = 80;
+            for(int i = 0; i < player.GetInventory().capacity; i++)
             {
+                Texture2D slot = player.GetInventory().slot;
+            //}
+            //foreach(Texture2D slot in player.GetInventory().slots)
+            //{
                 // When 6 inventory slots are placed, start new line
                 if(count == 6)
                 {
@@ -124,6 +127,8 @@ namespace Water
                             spriteBatch.Draw(player.GetInventory().items[itemPointer].texture, new Rectangle(x + 10, y + 10, player.GetInventory().items[count].texture.Width + 20, player.GetInventory().items[count].texture.Height + 20), Color.White);
                             // Save on screen location of item
                             player.GetInventory().items[itemPointer].position = new Vector2(x + 10, y + 10);
+
+                            spriteBatch.DrawString(spriteFont, player.GetInventory().items[itemPointer].position.ToString(), new Vector2(200, 800), Color.White);
                         }
                         else
                         {
@@ -141,13 +146,13 @@ namespace Water
             }
 
             // Draw textarea to display current information about selected item
-            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), player.GetInventory().slots[0].Height * 6, player.GetInventory().slots[0].Width * 6, textArea.Height), Color.White);
-   
+            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), (viewport.Height / 100) * 70, player.GetInventory().slot.Width * 6, textArea.Height), Color.White);
+
             // Draw information about current selected item
-            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
+            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slot.Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slot.Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slot.Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slot.Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
 
             spriteBatch.End();
         }
@@ -185,16 +190,6 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            
-        }
-
-        public void Leaving()
-        {
-            content.Unload();
-        }
-
-        public void Update(GameTime gameTime)
-        {
             // Get current keyboardstate
             KeyboardState newState = Keyboard.GetState();
 
@@ -227,23 +222,23 @@ namespace Water
                     current = player.GetInventory().items[index - 1];
                     // Set select new current item
                     current.isSelected = true;
-                    
+
                 }
             }
             // Check if 'F' key is pressed
-            else if(oldState.IsKeyUp(Keys.F) && newState.IsKeyDown(Keys.F))
+            else if (oldState.IsKeyUp(Keys.F) && newState.IsKeyDown(Keys.F))
             {
                 // Check if current not is null
-                if(current != null)
+                if (current != null)
                 {
                     // Check if current is instance of Cap
-                    if(current is Cap)
+                    if (current is Cap)
                     {
                         // Equip Cap
                         player.equipCap((Cap)current);
                     }
                     // Check if current is instance of Label
-                    else if(current is Label)
+                    else if (current is Label)
                     {
                         // Equip Label
                         player.equipLabel((Label)current);
@@ -251,7 +246,7 @@ namespace Water
                 }
             }
             // Check if 'Delete' key is pressed
-            else if(oldState.IsKeyUp(Keys.Delete) && newState.IsKeyDown(Keys.Delete))
+            else if (oldState.IsKeyUp(Keys.Delete) && newState.IsKeyDown(Keys.Delete))
             {
                 // Check if current not is null
                 if (current != null)
@@ -260,9 +255,19 @@ namespace Water
                     player.GetInventory().RemInventoryObject(current);
                 }
             }
-            
+
 
             oldState = newState;
+        }
+
+        public void Leaving()
+        {
+            content.Unload();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            
         }
     }
 }

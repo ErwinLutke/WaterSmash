@@ -107,7 +107,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameObject.cs" />
     <Compile Include="GameServices.cs" />
     <Compile Include="GameState\Button.cs" />
     <Compile Include="GameState\InventoryGameState.cs" />
@@ -124,8 +123,6 @@
     <Compile Include="Inventory\IDroppable.cs" />
     <Compile Include="Inventory\AEquipable.cs" />
     <Compile Include="GameState\IGameState.cs" />
-    <Compile Include="KeyLocker.cs" />
-    <Compile Include="SpriteAnimation.cs" />
     <Compile Include="Stage\Stage.cs" />
     <Compile Include="Inventory\Inventory.cs" />
     <Compile Include="Inventory\AInventoryObject.cs" />
@@ -154,20 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\audio\worldmap.mp3" />
-    <Content Include="Content\Images\bounding-box.png" />
-    <Content Include="Content\Images\characters\player\attack.png" />
-    <Content Include="Content\Images\characters\player\crouch.png" />
-    <Content Include="Content\Images\characters\player\hurt.png" />
-    <Content Include="Content\Images\characters\player\jump.png" />
-    <Content Include="Content\Images\characters\player\move.png" />
-    <Content Include="Content\Images\characters\player\stand.png" />
-    <Content Include="Content\Images\characters\player\player.png" />
-    <Content Include="Content\Images\characters\player\spritesheet.png" />
     <Content Include="Content\Images\fog.png" />
     <Content Include="Content\Images\message.png" />
     <Content Include="Content\Images\sprite.jpg" />
-    <Content Include="Content\Images\stages\floor.png" />
-    <Content Include="Content\Images\stages\stage_1\map.png" />
     <Content Include="Content\Images\stages\stage_1\worldmap_preview_1.png" />
     <Content Include="Content\Images\stages\stage_1\worldmap_selected_1.png" />
     <Content Include="Content\Images\stages\stage_2\worldmap_preview_2.png" />

@@ -1,6 +1,6 @@
 ﻿namespace Water
 {
-    abstract class AEquipable : AInventoryObject, IDroppable
+    public abstract class AEquipable : AInventoryObject, IDroppable
     {
         public bool isEquipped = false;
 

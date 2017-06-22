@@ -59,10 +59,7 @@ namespace Water
             position.X -= 1f; // Decrement X position (Move left)
         }
 
-        public void Crouch()
-        {
-            _actionStateMachine.Change("crouch");
-        }
+
 
         public void Update(GameTime gameTime)
         {

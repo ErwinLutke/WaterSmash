@@ -8,7 +8,8 @@ namespace Water
     {
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
-        private KeyLocker _keyLocker;
+
+        private KeyboardState oldState;
 
         public StandAction(AActor actor)
         {
@@ -27,9 +28,6 @@ namespace Water
 
         }
 
-
-        KeyboardState oldState;
-
         public void HandleInput(KeyboardState state)
         {
             if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Space) && !oldState.IsKeyDown(Keys.Space))
@@ -43,16 +41,21 @@ namespace Water
             }
             else if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
             {
-                _actionStateMachine.Change("move");
-            }            
+                // change to MoveAction
+                _actionStateMachine.Change("move"); 
+            }
+            else if (oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
+            {
+                // Change to ThrowAction if actor is currently not throwing
+                if (!_actor.isThrowing)
+                {
+                    _actionStateMachine.Change("throw", "stand");
+                }
+            }
             else if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
             {
                 _actionStateMachine.Change("attack");
                 _keyLocker.LockKey(Keys.Z);
-            }
-            else if (state.IsKeyDown(Keys.Down))
-            {
-                _actionStateMachine.Change("crouch");
             }
 
             _keyLocker.CheckInputLock(state, Keys.Space);
@@ -63,7 +66,7 @@ namespace Water
 
         public void Leaving()
         {
-            _actor.spriteAnimations["stand"].Reset();
+
         }
     }
 }

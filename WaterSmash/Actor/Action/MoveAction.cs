@@ -12,6 +12,8 @@ namespace Water
 
         private Vector2 position; // Holds current actor position
 
+        KeyboardState oldState;
+
         public MoveAction(AActor actor)
         {
             _actor = actor;
@@ -25,16 +27,26 @@ namespace Water
             _actor.currentSpriteAnimation = "move";
         }
 
-        KeyboardState oldState;
         public void HandleInput(KeyboardState state)
         {
-            if(state.IsKeyDown(Keys.Space))
+            if(state.IsKeyDown(Keys.Up))
             {
+                // Switch to JumpAction
                 _actionStateMachine.Change("jump");
             }
             else if (state.IsKeyDown(Keys.Down))
             {
+                // Switch to CrouchAction
                 _actionStateMachine.Change("crouch");
+            }
+            else if(oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
+            {
+                // if actor currently is throwing, cannot switch to trowAction
+                if (!_actor.isThrowing)
+                {
+                    // Switch to ThrowAction
+                    _actionStateMachine.Change("throw", "move");
+                }
             }
             else if (state.IsKeyDown(Keys.Right))
             {
@@ -44,23 +56,26 @@ namespace Water
             {
                 MoveLeft();
             }
-            else if (state.IsKeyDown(Keys.Down))
-            {
-                _actionStateMachine.Change("crouch");
-            }
             else
             {
+                // Switch to StandAction
                 _actionStateMachine.Change("stand");
             }
+            _keyLocker.CheckInputLock(state, Keys.Space);
+            _keyLocker.CheckInputLock(state, Keys.Z);
+            
+            oldState = state;
         }
 
         public void MoveRight()
         {
+            _actor.direction = AActor.Direction.RIGHT; // Set facing position to right
             position.X += 2f; // Increment X position (move right)
         }
 
         public void MoveLeft()
         {
+            _actor.direction = AActor.Direction.LEFT; // Set facing position to left
             position.X -= 2f; // Decrement X position (Move left)
         }
 
