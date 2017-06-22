@@ -12,12 +12,10 @@ using System.Threading.Tasks;
 namespace Water
 {
     [DataContract]
-    abstract class AActor
+    abstract class AActor : GameObject
     {
         [DataMember]
-        string name { get; set; }
-        Texture2D spriteSheet;
-        
+        string name { get; set; }  
 
         [DataMember]
         protected Inventory inventory;
@@ -29,8 +27,6 @@ namespace Water
         public int health { get; set; }
         public int attack { get; set; }
         public int defense { get; set;}
-
-        public Vector2 position { get; set; } // Holds current position of actor
 
         /// <summary>
         /// Holds ThrowAction to be able to continue throwing while switching back to other actions
@@ -63,15 +59,13 @@ namespace Water
         public Direction direction { get; set; }
 
         public Direction directionAtThrow { get; set; }
-
         public Texture2D texture { get; set; }
-
         public SpriteBatch spriteBatch;
         SpriteFont spriteFont;
-
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
-
+        public Dictionary<string, SpriteAnimation> spriteAnimations;
+        public string currentSpriteAnimation;
         /// <summary>
         /// Health Bar
         /// </summary>
@@ -85,6 +79,8 @@ namespace Water
             health = 100;
             inventory = new Inventory(30);
             actionStateMachine = new ActionStateMachine();
+                        spriteAnimations = new Dictionary<string, SpriteAnimation>();
+            
 
             spriteBatch = new SpriteBatch(graphics);
          
@@ -102,7 +98,7 @@ namespace Water
             return inventory;
         }
 
-        public void loadTextures()
+        public void load()
         {
             texture = content.Load<Texture2D>("inventory\\lable");
 
@@ -119,6 +115,7 @@ namespace Water
         public void Update(GameTime gameTime)
         {
             actionStateMachine.Update(gameTime);
+            spriteAnimations[currentSpriteAnimation].Update(gameTime);
 
             healthRect = new Rectangle((int)position.X - (texture.Width / 2), (int)position.Y - 50, health, 20);
 
@@ -138,9 +135,9 @@ namespace Water
             // ------------------------- TEMP -------------------------//
             spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
 
-            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
+            spriteBatch.DrawString(spriteFont, "X " + Position.X.ToString(), new Vector2(100, 200), Color.Black);
 
-            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Y " + Position.Y.ToString(), new Vector2(200, 200), Color.Black);
 
             spriteBatch.DrawString(spriteFont, "Direction " + direction.ToString(), new Vector2(300, 400), Color.Black);
             // ------------------------- TEMP -------------------------//
@@ -201,6 +198,9 @@ namespace Water
             }
 
             spriteBatch.End();
+            spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, Position);
+            Size = spriteAnimations[currentSpriteAnimation].Size;
+       
         }
     }
 }
