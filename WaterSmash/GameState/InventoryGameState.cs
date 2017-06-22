@@ -20,9 +20,12 @@ namespace Water
         Texture2D bg;       // Holds InverntoryGameState background
         Texture2D bottle;   // Holds bottle texture image
         Texture2D textArea; // Holds textarea
+        Texture2D slot;
 
         //Player player = new Player(); // Player instance used for testing purposes
         Player player;
+
+        Inventory inventory;
 
         private AEquipable current; // Holds current selected item
 
@@ -94,7 +97,8 @@ namespace Water
             // y position placement for inventory slots
             int y = 40;
 
-            foreach (Texture2D slot in player.GetInventory().slots)
+            
+            foreach (Texture2D t in inventory.slots)
             {
                 // When 6 inventory slots are placed, start new line
                 if (count == 6)
@@ -110,27 +114,27 @@ namespace Water
                 spriteBatch.Draw(slot, new Rectangle(x, y, slot.Width, slot.Height), Color.White);
 
                 // Check for items in items list
-                if (itemPointer < player.GetInventory().items.Count)
+                if (itemPointer < inventory.items.Count)
                 {
                     // Check if item to draw is equipped -> items that are equipped are out of inventory, so not drawn here
-                    if (!player.GetInventory().items[itemPointer].isEquipped)
+                    if (!inventory.items[itemPointer].isEquipped)
                     {
                         // Check if item is selected
-                        if (player.GetInventory().items[itemPointer].isSelected)
+                        if (inventory.items[itemPointer].isSelected)
                         {
                             // Set this item as current.
-                            current = player.GetInventory().items[itemPointer];
+                            current = inventory.items[itemPointer];
                             // Draw item image with selection (Slightly bigger)
-                            spriteBatch.Draw(player.GetInventory().items[itemPointer].texture, new Rectangle(x + 10, y + 10, player.GetInventory().items[count].texture.Width + 20, player.GetInventory().items[count].texture.Height + 20), Color.White);
+                            spriteBatch.Draw(inventory.items[itemPointer].texture, new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width + 20, inventory.items[count].texture.Height + 20), Color.White);
                             // Save on screen location of item
-                            player.GetInventory().items[itemPointer].position = new Vector2(x + 10, y + 10);
+                            inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
                         }
                         else
                         {
                             // Draw item image
-                            spriteBatch.Draw(player.GetInventory().items[itemPointer].texture, new Rectangle(x + 10, y + 10, player.GetInventory().items[count].texture.Width, player.GetInventory().items[count].texture.Height), Color.White);
+                            spriteBatch.Draw(inventory.items[itemPointer].texture, new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width, inventory.items[count].texture.Height), Color.White);
                             // Save on screen location of item
-                            player.GetInventory().items[itemPointer].position = new Vector2(x + 10, y + 10);
+                            inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
                         }
                     }
                     // Increment counter to get next item
@@ -141,13 +145,13 @@ namespace Water
             }
 
             // Draw textarea to display current information about selected item
-            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), player.GetInventory().slots[0].Height * 6, player.GetInventory().slots[0].Width * 6, textArea.Height), Color.White);
+            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), inventory.slots[0].Height * 6, inventory.slots[0].Width * 6, textArea.Height), Color.White);
 
             // Draw information about current selected item
-            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (player.GetInventory().slots[0].Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
+            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
 
             spriteBatch.End();
         }
@@ -167,6 +171,8 @@ namespace Water
                 }
             }
 
+            inventory = player.GetInventory();
+
             // Get background image
             bg = content.Load<Texture2D>("inventory\\bg");
             // Get bottle image 
@@ -175,17 +181,44 @@ namespace Water
             textArea = content.Load<Texture2D>("inventory\\inventory_tekst");
             // Load spritefont
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+            
+            slot = content.Load<Texture2D>("inventory\\inventory_slot");
 
             // Set first item as selected item
-            if (player.GetInventory().items.Count != 0)
+            if (inventory.items.Count != 0)
             {
-                player.GetInventory().items[0].isSelected = true;
+                inventory.items[0].isSelected = true;
             }
         }
 
         public void HandleInput(KeyboardState state)
         {
+            // Get index of item set as current
+            int index = inventory.items.IndexOf(current);
 
+            // Check if right key is pressed
+            if (oldState.IsKeyUp(Keys.Right) && state.IsKeyDown(Keys.Right))
+            {
+                nextItem(index);
+            }
+            // Check if left key is pressed
+            else if (oldState.IsKeyUp(Keys.Left) && state.IsKeyDown(Keys.Left))
+            {
+                previousItem(index);
+            }
+            // Check if 'F' key is pressed
+            else if (oldState.IsKeyUp(Keys.F) && state.IsKeyDown(Keys.F))
+            {
+                equipItem();
+            }
+            // Check if 'Delete' key is pressed
+            else if (oldState.IsKeyUp(Keys.Delete) && state.IsKeyDown(Keys.Delete))
+            {
+                dropItem();
+            }
+
+
+            oldState = state;
         }
 
         public void Leaving()
@@ -195,74 +228,66 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
-            // Get current keyboardstate
-            KeyboardState newState = Keyboard.GetState();
 
-            // Get index of item set as current
-            int index = player.GetInventory().items.IndexOf(current);
+        }
 
-            // Check if right key is pressed
-            if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
+        private void nextItem(int index)
+        {
+            // Check if List which holds items has a next item after current
+            if (index + 1 < inventory.items.Count)
             {
-                // Check if List which holds items has a next item after current
-                if (index + 1 < player.GetInventory().items.Count)
+                // Deselect current item
+                current.isSelected = false;
+                // Set next item as new current item
+                current = inventory.items[index + 1];
+                // Set select new current item
+                current.isSelected = true;
+            }
+        }
+
+        private void previousItem(int index)
+        {
+            // Check if List which holds items has an item before current
+            if (index - 1 >= 0)
+            {
+                // Deselect current item
+                current.isSelected = false;
+                // Set previous item as new current item
+                current = inventory.items[index - 1];
+                // Set select new current item
+                current.isSelected = true;
+
+            }
+        }
+
+        private void dropItem()
+        {
+            // Check if current not is null
+            if (current != null)
+            {
+                // Remove item from inventory
+                inventory.RemInventoryObject(current);
+            }
+        }
+
+        private void equipItem()
+        {
+            // Check if current not is null
+            if (current != null)
+            {
+                // Check if current is instance of Cap
+                if (current is Cap)
                 {
-                    // Deselect current item
-                    current.isSelected = false;
-                    // Set next item as new current item
-                    current = player.GetInventory().items[index + 1];
-                    // Set select new current item
-                    current.isSelected = true;
+                    // Equip Cap
+                    player.equipCap((Cap)current);
+                }
+                // Check if current is instance of Label
+                else if (current is Label)
+                {
+                    // Equip Label
+                    player.equipLabel((Label)current);
                 }
             }
-            // Check if left key is pressed
-            else if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
-            {
-                // Check if List which holds items has an item before current
-                if (index - 1 >= 0)
-                {
-                    // Deselect current item
-                    current.isSelected = false;
-                    // Set previous item as new current item
-                    current = player.GetInventory().items[index - 1];
-                    // Set select new current item
-                    current.isSelected = true;
-
-                }
-            }
-            // Check if 'F' key is pressed
-            else if (oldState.IsKeyUp(Keys.F) && newState.IsKeyDown(Keys.F))
-            {
-                // Check if current not is null
-                if (current != null)
-                {
-                    // Check if current is instance of Cap
-                    if (current is Cap)
-                    {
-                        // Equip Cap
-                        player.equipCap((Cap)current);
-                    }
-                    // Check if current is instance of Label
-                    else if (current is Label)
-                    {
-                        // Equip Label
-                        player.equipLabel((Label)current);
-                    }
-                }
-            }
-            // Check if 'Delete' key is pressed
-            else if (oldState.IsKeyUp(Keys.Delete) && newState.IsKeyDown(Keys.Delete))
-            {
-                // Check if current not is null
-                if (current != null)
-                {
-                    // Remove item from inventory
-                    player.GetInventory().RemInventoryObject(current);
-                }
-            }
-
-
-            oldState = newState;
         }
     }
 }
