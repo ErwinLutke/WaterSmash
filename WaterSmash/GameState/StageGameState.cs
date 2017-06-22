@@ -202,7 +202,7 @@ namespace Water
 
             spriteBatch.Draw(rect, coor, Color.White);
 
-            player.Draw(spriteBatch);
+            player.Draw(spriteBatch, gameTime);
             //enemy.Draw(spriteBatch);
             if (boundingBox)
             {
@@ -213,13 +213,13 @@ namespace Water
 
             foreach (GameObject obc in GameObjects)
             {
-                obc.Draw(spriteBatch);
+                obc.Draw(spriteBatch, gameTime);
             }
             if (enemies.Count > 0)
             {
                 foreach (Enemy enemy in enemies)
                 {
-                    enemy.Draw(spriteBatch);
+                    enemy.Draw(spriteBatch, gameTime);
                 }
             }
 

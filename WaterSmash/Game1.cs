@@ -45,7 +45,7 @@ namespace Water
             gameStateManager.Add("menu", new MenuGameState(gameStateManager));
             gameStateManager.Add("pause", new PauseGameState(gameStateManager));
 
-            gameStateManager.Change("inventory");
+            gameStateManager.Change("stage");
         }
 
         /// <summary>

@@ -85,18 +85,6 @@
 /processorParam:TextureFormat=Color
 /build:inventory/lable.png
 
-#begin inventory/bg.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:inventory/bg.png
-
 #begin inventory/selection.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -519,7 +507,7 @@
 /processorParam:TextureFormat=Color
 /build:Images/Actions/bottleThrow.png
 
-#begin inventory/bg_.png
+#begin inventory/bg_1920x1080.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -529,17 +517,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:inventory/bg_.png
-
-#begin inventory/_bg.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:inventory/_bg.png
+/build:inventory/bg_1920x1080.png
 

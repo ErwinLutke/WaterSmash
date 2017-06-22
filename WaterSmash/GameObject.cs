@@ -48,7 +48,7 @@ namespace Water
             this.Velocity = Velocity;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gametime)
 	    {
 	        spriteBatch.Draw(texture, Position, Color.White);
 	    }

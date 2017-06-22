@@ -51,17 +51,17 @@ namespace Water
                 SamplerState.PointClamp,
                 null, null, null, matrix);
 
-            //Viewport viewport = graphics.Viewport;
+            Viewport viewport = graphics.Viewport;
 
             //Draw background full screen
-            spriteBatch.Draw(bg, bg.Bounds, Color.White);
+            spriteBatch.Draw(bg, viewport.Bounds, Color.White);
 
-            ////Draw instruction text for equipping and dropping items
-            //spriteBatch.DrawString(spriteFont, "Press 'F' to equip", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 5), Color.White);
-            //spriteBatch.DrawString(spriteFont, "Press 'Del' to drop", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 10), Color.White);
+            //Draw instruction text for equipping and dropping items
+            spriteBatch.DrawString(spriteFont, "Press 'F' to equip", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 5), Color.White);
+            spriteBatch.DrawString(spriteFont, "Press 'Del' to drop", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 10), Color.White);
 
-            ////Draw bottle image
-            //spriteBatch.Draw(bottle, bottle.Bounds, Color.White);
+            //Draw bottle image
+            spriteBatch.Draw(bottle, new Rectangle(0,0, bottle.Bounds.Width, bottle.Bounds.Height), Color.White);
 
             ////Draw textareas for displaying information about current equipables
             //spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 100) * 5, (viewport.Height / 100) * 50, textArea.Width / 2, textArea.Height / 2 + (textArea.Height / 100) * 50), Color.White);
@@ -179,8 +179,8 @@ namespace Water
             inventory = player.GetInventory();
 
             // Get background image
-            bg = content.Load<Texture2D>("inventory\\_bg");
-            bgSize = new Point(500, 350);
+            bg = content.Load<Texture2D>("inventory\\bg_1920x1080");
+            bgSize = new Point(1920,1080);
             Point screenSize = graphics.Viewport.Bounds.Size;
             var scaleX = (float)screenSize.X / bgSize.X;
             var scaleY = (float)screenSize.Y / bgSize.Y;
