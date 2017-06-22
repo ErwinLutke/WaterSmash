@@ -26,8 +26,6 @@ namespace Water
             position = _actor.Position; // Set or update current actor position
             _actor.currentSpriteAnimation = "move";
         }
-
-        KeyboardState oldState;
         public void HandleInput(KeyboardState state)
         {
             if(state.IsKeyDown(Keys.Up))

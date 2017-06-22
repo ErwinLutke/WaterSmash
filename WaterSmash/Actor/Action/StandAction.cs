@@ -52,12 +52,7 @@ namespace Water
                 if (!_actor.isThrowing)
                 {
                     _actionStateMachine.Change("throw", "stand");
-                } 
-            }
-
-        
-        
-               
+                }    
             }            
             else if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
             {

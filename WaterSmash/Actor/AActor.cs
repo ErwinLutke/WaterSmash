@@ -63,7 +63,7 @@ namespace Water
 
         public Direction directionAtThrow { get; set; }
 
-        public Texture2D texture { get; set; }
+        //public Texture2D texture { get; set; }
         public Dictionary<string, SpriteAnimation> spriteAnimations;
         public string currentSpriteAnimation;
         
@@ -79,6 +79,8 @@ namespace Water
         /// </summary>
         Texture2D healthTexture;
         Rectangle healthRect;
+
+        public ActionStateMachine actionStateMachine;
 
         public AActor()
         {
@@ -104,6 +106,11 @@ namespace Water
         public void load()
         {
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+            texture = content.Load<Texture2D>("inventory\\lable");
+
+            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+
+            healthTexture = content.Load<Texture2D>("healthbar");
         }
 
         public Inventory GetInventory()
@@ -130,7 +137,7 @@ namespace Water
         {
             actionStateMachine.Update(gameTime);
 
-            healthRect = new Rectangle((int)position.X - (texture.Width / 2), (int)position.Y - 50, health, 20);
+            healthRect = new Rectangle((int)Position.X, (int)Position.Y - 50, health, 20);
 
             // If Actor currently throwing -> update throwAction whatever the current actionstate is
             if (isThrowing)
@@ -152,42 +159,42 @@ namespace Water
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            //spriteBatch.Begin();
 
             Viewport viewport = graphics.Viewport;
             
             // ------------------------- TEMP -------------------------//
             spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
 
-            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
+            //spriteBatch.DrawString(spriteFont, "X " + Position.X.ToString(), new Vector2(100, 200), Color.Black);
 
-            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.Black);
+            //spriteBatch.DrawString(spriteFont, "Y " + Position.Y.ToString(), new Vector2(200, 200), Color.Black);
 
-            spriteBatch.DrawString(spriteFont, "Direction " + direction.ToString(), new Vector2(300, 400), Color.Black);
+            //spriteBatch.DrawString(spriteFont, "Direction " + direction.ToString(), new Vector2(300, 400), Color.Black);
             // ------------------------- TEMP -------------------------//
 
-            spriteBatch.Draw(texture, position, Color.White);
+            spriteBatch.Draw(texture, Position, Color.White);
 
             spriteBatch.Draw(healthTexture, healthRect, Color.Red);
 
             // Check if actor currently is throwing
-            if(!isThrowing)
+            if (!isThrowing)
             {
                 // Check if current action is ThrowAction
                 if (actionStateMachine.Current is ThrowAction)
                 {
                     // Check if actor is able to throw again according to time delay
-                    if (timeAtThrow == 0 || (gameTime.TotalGameTime.TotalSeconds - timeAtThrow) > 1.5)
-                    {
-                        // Set time at throw
-                        timeAtThrow = gameTime.TotalGameTime.TotalSeconds;
-                        // Save ThrowAction to be able to continue throwing
-                        throwAction = (ThrowAction)actionStateMachine.Current;
+                    //if (timeAtThrow == 0 || (gameTime.TotalGameTime.TotalSeconds - timeAtThrow) > 1.5)
+                    //{
+                    // Set time at throw
+                    //timeAtThrow = gameTime.TotalGameTime.TotalSeconds;
+                    // Save ThrowAction to be able to continue throwing
+                    throwAction = (ThrowAction)actionStateMachine.Current;
 
-                        directionAtThrow = direction;
+                    directionAtThrow = direction;
 
-                        isThrowing = true;
-                    }
+                    isThrowing = true;
+                    //}
                 }
             }
             else if (isThrowing)
@@ -196,11 +203,9 @@ namespace Water
                 spriteBatch.Draw(throwAction.bottle, throwAction.bottlePosition, Color.White);
 
                 // ------------------------- TEMP -------------------------//
-                spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(200, 300), Color.White);
-                spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(300, 300), Color.White);
+                //spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(200, 300), Color.White);
+                //spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(300, 300), Color.White);
                 // ------------------------- TEMP -------------------------//
-
-        }
 
                 // According to direction at throw set when to stop / reset the throwaction 
                 if (directionAtThrow == Direction.RIGHT)
@@ -223,7 +228,7 @@ namespace Water
                 }
             }
 
-            spriteBatch.End();
+            //spriteBatch.End();
             spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, Position);
             Size = spriteAnimations[currentSpriteAnimation].Size;
         }

@@ -53,8 +53,7 @@ namespace Water
             {
                 if (state.IsKeyDown(Keys.Left)) // continue going left if left key is pressed
                 {
-                    velocity.X = -3f;
-                    
+                    velocity.X = -3f;                  
                     _actor.direction = AActor.Direction.LEFT; // Set current facing direction
                 }
                 else if (state.IsKeyDown(Keys.Right)) // continue going to right if right key is pressed

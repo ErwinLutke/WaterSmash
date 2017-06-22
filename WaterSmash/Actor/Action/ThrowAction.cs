@@ -61,7 +61,7 @@ namespace Water
 
             spriteBatch = new SpriteBatch(graphics);
 
-            bottle = content.Load<Texture2D>("Images\\Actions\\bottleThrow");
+            bottle = content.Load<Texture2D>("Images\\Actions\\bottleThrow_small");
 
             Throw();
 
@@ -81,7 +81,7 @@ namespace Water
 
         public void Throw()
         {
-            bottlePosition = _actor.position;
+            bottlePosition = _actor.Position;
 
             startPosition = bottlePosition;
 
@@ -89,12 +89,12 @@ namespace Water
 
             if (_actor.direction == AActor.Direction.RIGHT)
             {
-                velocity.X = 25f;
+                velocity.X = 10f;
 
             }
             else if (_actor.direction == AActor.Direction.LEFT)
             {
-                velocity.X = -25f;             
+                velocity.X = -10f;             
             }
 
         }
@@ -113,7 +113,7 @@ namespace Water
                 fallDown = true;
             }
 
-            bottlePosition.Y -= 25f;
+            bottlePosition.Y -= 5f;
             velocity.Y = -1f;
 
             if (fallDown)
