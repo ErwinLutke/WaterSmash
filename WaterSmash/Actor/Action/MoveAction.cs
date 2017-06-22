@@ -8,66 +8,70 @@ namespace Water
     {
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
-        private KeyLocker _keyLocker;
 
         private Vector2 position; // Holds current actor position
+
+        KeyboardState oldState;
 
         public MoveAction(AActor actor)
         {
             _actor = actor;
             _actionStateMachine = actor.actionStateMachine;
-            _keyLocker = new KeyLocker();
         }
-        
+
         public void Entered(params object[] args)
         {
             position = _actor.Position; // Set or update current actor position
-            _actor.currentSpriteAnimation = "move";
         }
 
-        KeyboardState oldState;
         public void HandleInput(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Right))
+            if (state.IsKeyDown(Keys.Up))
             {
-                moveRight();
-            }
-            else if (state.IsKeyDown(Keys.Left))
-            {
-                moveLeft();
-            }
-            else if (state.IsKeyDown(Keys.Space))
-            {
+                // Switch to JumpAction
                 _actionStateMachine.Change("jump");
             }
             else if (state.IsKeyDown(Keys.Down))
             {
+                // Switch to CrouchAction
                 _actionStateMachine.Change("crouch");
+            }
+            else if (oldState.IsKeyUp(Keys.X) && state.IsKeyDown(Keys.X))
+            {
+                // if actor currently is throwing, cannot switch to trowAction
+                if (!_actor.isThrowing)
+                {
+                    // Switch to ThrowAction
+                    _actionStateMachine.Change("throw", "move");
+                }
+            }
+            else if (state.IsKeyDown(Keys.Right))
+            {
+                MoveRight();
+            }
+            else if (state.IsKeyDown(Keys.Left))
+            {
+                MoveLeft();
             }
             else
             {
+                // Switch to StandAction
                 _actionStateMachine.Change("stand");
             }
-
-            if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
-            {
-                _actionStateMachine.Change("attack");
-                _keyLocker.LockKey(Keys.Z);
-            }
-
-            _keyLocker.CheckInputLock(state, Keys.Space);
-            _keyLocker.CheckInputLock(state, Keys.Z);
 
             oldState = state;
         }
 
-        private void moveLeft()
+        public void MoveRight()
         {
-            position.X -= 2f; // Decrement X position (Move left)
-        }
-        private void moveRight()
-        {
+            _actor.direction = AActor.Direction.RIGHT; // Set facing position to right
             position.X += 2f; // Increment X position (move right)
+        }
+
+        public void MoveLeft()
+        {
+            _actor.direction = AActor.Direction.LEFT; // Set facing position to left
+            position.X -= 2f; // Decrement X position (Move left)
         }
 
         public void Update(GameTime gameTime)
@@ -77,7 +81,7 @@ namespace Water
 
         public void Leaving()
         {
-            _actor.spriteAnimations["move"].Reset();
+
         }
 
     }
