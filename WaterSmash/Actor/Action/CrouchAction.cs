@@ -11,7 +11,6 @@ namespace Water
         private AActor _actor;
         private ActionStateMachine _actionStateMachine;
 
-        private ContentManager content = GameServices.GetService<ContentManager>();
         private Vector2 position; // Holds current actor position
 
         public CrouchAction(AActor actor)
@@ -66,6 +65,10 @@ namespace Water
 
         public void Crouch()
         {
+            if(!state.IsKeyDown(Keys.Down))
+            {
+                _actionStateMachine.Change("stand");
+            }
 
         }
 
@@ -76,7 +79,7 @@ namespace Water
 
         public void Leaving()
         {
-            _actor.texture = content.Load<Texture2D>("inventory\\lable");
+            _actor.spriteAnimations["crouch"].Reset();
         }
     }
 }

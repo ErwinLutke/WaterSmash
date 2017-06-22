@@ -12,42 +12,37 @@ using System.Threading.Tasks;
 namespace Water
 {
     [DataContract]
-    abstract class AActor
+    abstract class AActor : GameObject
     {
         [DataMember]
         string name { get; set; }
-        Texture2D spriteSheet;
-        
 
         [DataMember]
         protected Inventory inventory;
 
-        public ActionStateMachine actionStateMachine;
+        public int health { get; set; }
+        public int attack { get; set; }
+        public int defense { get; set; }
 
         bool _isInvunerable = false;
 
-        public int health { get; set; }
-        public int attack { get; set; }
-        public int defense { get; set;}
 
-        public Vector2 position { get; set; } // Holds current position of actor
+        public ActionStateMachine actionStateMachine;
 
+        public Dictionary<string, SpriteAnimation> spriteAnimations;
+        public string currentSpriteAnimation;
+        
 
-        public Texture2D texture { get; set; }
-
-        SpriteBatch spriteBatch;
+        // TEMP - debugging
         SpriteFont spriteFont;
-
-        private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
 
         public AActor()
         {
             inventory = new Inventory();
             actionStateMachine = new ActionStateMachine();
-
-            spriteBatch = new SpriteBatch(graphics);
-
+            spriteAnimations = new Dictionary<string, SpriteAnimation>();
+            
             actionStateMachine.Add("move", new MoveAction(this));
             actionStateMachine.Add("stand", new StandAction(this));
             actionStateMachine.Add("jump", new JumpAction(this));
@@ -56,43 +51,60 @@ namespace Water
             actionStateMachine.Add("crouch", new CrouchAction(this));
         }
 
+        // TEMP - debugging
+        public void load()
+        {
+            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
+        }
 
         public Inventory GetInventory()
         {
             return inventory;
         }
-
-        public void loadTextures()
-        {
-            texture = content.Load<Texture2D>("inventory\\lable");
-            spriteFont = content.Load<SpriteFont>("inventory\\inventory");
-        }
-
+    
         public void HandleInput(KeyboardState state)
         {
             actionStateMachine.HandleInput(state);
         }
 
+        int timeSinceLastFrame;
         public void Update(GameTime gameTime)
         {
             actionStateMachine.Update(gameTime);
+            spriteAnimations[currentSpriteAnimation].Update(gameTime);
+
+            if (this is Enemy)
+            {
+                timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
+                if (timeSinceLastFrame > 2000)
+                {
+                    timeSinceLastFrame -= 2000;
+                    actionStateMachine.Change("attack");
+                }
+            }
         }
 
-        public void Draw(GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            //Rectangle sprite = new Rectangle(26, 24, 55, 106);
+            //Rectangle playerPos = new Rectangle(position.ToPoint().X, position.ToPoint().Y - sprite.Height, sprite.Width, sprite.Height);
 
-            Viewport viewport = graphics.Viewport;
+            //Viewport viewport = graphics.Viewport;
+            if (this is Player)
+            {
+                // TEMP - debugging
+                spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.White);
+                spriteBatch.DrawString(spriteFont, "X " + Position.X.ToString(), new Vector2(100, 200), Color.White);
+                spriteBatch.DrawString(spriteFont, "Y " + Position.Y.ToString(), new Vector2(200, 200), Color.White);
+            } else
+            {
+                spriteBatch.DrawString(spriteFont, health.ToString(), new Vector2(300, 100), Color.White);
+            }
+            //Rectangle rect = new Rectangle(position.ToPoint().X, position.ToPoint().Y - texture.Height, texture.Width, texture.Height);
+            //spriteBatch.Draw(texture, rect, Color.White);
 
-            spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
-
-            spriteBatch.DrawString(spriteFont, "X " + position.X.ToString(), new Vector2(100, 200), Color.Black);
-
-            spriteBatch.DrawString(spriteFont, "Y " + position.Y.ToString(), new Vector2(200, 200), Color.Black);
-
-            spriteBatch.Draw(texture, position, Color.White);
-
-            spriteBatch.End();
+            spriteAnimations[currentSpriteAnimation].Draw(spriteBatch, Position);
+            Size = spriteAnimations[currentSpriteAnimation].Size;
         }
 
 
