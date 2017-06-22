@@ -86,7 +86,7 @@ namespace Water
             direction = Direction.RIGHT;    // Sets starting direction
             health = 100;
             data = new Color[health * 10];
-            inventory = new Inventory();
+            inventory = new Inventory(30);
             actionStateMachine = new ActionStateMachine();
             spriteAnimations = new Dictionary<string, SpriteAnimation>();
 
