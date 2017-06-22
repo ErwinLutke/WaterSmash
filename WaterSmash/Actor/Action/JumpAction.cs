@@ -41,7 +41,7 @@ namespace Water
             {
                 velocity.X = -3f; // substract velocity, lean left
             }
-            else if (oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
+            else if (oldState.IsKeyUp(Keys.X) && state.IsKeyDown(Keys.X))
             {
                 // if actor currently is throwing, cannot switch to trowAction
                 if(!_actor.isThrowing)

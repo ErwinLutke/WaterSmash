@@ -69,16 +69,16 @@ namespace Water
 
         public Inventory generateInventory()
         {
-            Inventory inventory = new Inventory(4);
+            //Inventory inventory = new Inventory(4);
 
             rnd = new Random(Guid.NewGuid().GetHashCode());
 
-            for(int i = 0; i < inventory.capacity; i++)
-            {
-                inventory.AddInventoryObject(generateEquipable(rnd.Next(2)));
-            }
+            //for(int i = 0; i < inventory.capacity; i++)
+            //{
+            //    inventory.AddInventoryObject(generateEquipable(rnd.Next(2)));
+            //}
 
-            return inventory;
+            return null;
         }
 
         /// <summary>

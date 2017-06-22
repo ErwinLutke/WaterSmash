@@ -26,7 +26,7 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Up))
+            if (state.IsKeyDown(Keys.Space))
             {
                 // Switch to JumpAction
                 _actionStateMachine.Change("jump");

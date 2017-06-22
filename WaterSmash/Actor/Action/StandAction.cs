@@ -30,7 +30,7 @@ namespace Water
         }
 
 
-        KeyboardState oldState;
+
 
         public void HandleInput(KeyboardState state)
         {
@@ -49,7 +49,7 @@ namespace Water
                 _actionStateMachine.Change("attack");
                 _keyLocker.LockKey(Keys.Z);
             }
-            else if (oldState.IsKeyUp(Keys.Space) && state.IsKeyDown(Keys.Space))
+            else if (oldState.IsKeyUp(Keys.X) && state.IsKeyDown(Keys.X))
             {
                 // Change to ThrowAction if actor is currently not throwing
                 if (!_actor.isThrowing)

@@ -82,6 +82,7 @@ namespace Water
     
         public AActor()
         {
+            load();
             direction = Direction.RIGHT;    // Sets starting direction
             health = 100;
             data = new Color[health * 10];
