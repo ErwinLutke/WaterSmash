@@ -8,6 +8,8 @@ namespace Water
 {
     public class Generator
     {
+        ContentManager content = GameServices.GetService<ContentManager>();
+
         /// <summary>
         /// Userd for generating randoms
         /// </summary>
@@ -204,8 +206,6 @@ namespace Water
         Dictionary<string, Dictionary<string, SpriteAnimation>> spriteAnimations;
         private void setSpriteAnimations()
         {
-            ContentManager content = GameServices.GetService<ContentManager>();
-
             spriteAnimations = new Dictionary<string, Dictionary<string, SpriteAnimation>>();
             spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
             spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
@@ -214,6 +214,30 @@ namespace Water
             spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
             spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
             spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
+        }
+
+        /// <summary>
+        /// "random" map generator, generates a straight line so far...
+        /// </summary>
+        /// <returns></returns>
+        /// 
+        private List<object> GameObjects = new List<object>();//holds all map blocks
+        GameObject Floor;
+        int map_x = 0;
+        public List<object> generateMap()
+        { 
+            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
+            int maxBlox = 10;//max amount of blocks in game
+            while (GameObjects.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
+            {
+                Vector2 testvec = new Vector2(map_x, Floor.Position.Y - 20);//
+                Texture2D testobj = content.Load<Texture2D>("Images/stages/testobj");//
+
+                GameObject test = new GameObject(testobj, testvec);//
+                GameObjects.Add(test);//voeg de vloer toe aan de lijst met objects
+                map_x = map_x + 100;//increment de x waarde van map_x, om het volgende object op de juist plek te spawnen
+            }
+            return GameObjects;
         }
 
     }

@@ -28,7 +28,7 @@ namespace Water
 
 
         private bool jumping = false;
-        private List<GameObject> GameObjects = new List<GameObject>();//holds all map blocks
+
         private List<Enemy> enemies = new List<Enemy>();//holds all enemies
         private int killedEnemies = 0;//total killed enemies 
 
@@ -83,6 +83,7 @@ namespace Water
             }
             else
             {
+                _currentStage = new Stage();
                 player = new Player();
             }
 
@@ -135,7 +136,7 @@ namespace Water
             // TEMP - debugging purpose
             player.load();
             enemy.load();
-            generateMap();
+            //generateMap();
             data = new Color[100 * 10];
             progressBar();
 
@@ -159,8 +160,9 @@ namespace Water
             if (state.IsKeyUp(Keys.Space))
             {
                 jumping = false;
+                
             }
-            foreach (var map in GameObjects)
+            foreach (var map in _currentStage.GameObjects)
             {
                 if (state.IsKeyUp(Keys.Left))
                 {
@@ -209,7 +211,7 @@ namespace Water
                 spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
             }
 
-            foreach (GameObject obc in GameObjects)
+            foreach (GameObject obc in _currentStage.GameObjects)
             {
                 obc.Draw(spriteBatch);
             }
@@ -290,7 +292,7 @@ namespace Water
         private void checkGameObjColl()
         {
             //float y = player.Position.Y;
-            foreach (var obj in GameObjects)
+            foreach (GameObject obj in _currentStage.GameObjects)
             {
                 if (player.BoundingBox.Intersects(obj.BoundingBox))
                 {
@@ -364,25 +366,7 @@ namespace Water
             
         }
 
-        //field voor generatemap()
-        int map_x = 0;
-        /// <summary>
-        /// methode om een map te genereren.
-        /// maakt een vloer waar de AActors op kunnen lopen
-        /// </summary>
-        private void generateMap()
-        {
-            int maxBlox = 10;//max amount of blocks in game
-            while (GameObjects.Count() < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
-            {
-                Vector2 testvec = new Vector2(map_x, Floor.Position.Y - 20);//
-                Texture2D testobj = content.Load<Texture2D>("Images/stages/testobj");//
-                
-                GameObject test = new GameObject(testobj, testvec);//
-                GameObjects.Add(test);//voeg de vloer toe aan de lijst met objects
-                map_x = map_x + 100;//increment de x waarde van map_x, om het volgende object op de juist plek te spawnen
-            }
-        }
+
 
         //fields voor spawnen van enemies, X en Y positie
         float y; 
