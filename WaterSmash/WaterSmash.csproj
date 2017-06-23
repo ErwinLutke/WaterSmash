@@ -162,6 +162,9 @@
   <ItemGroup>
     <Content Include="Content\audio\worldmap.mp3" />
     <Content Include="Content\Images\bounding-box.png" />
+    <Content Include="Content\Images\characters\enemy\attack.png" />
+    <Content Include="Content\Images\characters\enemy\move.png" />
+    <Content Include="Content\Images\characters\enemy\stand.png" />
     <Content Include="Content\Images\characters\player\attack.png" />
     <Content Include="Content\Images\characters\player\crouch.png" />
     <Content Include="Content\Images\characters\player\hurt.png" />
