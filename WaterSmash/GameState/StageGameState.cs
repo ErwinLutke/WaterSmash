@@ -21,9 +21,10 @@ namespace Water
         private static GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
 
-        //RICKS CODE:@:@:@:@
-        //
-
+        /// <summary>
+        /// Camera for following the player around
+        /// </summary>
+        private Camera2D camera;
 
 
 
@@ -41,6 +42,8 @@ namespace Water
 
         SpriteBatch spriteBatch;
         Texture2D map;
+
+
         Point mapSize;
         Matrix matrix;
 
@@ -66,12 +69,6 @@ namespace Water
             colourData[0] = Color.Red; //The Colour of the rectangle
             pixel.SetData<Color>(colourData);
 
-            map = content.Load<Texture2D>("Images/stages/stage_1/map");
-            mapSize = new Point(500, 350);
-            Point screenSize = graphics.Viewport.Bounds.Size;
-            var scaleX = (float)screenSize.X / mapSize.X;
-            var scaleY = (float)screenSize.Y / mapSize.Y;
-            matrix = Matrix.CreateScale(scaleX, scaleY, 1.0f);
 
             if (args.Length > 0)
             {
@@ -84,8 +81,9 @@ namespace Water
                 player = new Player();
             }
 
+            loadCameraSettings();
 
-            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
+            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 20));
             enemy = new Enemy();
             enemy.health = 100;
             player.attack = 11;
@@ -93,8 +91,10 @@ namespace Water
             //   enemy = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 260));
 
             //player.position = new Vector2(screenSize.X / 20, screenSize.Y / 1.4f); // Set player starting position
-            player.Position = new Vector2(25, Floor.Position.Y); // Set player starting position
+            player.Position = new Vector2(0, Floor.Position.Y); // Set player starting position
             enemy.Position = new Vector2(125, Floor.Position.Y); // Set player starting position
+
+            //    cameraLocation = new Point(player.Position.ToPoint().X, player.Position.ToPoint().Y);
 
             player.actionStateMachine.Change("stand");
             enemy.actionStateMachine.Change("stand");
@@ -173,6 +173,7 @@ namespace Water
 
         public void Update(GameTime gameTime)
         {
+            camera.Update(gameTime);
             player.Update(gameTime);
             enemy.Update(gameTime);
             checkCollisions();
@@ -186,7 +187,13 @@ namespace Water
         bool boundingBox = false;
         public void Draw(GameTime gameTime)
         {
-             // Begin drawing and disable AA for pixally art
+            //cam.Pos = new Vector2(500.0f, 200.0f);
+            // Begin drawing and disable AA for pixally art
+            //spriteBatch.Begin(SpriteSortMode.Deferred,
+            //    BlendState.AlphaBlend,
+            //    SamplerState.PointClamp,
+            //    null, null, null, matrix);
+            // Begin drawing and disable AA for pixally art
             spriteBatch.Begin(SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
@@ -368,6 +375,23 @@ namespace Water
             coor = new Vector2(250, 10);
             for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
             rect.SetData(data);
+        }
+
+
+        
+        private void loadCameraSettings()
+        {
+            camera = new Camera2D();
+            camera.Focus = player;
+            camera.Scale = 1;
+
+            map = content.Load<Texture2D>("Images/stages/stage_1/map");
+            mapSize = new Point(500, 350);
+            //Point screenSize = graphics.Viewport.Bounds.Size;
+            //var scaleX = (float)screenSize.X / mapSize.X;
+            //var scaleY = (float)screenSize.Y / mapSize.Y;
+            //matrix = Matrix.CreateScale(scaleX, scaleY, 1.0f);
+            
         }
     }
 }
