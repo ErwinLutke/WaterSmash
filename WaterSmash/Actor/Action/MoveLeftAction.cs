@@ -30,10 +30,19 @@ namespace Water
             {
                 moveLeft();
             }
+            else if(state.IsKeyDown(Keys.Right))
+            {
+                _actionStateMachine.Change("moveRight");
+            }
+            else
+            {
+                _actionStateMachine.Change("stand");
+            }
        }
 
         private void moveLeft()
         {
+            _actor.direction = AActor.Direction.LEFT; // Set facing position to left
             position.X -= 2f; // Decrement X position (Move left)
         }
 
@@ -47,7 +56,7 @@ namespace Water
         {
             _actor.spriteAnimations["moveLeft"].Reset();
         }
-            
+
 
     }
 }

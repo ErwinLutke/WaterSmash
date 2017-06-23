@@ -12,7 +12,7 @@ namespace Water
      class Enemy : AActor
     {
         private bool inRange = false;
-        private int sightRange = 50;
+        private int sightRange = 500;
         private bool cooldown = false;
         //private HealthBar healthbar;
         
@@ -36,6 +36,11 @@ namespace Water
                 actionStateMachine.Change("jump");
             }
             
+        }
+
+        public void setSightRange(int range)
+        {
+            this.sightRange = range;
         }
 
         public bool isInRange()

@@ -67,6 +67,7 @@ namespace Water
 
             if (args.Length > 0)
             {
+
                 // Save previous action to switch back to after throw
                 prevAction = args[0].ToString();
             }
@@ -82,6 +83,7 @@ namespace Water
         public void Throw()
         {
             bottlePosition = _actor.Position;
+            bottlePosition.Y -= _actor.Size.Y;
 
             startPosition = bottlePosition;
 
@@ -89,12 +91,12 @@ namespace Water
 
             if (_actor.direction == AActor.Direction.RIGHT)
             {
-                velocity.X = 25f;
+                velocity.X = 20f;
 
             }
             else if (_actor.direction == AActor.Direction.LEFT)
             {
-                velocity.X = -25f;
+                velocity.X = -20f;
             }
 
         }
@@ -108,13 +110,13 @@ namespace Water
         {
             bottlePosition += velocity;
 
-            if (bottlePosition.Y < (startPosition.Y - 50))
+            if (bottlePosition.Y < (startPosition.Y - 20))
             {
                 fallDown = true;
             }
 
-            bottlePosition.Y -= 25f;
-            velocity.Y = -1f;
+            bottlePosition.Y -= 8f;
+            velocity.Y = -2f;
 
             if (fallDown)
             {
