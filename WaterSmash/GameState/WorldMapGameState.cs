@@ -111,9 +111,9 @@ namespace Water
             {
                 if (args.Length > 0)
                 {
-                    stageData[selectedStage].record = (string)args[0] ;
-                    stageData[selectedStage].difficulty++;
-                    if (selectedStage + 1 == stageProgress) stageProgress++;
+                    stageData[selectedStage - 1].record = (string)args[0] ;
+                    stageData[selectedStage - 1].difficulty++;
+                    if (selectedStage == stageProgress) stageProgress++;
                     track = true;
                 }
             }

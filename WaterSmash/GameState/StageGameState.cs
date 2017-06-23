@@ -125,22 +125,6 @@ namespace Water
 
             //    cameraLocation = new Point(player.Position.ToPoint().X, player.Position.ToPoint().Y);
 
-            player.actionStateMachine.Change("stand");
-            enemy.actionStateMachine.Change("stand");
-            //Debug.WriteLine(player);
-
-            spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
-            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/stand"), 3, 10));
-            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/attack"), 1, 15));
-            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/move"), 1, 20));
-            spriteAnimations["enemy"].Add("moveRight", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/move"), 1, 20));
-            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
-            spriteAnimations["enemy"]["moveRight"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
-            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
-            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
-
-            enemy.spriteAnimations = spriteAnimations["enemy"];
-
             spriteAnimations.Add("player", new Dictionary<string, SpriteAnimation>());
             spriteAnimations["player"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
             spriteAnimations["player"].Add("move", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 5, 20));
@@ -162,6 +146,8 @@ namespace Water
 
 
             player.spriteAnimations = spriteAnimations["player"];
+            player.actionStateMachine.Change("stand");
+
 
             // TEMP - debugging purpose
             player.load();
@@ -211,7 +197,7 @@ namespace Water
 
             camera.Update(gameTime);
             player.Update(gameTime);
-            enemy.Update(gameTime);
+       //     enemy.Update(gameTime);
 
             // Check if player is finished
             if(finished)
@@ -335,6 +321,10 @@ namespace Water
 
         public void Leaving()
         {
+            totalStageTime = 0;
+            finished = false;
+            end = false;
+            aplhaValue = 1;
             spriteAnimations.Clear();
             content.Unload();
         }
@@ -487,14 +477,7 @@ namespace Water
         /// voor elke enemy die gedood is moet de progressbar incrementen, tot het maximale enemies van de stage.
         /// 
         /// </summary>
-        public void progressBar()
-        {
-            //WERKT NOG NIET!!!
-            rect =  new Texture2D(graphics, 100, 10);
-            coor = new Vector2(250, 10);
-            for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
-            rect.SetData(data);
-        }
+
 
 
         
