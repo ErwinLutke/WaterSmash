@@ -26,6 +26,8 @@ namespace Water
         /// </summary>
         private Camera2D camera;
 
+        bool end = false;
+
 
 
         private bool jumping = false;
@@ -86,7 +88,8 @@ namespace Water
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 20));
             enemy = new Enemy();
             enemy.health = 100;
-            player.attack = 11;
+            player.attack = 49;
+            player.health = 100;
 
             //   enemy = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 260));
 
@@ -182,7 +185,12 @@ namespace Water
             _currentStage.moveEnemies(player.Position);
             _currentStage.checkInRange(player.Position);
             _currentStage.checkProgress();
-            
+            if (_currentStage.killedEnemies >= _currentStage.totalEnemies && end == false)
+            {
+                _currentStage.enemies.Clear();
+                spawnBoss();
+                end = true;
+            }
         }
 
         bool boundingBox = false;
@@ -213,8 +221,26 @@ namespace Water
             //Draw the box around the health bar
             spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width/2, 44), Color.White);
             //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
+            if (_currentStage.killedEnemies < _currentStage.totalEnemies)
+            {
+                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Orange);
+            }
+            if (_currentStage.killedEnemies >= _currentStage.totalEnemies)
+            {
+                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Green);
+            }
+            spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y -100, player.healthTexture.Width / 4, 10), new Rectangle(0, 45, player.healthTexture.Width / 4, 10), Color.Red);
+            spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, player.healthTexture.Width / 4, 10), new Rectangle(0, 0, player.healthTexture.Width / 4, 10), Color.White);
+            spriteBatch.Draw((player.healthTexture), new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, 0 + (int)(player.health) +20, 10), new Rectangle(0, 45, player.healthTexture.Width / 2, 10), Color.Green);
 
-            spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X-40, 30, 0 +(int)(_currentStage.killedEnemies) *5/2, 44),new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Green);
+            foreach (Enemy enemy in _currentStage.enemies)
+            {
+                spriteBatch.Draw(enemy.healthTexture, new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, enemy.healthTexture.Width / 4, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 4, 10), Color.Red);
+                spriteBatch.Draw(enemy.healthTexture, new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, enemy.healthTexture.Width / 4, 10), new Rectangle(0, 0, enemy.healthTexture.Width / 4, 10), Color.White);
+                spriteBatch.Draw((enemy.healthTexture), new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, 0 + (int)(enemy.health) + 20, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 2, 10), Color.Green);
+            }
+
+
 
             player.Draw(spriteBatch);
             //enemy.Draw(spriteBatch);
@@ -290,24 +316,6 @@ namespace Water
             foreach (GameObject obj in _currentStage.GameObjects)
             {
                 if (player.BoundingBox.Intersects(obj.BoundingBox))
-                {
-                    //Rectangle overlap = Rectangle.Intersect(player.BoundingBox, Floor.BoundingBox);
-
-                    //player.Position = new Vector2(player.Position.X, obj.Position.Y);
-
-                }
-                else if (!player.BoundingBox.Intersects(obj.BoundingBox))
-                {
-                    
-                }
-                else if(player.BoundingBox.Intersects(obj.BoundingBox) && jumping)
-                {
-                    player.actionStateMachine.Change("jump");
-                }
-                else
-                {
-                    Debug.WriteLine("no coll");
-                }
                 foreach (Enemy enemy in _currentStage.enemies)
                 {
                     if (enemy.BoundingBox.Intersects(obj.BoundingBox))
@@ -337,7 +345,15 @@ namespace Water
                     }
                         if(player.actionStateMachine.Current is AttackAction)
                         {
-                            enemy.health += enemy.defense - player.attack;// -= player.attack;
+                            enemy.health = (enemy.health + (enemy.defense *(int)0.5)+13) - player.attack;// -= player.attack;                           
+                            if(player.health >100)
+                            {
+                                player.health = 100;
+                            }
+                            else if(player.health <100)
+                            {
+                                player.health += enemy.defense / 2;
+                            }
                         }
                         else if (enemy.actionStateMachine.Current is AttackAction)
                         {
@@ -399,5 +415,12 @@ namespace Water
             //matrix = Matrix.CreateScale(scaleX, scaleY, 1.0f);
             
         }
+
+        public void spawnBoss()
+        {
+            Vector2 spawnloc = new Vector2(player.Position.X + 500, player.Position.Y);
+            _currentStage.spawnBoss(3, spawnloc);        
+        }
+
     }
 }

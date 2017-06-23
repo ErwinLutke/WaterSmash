@@ -17,7 +17,7 @@ namespace Water
         
         Generator generator;
         public int killedEnemies = 0;//total killed enemies
-        int totalEnemies = 93;//maximale aantal enemies per stage
+        public int totalEnemies = 93;//maximale aantal enemies per stage
         GameObject Floor;
         public String name { get; set; }
 
@@ -62,7 +62,8 @@ namespace Water
                     {
                         //maken van nieuwe enemy
                         enemies.Add((Enemy)generator.enemyGenerator(1, new Vector2(rInt + position.X, Floor.Position.Y)));//toevoegen van de enemy aan de enemies list
-                    }
+                        rInt = r.Next(0, 1000);
+                }
                 }
             
         
@@ -144,6 +145,13 @@ namespace Water
                 killedEnemies = totalEnemies;
             }
         }
+
+        public void spawnBoss(int dificulty ,Vector2 pos)
+        {
+            enemies.Add(generator.enemyGenerator(dificulty, pos));
+        }
+
+
 
 
     }

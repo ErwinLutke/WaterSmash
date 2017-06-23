@@ -183,16 +183,16 @@ namespace Water
         public object enemyGenerator(int dificulty, Vector2 pos)
         {
 
-            int baseHealth = 10;
-            int baseAttack = 4;
-            int baseDefence = 5;
+            int baseHealth = 100;
+            int baseAttack = 12;
+            int baseDefence = 33;
             int sight = 123 * (dificulty / 2);
 
 
             Enemy spawn = new Enemy();
             spawn.name = "enemieiei";
             //spawn.inventory = generateInventory();
-            spawn.health = baseHealth * dificulty;
+            spawn.health = baseHealth*dificulty;
             spawn.attack = baseAttack * dificulty;
             spawn.defense = baseDefence * dificulty;
             // spawn.setSightRange(sight);

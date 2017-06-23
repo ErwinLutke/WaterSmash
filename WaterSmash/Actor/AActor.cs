@@ -67,7 +67,7 @@ namespace Water
         /// <summary>
         /// Health Bar
         /// </summary>
-        Texture2D healthTexture;
+        public Texture2D healthTexture;
         Rectangle healthRect;
 
         public ActionStateMachine actionStateMachine;
@@ -102,12 +102,13 @@ namespace Water
         // TEMP - debugging
         public void load()
         {
+            healthTexture = content.Load<Texture2D>("Images/stages/HealthBar2");
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
             texture = content.Load<Texture2D>("inventory\\lable");
 
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
 
-            //healthTexture = content.Load<Texture2D>("healthbar");
+            //healthTexture = content.Load<Texture2D>("inventory\\healthbar");
             //healthTexture = content.Load<Texture2D>("healthbar");
         }
 
@@ -128,7 +129,7 @@ namespace Water
             actionStateMachine.Update(gameTime);
             spriteAnimations[currentSpriteAnimation].Update(gameTime);
 
-            //healthRect = new Rectangle((int)Position.X - (texture.Width / 2), (int)Position.Y - 50, health, 20);
+            healthRect = new Rectangle((int)Position.X , (int)Position.Y -50, health, 20);
 
             // If Actor currently throwing -> update throwAction whatever the current actionstate is
             if (isThrowing)
@@ -162,16 +163,17 @@ namespace Water
             }
             //Rectangle rect = new Rectangle(position.ToPoint().X, position.ToPoint().Y - texture.Height, texture.Width, texture.Height);
             //spriteBatch.Draw(texture, rect, Color.White);
-            for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
-            rect.SetData(data);
+            //for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
+            //rect.SetData(data);
 
-            Vector2 coor = new Vector2(Position.X, Position.Y - 80);
-            spriteBatch.Draw(rect, coor, Color.White);
+            //Vector2 coor = new Vector2(Position.X, Position.Y - 80);
+           // spriteBatch.Draw(rect, coor, Color.White);
 
 
             //spriteBatch.Draw(texture, Position, Color.White);
 
             //spriteBatch.Draw(healthTexture, healthRect, Color.Red);
+
             if (!isThrowing)
             {
                 // Check if current action is ThrowAction
