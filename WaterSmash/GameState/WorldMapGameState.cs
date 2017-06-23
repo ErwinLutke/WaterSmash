@@ -19,17 +19,19 @@ namespace Water
         SpriteBatch spriteBatch;
 
         KeyLocker keyLocker;
+        
+        private bool track = false;
 
         /// <summary>
-        /// Holds how many stages are playable
-        /// NOT USED YET
+        /// Which stages are unlocked default is stage 1
         /// </summary>
         [DataMember]
-        int stageProgress { get; set; }
-       
+        int stageProgress = 1;
+
         /// <summary>
         /// Holds all data of the stages
         /// </summary>
+        [DataMember]
         List<StageData> stageData = new List<StageData>();
 
         /// <summary>
@@ -108,12 +110,14 @@ namespace Water
             }
             else if(gameStateManager.Previous is StageGameState)
             {
-                if(args.Length > 0)
+                if (args.Length > 0)
                 {
                     stageData[selectedStage - 1].record = (string)args[0];
+                    stageData[selectedStage - 1].difficulty++;
+                    stageProgress++;
+                    track = true;
                 }
             }
-
            
         }
 
@@ -150,6 +154,9 @@ namespace Water
             // We only want to draw a certain part of the worldmap depending on the zoom level (viewPortSize)
             Rectangle sourceRect = new Rectangle(currentLoc.X - (viewPortSize.X / 2), currentLoc.Y - (viewPortSize.Y / 2), viewPortSize.X, viewPortSize.Y);
             spriteBatch.Draw(images["worldmap"], graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
+
+            if(stageProgress > 1) spriteBatch.Draw(images["road"], graphicsDevice.Viewport.Bounds, sourceRect, Color.White);
+
             spriteBatch.Draw(images["fog"], graphicsDevice.Viewport.Bounds, Color.White);
 
             // If we are on a selectable stage, draw the highlight of the stage
@@ -214,7 +221,7 @@ namespace Water
                     && currentLoc.Y > stage.startLocation.Y 
                     && currentLoc.Y < stage.endLocation.Y)
                 {
-                    return stage.level;
+                    if(stage.level <= stageProgress) return stage.level;
                 }
 
             }
@@ -227,6 +234,7 @@ namespace Water
         private void loadContent()
         {
             images.Add("worldmap", contentManager.Load<Texture2D>("Images/worldmap"));
+            images.Add("road", contentManager.Load<Texture2D>("Images/road"));
             images.Add("fog", contentManager.Load<Texture2D>("Images/fog"));
             images.Add("message", contentManager.Load<Texture2D>("Images/message"));
 
@@ -257,6 +265,7 @@ namespace Water
             stage_1.record = "--'--\"---";
             stage_1.startLocation = new Point(130, 255);
             stage_1.endLocation = new Point(190, 295);
+            stage_1.difficulty = 1;
 
             stage_2.level = 2;
             stage_2.name = "Cabin in the woods";
@@ -264,6 +273,7 @@ namespace Water
             stage_2.record = "--'--\"---";
             stage_2.startLocation = new Point(180, 175);
             stage_2.endLocation = new Point(240, 215);
+            stage_2.difficulty = 1;
 
             stageData.Add(stage_1);
             stageData.Add(stage_2);
@@ -315,6 +325,10 @@ namespace Water
                     keyLocker.LockKey(Keys.Enter);
                 }
             }
+
+            keyLocker.CheckInputLock(state, Keys.Enter);
+            keyLocker.CheckInputLock(state, Keys.Escape);
+            keyLocker.CheckInputLock(state, Keys.I);
         }
 
     }
@@ -349,6 +363,11 @@ namespace Water
         /// Which stage it is
         /// </summary>
         public int level;
+
+        /// <summary>
+        /// Will increase every time you beat the stage
+        /// </summary>
+        public int difficulty;
 
         /// <summary>
         /// Holds the highlight to render when the stage is hovered on
