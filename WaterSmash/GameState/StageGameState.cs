@@ -32,8 +32,7 @@ namespace Water
         bool end = false;
 
 
-        private int totalStageTime;
-        private string timeRecord = "";
+        private float totalStageTime;
 
 
         private bool jumping = false;
@@ -202,7 +201,8 @@ namespace Water
  
         public void Update(GameTime gameTime)
         {
-            totalStageTime += (gameTime.ElapsedGameTime.Milliseconds * 1000);
+            totalStageTime += gameTime.ElapsedGameTime.Milliseconds;
+            Debug.WriteLine("ms " + totalStageTime);
 
             camera.Update(gameTime);
             player.Update(gameTime);
@@ -265,18 +265,19 @@ namespace Water
             }
 
             //spriteBatch.Draw(rect, coor, Color.White);
-            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Red);
+            //spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Red);
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)camera.Position.X + 150, 30, _currentStage.progressBar.Width / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Red);
 
 
             //Draw the box around the health bar
-            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width/2, 44), Color.White);
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)camera.Position.X + 150, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width/2, 44), Color.White);
             if (_currentStage.killedEnemies < _currentStage.totalEnemies)
             {
-                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Orange);
+                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)camera.Position.X + 150, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Orange);
             }
             if (_currentStage.killedEnemies >= _currentStage.totalEnemies)
             {
-                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Green);
+                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)camera.Position.X + 150, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Green);
             }
             spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y -100, player.healthTexture.Width / 4, 10), new Rectangle(0, 45, player.healthTexture.Width / 4, 10), Color.Red);
             spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, player.healthTexture.Width / 4, 10), new Rectangle(0, 0, player.healthTexture.Width / 4, 10), Color.White);
@@ -368,8 +369,7 @@ namespace Water
             // Change to worldmap when fading is max
             if(aplhaValue >= 255)
             {
-                timeRecord = (totalStageTime / 1000).ToString();
-                gameStateManager.Change("worldmap", timeRecord);
+                gameStateManager.Change("worldmap", getPlayTime());
             }
         }
 
@@ -512,5 +512,18 @@ namespace Water
             _currentStage.spawnBoss(3, bossSpawnloc);        
         }
 
+
+        /// <summary>
+        /// Calculates the elapsed time and makes it human readable in mm:ss:ms
+        /// </summary>
+        private string getPlayTime()
+        {
+            int milliseconds = (int)((totalStageTime % 1000) / 100);
+            int seconds = (int)((totalStageTime / 1000) % 60);
+            int minutes = (int)((totalStageTime / (1000 * 60)) % 60);
+            return minutes + "'" + seconds + "\" + milliseconds";
+        }
+
     }
+
 }

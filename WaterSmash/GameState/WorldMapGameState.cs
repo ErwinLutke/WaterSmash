@@ -91,32 +91,30 @@ namespace Water
             MediaPlayer.Play(worldMusic);
             MediaPlayer.IsRepeating = true;
 
-            if (player == null)
-            {
-                if (args.Length > 0)
-                {
-                    player = (Player)args[0];
-                }
-                else
-                {
-                    player = new Player();
-                }
-            }
 
             if(gameStateManager.Previous is MenuGameState)
             {
-                // load player here
-                Debug.WriteLine("came from menu, OOOEOOEOEEE");
+                if (player == null)
+                {
+                    if (args.Length > 0)
+                    {
+                        player = (Player)args[0];
+                    }
+                    else
+                    {
+                        player = new Player();
+                    }
+                }
+
             }
             else if(gameStateManager.Previous is StageGameState)
             {
                 if (args.Length > 0)
                 {
-                    stageData[selectedStage - 1].record = (string)args[0];
-                    stageData[selectedStage - 1].difficulty++;
-                    if (selectedStage == stageProgress) stageProgress++;
+                    stageData[selectedStage].record = (string)args[0] ;
+                    stageData[selectedStage].difficulty++;
+                    if (selectedStage + 1 == stageProgress) stageProgress++;
                     track = true;
-                    Debug.WriteLine(stageData[selectedStage - 1].record);
                 }
             }
            
