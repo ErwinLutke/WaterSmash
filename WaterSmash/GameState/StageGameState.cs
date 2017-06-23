@@ -91,7 +91,7 @@ namespace Water
             //   enemy = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 260));
 
             //player.position = new Vector2(screenSize.X / 20, screenSize.Y / 1.4f); // Set player starting position
-            player.Position = new Vector2(255, 260-10); // Set player starting position
+            player.Position = new Vector2(255, 260); // Set player starting position
             enemy.Position = new Vector2(125, Floor.Position.Y); // Set player starting position
 
             //    cameraLocation = new Point(player.Position.ToPoint().X, player.Position.ToPoint().Y);

@@ -250,7 +250,7 @@ namespace Water
             int currentx = 0;
             while (bg.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
             {
-                Vector2 testvec = new Vector2(currentx, 0);//
+                Vector2 testvec = new Vector2(currentx, 0-70);//
                 GameObject test = new GameObject(testobj, testvec);//
                 bg.Add(test);//voeg de vloer toe aan de lijst met objects
                 currentx = currentx + testobj.Width;
