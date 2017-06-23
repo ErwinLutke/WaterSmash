@@ -195,10 +195,9 @@ namespace Water
             //    null, null, null, matrix);
             // Begin drawing and disable AA for pixally art
             spriteBatch.Begin(SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp,
-                null, null, null, matrix);
-
+                            BlendState.AlphaBlend,
+                            SamplerState.PointClamp,
+                            null, null, null, camera.Transform);
             spriteBatch.Draw(map, map.Bounds, Color.White);
             //spriteBatch.Draw(rect, coor, Color.White);
             spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20, 30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Red);
