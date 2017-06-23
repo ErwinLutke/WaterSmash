@@ -91,7 +91,7 @@ namespace Water
             //   enemy = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 260));
 
             //player.position = new Vector2(screenSize.X / 20, screenSize.Y / 1.4f); // Set player starting position
-            player.Position = new Vector2(0, Floor.Position.Y); // Set player starting position
+            player.Position = new Vector2(255, 260-10); // Set player starting position
             enemy.Position = new Vector2(125, Floor.Position.Y); // Set player starting position
 
             //    cameraLocation = new Point(player.Position.ToPoint().X, player.Position.ToPoint().Y);
@@ -177,10 +177,11 @@ namespace Water
             player.Update(gameTime);
             enemy.Update(gameTime);
             checkCollisions();
-            _currentStage.spawnEnemies();
+            _currentStage.spawnEnemies(player.Position);
             _currentStage.checkHealth();
             _currentStage.moveEnemies(player.Position);
             _currentStage.checkInRange(player.Position);
+            _currentStage.checkProgress();
             
         }
 
@@ -198,16 +199,22 @@ namespace Water
                             BlendState.AlphaBlend,
                             SamplerState.PointClamp,
                             null, null, null, camera.Transform);
-            spriteBatch.Draw(map, map.Bounds, Color.White);
+            foreach (GameObject bgitem in _currentStage.bg)
+            {
+                bgitem.Draw(spriteBatch);
+            }
+            //spriteBatch.Draw(map, map.Bounds, Color.White);
+            //spriteBatch.Draw(_currentStage.stageBackground, _currentStage.stageBackground.Bounds, Color.White);
+
             //spriteBatch.Draw(rect, coor, Color.White);
-            spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20, 30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Red);
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Red);
 
 
             //Draw the box around the health bar
-            spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 0, _currentStage.progressBar.Width, 44), Color.White);
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width/2, 44), Color.White);
             //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
 
-            spriteBatch.Draw((_currentStage.progressBar), new Rectangle(20,30, 0 +(int)(_currentStage.killedEnemies) *5, 44),new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Green);
+            spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X-40, 30, 0 +(int)(_currentStage.killedEnemies) *5/2, 44),new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Green);
 
             player.Draw(spriteBatch);
             //enemy.Draw(spriteBatch);
@@ -286,7 +293,7 @@ namespace Water
                 {
                     //Rectangle overlap = Rectangle.Intersect(player.BoundingBox, Floor.BoundingBox);
 
-                    player.Position = new Vector2(player.Position.X, obj.Position.Y);
+                    //player.Position = new Vector2(player.Position.X, obj.Position.Y);
 
                 }
                 else if (!player.BoundingBox.Intersects(obj.BoundingBox))

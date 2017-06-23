@@ -17,6 +17,7 @@ namespace Water
         
         Generator generator;
         public int killedEnemies = 0;//total killed enemies
+        int totalEnemies = 93;//maximale aantal enemies per stage
         GameObject Floor;
         public String name { get; set; }
 
@@ -27,32 +28,44 @@ namespace Water
 
         private ContentManager content = GameServices.GetService<ContentManager>();
         public List<object> GameObjects = new List<object>();//holds all map blocks
+        public List<object> bg = new List<object>();//holds all bg elements
 
         public List<object> enemies;
 
         public Stage()
         {
+            stageBackground = content.Load<Texture2D>("Images/stages/stage_1/bg");
             progressBar = content.Load<Texture2D>("Images/stages/HealthBar2");
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
             enemies = new List<object>();
             generator = new Generator();
             GameObjects = generator.generateMap();
-            spawnEnemies();
+            bg = generator.generateBackground();
+            //spawnEnemies();
         }
 
         /// <summary>
         /// spawned alle enemies in de map. zolang er enemies gespawned kunnen worden, wordt een nieuwe enemy gemaakt en aan de list met enemies toevegoegd 
         /// </summary>
-        public void spawnEnemies()
+        public void spawnEnemies(Vector2 position)
         {
-            int totalEnemies = 93;//maximale aantal enemies per stage
-            int maxEnemiesInGame = 2;//maximale aantal enemies die tegelijk in het spel mogen zijn.
-            //creer loop om enemies te spawnen. wanneer totale gekillde enemeies kleiner is dan het totale enemies per stage wordt een niewe enemy gespawned.
-            while (killedEnemies < totalEnemies && enemies.Count() < maxEnemiesInGame)
-            {
-                //maken van nieuwe enemy
-                enemies.Add((Enemy)generator.enemyGenerator(1, new Vector2(125, Floor.Position.Y)));//toevoegen van de enemy aan de enemies list
-            }
+            Random r = new Random();
+            int rInt = r.Next(0, 1000);
+
+            int maxEnemiesInGame = 23;//maximale aantal enemies die tegelijk in het spel mogen zijn.
+           
+            
+                //creer loop om enemies te spawnen. wanneer totale gekillde enemeies kleiner is dan het totale enemies per stage wordt een niewe enemy gespawned.
+                while (killedEnemies < totalEnemies && enemies.Count() < maxEnemiesInGame)
+                {
+                    if (rInt < position.X + 1000)
+                    {
+                        //maken van nieuwe enemy
+                        enemies.Add((Enemy)generator.enemyGenerator(1, new Vector2(rInt + position.X, Floor.Position.Y)));//toevoegen van de enemy aan de enemies list
+                    }
+                }
+            
+        
         }
 
         /// <summary>
@@ -124,10 +137,14 @@ namespace Water
                 }
             }
         }
-    }
-    internal class ProgressBar
-    {
+        public void checkProgress()
+        {
+            if(killedEnemies >=totalEnemies)
+            {
+                killedEnemies = totalEnemies;
+            }
+        }
+
 
     }
-    
 }

@@ -64,14 +64,20 @@ namespace Water
 
         public void MoveRight()
         {
-            _actor.direction = AActor.Direction.RIGHT; // Set facing position to right
-            position.X += 2f; // Increment X position (move right)
+
+                _actor.direction = AActor.Direction.RIGHT; // Set facing position to right
+                position.X += 2f; // Increment X position (move right)
+            
         }
 
         public void MoveLeft()
         {
-            _actor.direction = AActor.Direction.LEFT; // Set facing position to left
-            position.X -= 2f; // Decrement X position (Move left)
+            if (position.X <= 255) { }
+            else
+            {
+                _actor.direction = AActor.Direction.LEFT; // Set facing position to left
+                position.X -= 2f; // Decrement X position (Move left)
+            }
         }
 
         public void Update(GameTime gameTime)

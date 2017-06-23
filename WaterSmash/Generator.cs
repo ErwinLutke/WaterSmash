@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Water
 {
@@ -185,6 +186,7 @@ namespace Water
             int baseHealth = 10;
             int baseAttack = 4;
             int baseDefence = 5;
+            int sight = 123 * (dificulty / 2);
 
 
             Enemy spawn = new Enemy();
@@ -193,6 +195,7 @@ namespace Water
             spawn.health = baseHealth * dificulty;
             spawn.attack = baseAttack * dificulty;
             spawn.defense = baseDefence * dificulty;
+            // spawn.setSightRange(sight);
             spawn.Position = pos;
 
             spawn.spriteAnimations = spriteAnimations["enemy"];
@@ -227,17 +230,34 @@ namespace Water
         public List<object> generateMap()
         { 
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
-            int maxBlox = 10;//max amount of blocks in game
+            int maxBlox = 100;//max amount of blocks in game
             while (GameObjects.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
             {
                 Vector2 testvec = new Vector2(map_x, Floor.Position.Y - 20);//
-                Texture2D testobj = content.Load<Texture2D>("Images/stages/testobj");//
+                Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_1/floor");//
 
                 GameObject test = new GameObject(testobj, testvec);//
                 GameObjects.Add(test);//voeg de vloer toe aan de lijst met objects
                 map_x = map_x + 100;//increment de x waarde van map_x, om het volgende object op de juist plek te spawnen
             }
             return GameObjects;
+        }
+        private List<object> bg = new List<object>();//holds all map blocks
+        public List<object> generateBackground()
+        {
+            Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_1/fill");//
+            int maxBlox = 30;//max amount of blocks in game
+            int currentx = 0;
+            while (bg.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
+            {
+                Vector2 testvec = new Vector2(currentx, 0);//
+                GameObject test = new GameObject(testobj, testvec);//
+                bg.Add(test);//voeg de vloer toe aan de lijst met objects
+                currentx = currentx + testobj.Width;
+                Debug.WriteLine("wall x :" + currentx);
+            }
+            return bg;
+
         }
 
     }
