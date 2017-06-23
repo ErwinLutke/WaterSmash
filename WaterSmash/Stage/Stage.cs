@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 
 namespace Water
 {
@@ -18,11 +20,13 @@ namespace Water
         public Texture2D stageThumbnail { get; private set; }
         public Texture2D stageBackground { get; set; }
 
+        private ContentManager content = GameServices.GetService<ContentManager>();
+
         List<AActor> enemies;
 
         public Stage()
         {
-
+            
         }
 
     }

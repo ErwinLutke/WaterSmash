@@ -61,102 +61,102 @@ namespace Water
             spriteBatch.DrawString(spriteFont, "Press 'Del' to drop", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 10), Color.White);
 
             //Draw bottle image
-            spriteBatch.Draw(bottle, new Rectangle(0,0, bottle.Bounds.Width, bottle.Bounds.Height), Color.White);
+            //spriteBatch.Draw(bottle, new Rectangle(viewport.Width / 100 * 10, viewport.Height / 100 * 15, bottle.Width, bottle.Height), Color.White);
+            spriteBatch.Draw(bottle, new Vector2(0,0), bottle.Bounds, Color.White, 0.0f, new Vector2(0, 0), new Vector2(matrix.Scale.X, matrix.Scale.Y), SpriteEffects.None, 0.0f);
 
-            ////Draw textareas for displaying information about current equipables
-            //spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 100) * 5, (viewport.Height / 100) * 50, textArea.Width / 2, textArea.Height / 2 + (textArea.Height / 100) * 50), Color.White);
-            //spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 100) * 25, (viewport.Height / 100) * 50, textArea.Width / 2, textArea.Height / 2 + (textArea.Height / 100) * 50), Color.White);
+            //Draw textareas for displaying information about current equipables
+            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 100) * 5, (viewport.Height / 100) * 50, textArea.Width / 2, textArea.Height / 2 + (textArea.Height / 100) * 50), Color.White);
+            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 100) * 25, (viewport.Height / 100) * 50, textArea.Width / 2, textArea.Height / 2 + (textArea.Height / 100) * 50), Color.White);
 
-            ////Draw title text for equipped items
-            //spriteBatch.DrawString(spriteFont, "Current equipped cap: ", new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 2), Color.Black);
-            //spriteBatch.DrawString(spriteFont, "Current equipped label: ", new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 2), Color.Black);
+            //Draw title text for equipped items
+            spriteBatch.DrawString(spriteFont, "Current equipped cap: ", new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 2), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Current equipped label: ", new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 2), Color.Black);
 
-            ////Check if player currently has a cap equipped
-            //if (player.equippedCap != null)
-            //{
-            //    //Draw information about current equipped cap
-            //    spriteBatch.DrawString(spriteFont, player.equippedCap.name, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 4), Color.Black);
-            //    spriteBatch.DrawString(spriteFont, "Level: " + player.equippedCap.level, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
-            //    spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedCap.attack, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
-            //    spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedCap.defense, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
-            //    spriteBatch.Draw(player.equippedCap.texture, new Rectangle((viewport.Width / 100) * 15 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedCap.texture.Width, player.equippedCap.texture.Height), Color.White);
-            //}
-            ////Check if player currently has a label equipped
-            //if (player.equippedLabel != null)
-            //{
-            //    //Draw information about current equipped cap
-            //    spriteBatch.DrawString(spriteFont, player.equippedLabel.name, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 4), Color.Black);
-            //    spriteBatch.DrawString(spriteFont, "Level: " + player.equippedLabel.level, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
-            //    spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedLabel.attack, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
-            //    spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedLabel.defense, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
-            //    spriteBatch.Draw(player.equippedLabel.texture, new Rectangle((viewport.Width / 100) * 35 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedLabel.texture.Width, player.equippedLabel.texture.Height), Color.White);
+            //Check if player currently has a cap equipped
+            if (player.equippedCap != null)
+            {
+                //Draw information about current equipped cap
+                spriteBatch.DrawString(spriteFont, player.equippedCap.name, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 4), Color.Black);
+                spriteBatch.DrawString(spriteFont, "Level: " + player.equippedCap.level, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
+                spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedCap.attack, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
+                spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedCap.defense, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
+                spriteBatch.Draw(content.Load<Texture2D>(player.equippedCap.texture.ToString()), new Rectangle((viewport.Width / 100) * 15 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedCap.texture.Width, player.equippedCap.texture.Height), Color.White);
+            }
+            //Check if player currently has a label equipped
+            if (player.equippedLabel != null)
+            {
+                //Draw information about current equipped cap
+                spriteBatch.DrawString(spriteFont, player.equippedLabel.name, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 4), Color.Black);
+                spriteBatch.DrawString(spriteFont, "Level: " + player.equippedLabel.level, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
+                spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedLabel.attack, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
+                spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedLabel.defense, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
+                spriteBatch.Draw(content.Load<Texture2D>(player.equippedLabel.texture.ToString()), new Rectangle((viewport.Width / 100) * 35 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedLabel.texture.Width, player.equippedLabel.texture.Height), Color.White);
 
-            //}
+            }
 
+            // Used for layout inventory slots
+            int count = 0;
 
-            //// Used for layout inventory slots
-            //int count = 0;
+            // Used for displaying items in inventory
+            int itemPointer = 0;
 
-            //// Used for displaying items in inventory
-            //int itemPointer = 0;
+            // y position placement for inventory slots
+            int y = 40;
 
-            //// y position placement for inventory slots
-            //int y = 40;
+            for (int i = 0; i < inventory.capacity; i++)
+            {
+                // When 6 inventory slots are placed, start new line
+                if (count == 6)
+                {
+                    y += slot.Height;
+                    count = 0;
+                }
 
-            //for(int i = 0; i < inventory.capacity; i++)
-            //{
-            //    // When 6 inventory slots are placed, start new line
-            //    if (count == 6)
-            //    {
-            //        y += slot.Height;
-            //        count = 0;
-            //    }
+                // Hold x position of current inventory slot
+                int x = (viewport.Width / 2) + (count * slot.Width);
 
-            //    // Hold x position of current inventory slot
-            //    int x = (viewport.Width / 2) + (count * slot.Width);
+                // Draw inventory slot image
+                spriteBatch.Draw(slot, new Rectangle(x, y, slot.Width, slot.Height), Color.White);
 
-            //    // Draw inventory slot image
-            //    spriteBatch.Draw(slot, new Rectangle(x, y, slot.Width, slot.Height), Color.White);
+                // Check for items in items list
+                if (itemPointer < inventory.items.Count)
+                {
+                    // Check if item to draw is equipped -> items that are equipped are out of inventory, so not drawn here
+                    if (!inventory.items[itemPointer].isEquipped)
+                    {
+                        // Check if item is selected
+                        if (inventory.items[itemPointer].isSelected)
+                        {
+                            // Set this item as current.
+                            current = inventory.items[itemPointer];
+                            // Draw item image with selection (Slightly bigger)
+                            spriteBatch.Draw(content.Load<Texture2D>(inventory.items[itemPointer].texture.ToString()), new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width + 20, inventory.items[count].texture.Height + 20), Color.White);
+                            // Save on screen location of item
+                            inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
+                        }
+                        else
+                        {
+                            // Draw item image
+                            spriteBatch.Draw(content.Load<Texture2D>(inventory.items[itemPointer].texture.ToString()), new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width, inventory.items[count].texture.Height), Color.White);
+                            // Save on screen location of item
+                            inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
+                        }
+                    }
+                    // Increment counter to get next item
+                    itemPointer++;
+                }
+                // Increment counter for position purposes
+                count++;
+            }
 
-            //    // Check for items in items list
-            //    if (itemPointer < inventory.items.Count)
-            //    {
-            //        // Check if item to draw is equipped -> items that are equipped are out of inventory, so not drawn here
-            //        if (!inventory.items[itemPointer].isEquipped)
-            //        {
-            //            // Check if item is selected
-            //            if (inventory.items[itemPointer].isSelected)
-            //            {
-            //                // Set this item as current.
-            //                current = inventory.items[itemPointer];
-            //                // Draw item image with selection (Slightly bigger)
-            //                spriteBatch.Draw(inventory.items[itemPointer].texture, new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width + 20, inventory.items[count].texture.Height + 20), Color.White);
-            //                // Save on screen location of item
-            //                inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
-            //            }
-            //            else
-            //            {
-            //                // Draw item image
-            //                spriteBatch.Draw(inventory.items[itemPointer].texture, new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width, inventory.items[count].texture.Height), Color.White);
-            //                // Save on screen location of item
-            //                inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
-            //            }
-            //        }
-            //        // Increment counter to get next item
-            //        itemPointer++;
-            //    }
-            //    // Increment counter for position purposes
-            //    count++;
-            //}
+            // Draw textarea to display current information about selected item
+            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), slot.Height * 6, slot.Width * 6, textArea.Height), Color.White);
 
-            //// Draw textarea to display current information about selected item
-            //spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), slot.Height * 6, slot.Width * 6, textArea.Height), Color.White);
-
-            //// Draw information about current selected item
-            //spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
-            //spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
-            //spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
-            //spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
+            // Draw information about current selected item
+            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
 
             spriteBatch.End();
         }

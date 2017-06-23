@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Media;
 
 namespace Water
 {
@@ -39,6 +40,32 @@ namespace Water
         GameObject Floor;
         Enemy enemy;
 
+        /// <summary>
+        /// Holds GameObject waterDispenser
+        /// </summary>
+        GameObject waterDispenser;
+
+        /// <summary>
+        /// Holds texture of waterDispenser
+        /// </summary>
+        Texture2D waterDispenserTexture;
+
+        /// <summary>
+        /// Holds song for when waterDispenser lands
+        /// </summary>
+        Song waterDispenserLandingSound;
+
+        /// <summary>
+        /// Hold wether waterDispenser landed or not
+        /// </summary>
+        bool waterDispenserLanded;
+
+        /// <summary>
+        /// Set waterDispenser dropspeed
+        /// </summary>
+        float dropSpeed = 5f;
+        
+
         AActor player;
 
         Dictionary<string, Dictionary<string, SpriteAnimation>> spriteAnimations;
@@ -47,6 +74,23 @@ namespace Water
         Texture2D map;
         Point mapSize;
         Matrix matrix;
+
+        /// <summary>
+        /// Hold wether boss is defeated or not -> waterDispenser spawns when defeated
+        /// </summary>
+        bool bossDefeated = true; // TEMP! MUST BE FALSE
+
+        /// <summary>
+        /// Hold wether player has finished the staged (interacted with waterDispenser)
+        /// </summary>
+        bool finished = false;
+
+        /// <summary>
+        /// Properties for fading when finished
+        /// </summary>
+        int aplhaValue = 1;
+        int fadeIncrement = 2;
+        Texture2D fader;
 
         private Vector2 startPosition; // Holds player starting position 
 
@@ -89,6 +133,12 @@ namespace Water
 
 
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
+
+            waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
+            waterDispenser = new GameObject(waterDispenserTexture, new Vector2(400, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
+            waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
+
+            fader = content.Load<Texture2D>("healthbar");
             enemy = new Enemy();
             enemy.health = 100;
             player.attack = 11;
@@ -186,6 +236,33 @@ namespace Water
             checkHealth();
             moveEnemies();
             checkInRange();
+
+            // Check if player is finished
+            if(finished)
+            {
+                // Fade animation and leave stage
+                fadeAndLeave();
+            }
+
+            // Check if boss is defeated for waterDispenser purposes
+            if (bossDefeated)
+            {
+                // Land waterDispenser
+                if (waterDispenser.Position.Y + waterDispenser.Size.Y < Floor.Position.Y)
+                { 
+                    waterDispenser.Position = new Vector2(waterDispenser.Position.X, waterDispenser.Position.Y + dropSpeed);
+                }
+                // Play sound on landing
+                else if (waterDispenser.Position.Y + waterDispenser.Size.Y == Floor.Position.Y)
+                {
+                    if(!waterDispenserLanded)
+                    {
+                        MediaPlayer.Play(waterDispenserLandingSound);
+                        MediaPlayer.IsRepeating = false;
+                    }
+                    waterDispenserLanded = true;
+                }
+            }
         }
 
         bool boundingBox = false;
@@ -209,6 +286,7 @@ namespace Water
                 spriteBatch.Draw(pixel, enemy.BoundingBox, Color.White);
                 spriteBatch.Draw(pixel, player.BoundingBox, Color.White);
                 spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
+                spriteBatch.Draw(pixel, waterDispenser.BoundingBox, Color.White);
             }
 
             foreach (GameObject obc in GameObjects)
@@ -221,6 +299,16 @@ namespace Water
                 {
                     enemy.Draw(spriteBatch, gameTime);
                 }
+            }
+
+            if(finished)
+            {
+                spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
+            }
+
+            if(bossDefeated)
+            {
+                waterDispenser.Draw(spriteBatch, gameTime);
             }
 
             spriteBatch.End();
@@ -240,8 +328,34 @@ namespace Water
             checkFloorCollisions();
             checkEnemyCollisions();
             checkGameObjColl();
-
+            checkWaterCollision();
         }
+
+        /// <summary>
+        /// Check wether player has collision with waterDispenser
+        /// If is -> stage is finished
+        /// </summary>
+        private void checkWaterCollision()
+        {
+            if(player.BoundingBox.Intersects(waterDispenser.BoundingBox))
+            {
+                finished = true;
+            }
+        }
+
+        /// <summary>
+        /// Fade animation for fading out of stage
+        /// </summary>
+        private void fadeAndLeave()
+        {
+            aplhaValue += fadeIncrement;
+            // Change to worldmap when fading is max
+            if(aplhaValue >= 255)
+            {
+                gameStateManager.Change("worldmap");
+            }
+        }
+
         private void checkInRange()
         {
             foreach (var enemy in enemies)
