@@ -609,3 +609,9 @@
 /processorParam:TextureFormat=Color
 /build:Images/stages/stage_1/floor.jpg
 
+#begin audio/slurp.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:audio/slurp.mp3
+

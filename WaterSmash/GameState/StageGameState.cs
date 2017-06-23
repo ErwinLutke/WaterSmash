@@ -61,6 +61,8 @@ namespace Water
         /// Set waterDispenser dropspeed
         /// </summary>
         float dropSpeed = 5f;
+
+        Song slurp;
         
 
         AActor player;
@@ -88,7 +90,7 @@ namespace Water
         /// Properties for fading when finished
         /// </summary>
         int aplhaValue = 1;
-        int fadeIncrement = 2;
+        int fadeIncrement = 1;
         Texture2D fader;
 
         private Vector2 startPosition; // Holds player starting position 
@@ -132,6 +134,7 @@ namespace Water
             waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
             waterDispenser = new GameObject(waterDispenserTexture, new Vector2(400, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
             waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
+            slurp = content.Load<Song>("audio/slurp");
 
             fader = content.Load<Texture2D>("healthbar");
             enemy = new Enemy();
@@ -228,10 +231,6 @@ namespace Water
             camera.Update(gameTime);
             player.Update(gameTime);
             enemy.Update(gameTime);
-            spawnEnemies();
-            checkHealth();
-            moveEnemies();
-            checkInRange();
 
             // Check if player is finished
             if(finished)
@@ -265,7 +264,7 @@ namespace Water
             _currentStage.moveEnemies(player.Position);
             _currentStage.checkInRange(player.Position);
             _currentStage.checkProgress();
-            
+            checkWaterCollision();
         }
 
         bool boundingBox = false;
@@ -284,7 +283,7 @@ namespace Water
                             null, null, null, camera.Transform);
             foreach (GameObject bgitem in _currentStage.bg)
             {
-                bgitem.Draw(spriteBatch);
+                bgitem.Draw(spriteBatch, gameTime);
             }
             //spriteBatch.Draw(map, map.Bounds, Color.White);
             //spriteBatch.Draw(_currentStage.stageBackground, _currentStage.stageBackground.Bounds, Color.White);
@@ -299,7 +298,7 @@ namespace Water
 
             spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X-40, 30, 0 +(int)(_currentStage.killedEnemies) *5/2, 44),new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Green);
 
-            player.Draw(spriteBatch);
+            player.Draw(spriteBatch, gameTime);
             //enemy.Draw(spriteBatch);
             if (boundingBox)
             {
@@ -369,6 +368,13 @@ namespace Water
         private void fadeAndLeave()
         {
             aplhaValue += fadeIncrement;
+
+            if(aplhaValue == 100)
+            {
+                MediaPlayer.Play(slurp);
+                MediaPlayer.IsRepeating = false;
+            }
+
             // Change to worldmap when fading is max
             if(aplhaValue >= 255)
             {
