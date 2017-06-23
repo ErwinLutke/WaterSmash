@@ -67,7 +67,7 @@ namespace Water
         /// <summary>
         /// Health Bar
         /// </summary>
-        Texture2D healthTexture;
+        public Texture2D healthTexture;
         Rectangle healthRect;
 
         public ActionStateMachine actionStateMachine;
@@ -86,7 +86,7 @@ namespace Water
             direction = Direction.RIGHT;    // Sets starting direction
             health = 100;
             data = new Color[health * 10];
-            inventory = new Inventory();
+            inventory = new Inventory(30);
             actionStateMachine = new ActionStateMachine();
             spriteAnimations = new Dictionary<string, SpriteAnimation>();
 
@@ -97,17 +97,19 @@ namespace Water
             actionStateMachine.Add("throw", new ThrowAction(this));
             actionStateMachine.Add("crouch", new CrouchAction(this));
             actionStateMachine.Add("moveLeft",new MoveLeftAction(this));
+            actionStateMachine.Add("moveRight", new MoveRightAction(this));
         }
 
         // TEMP - debugging
         public void load()
         {
+            healthTexture = content.Load<Texture2D>("Images/stages/HealthBar2");
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
             texture = content.Load<Texture2D>("inventory\\lable");
 
             spriteFont = content.Load<SpriteFont>("inventory\\inventory");
 
-            //healthTexture = content.Load<Texture2D>("healthbar");
+            //healthTexture = content.Load<Texture2D>("inventory\\healthbar");
             //healthTexture = content.Load<Texture2D>("healthbar");
         }
 
@@ -128,7 +130,7 @@ namespace Water
             actionStateMachine.Update(gameTime);
             spriteAnimations[currentSpriteAnimation].Update(gameTime);
 
-            //healthRect = new Rectangle((int)Position.X - (texture.Width / 2), (int)Position.Y - 50, health, 20);
+            healthRect = new Rectangle((int)Position.X , (int)Position.Y -50, health, 20);
 
             // If Actor currently throwing -> update throwAction whatever the current actionstate is
             if (isThrowing)
@@ -136,15 +138,11 @@ namespace Water
                 throwAction.Update(gameTime);
             }
         }
-        GameTime g = new GameTime();
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            
-
             Viewport viewport = graphics.Viewport;
             
-            // ------------------------- TEMP -------------------------//
             spriteBatch.DrawString(spriteFont, actionStateMachine.Current.ToString(), new Vector2(100, 100), Color.Black);
 
             //Viewport viewport = graphics.Viewport;
@@ -162,26 +160,26 @@ namespace Water
             }
             //Rectangle rect = new Rectangle(position.ToPoint().X, position.ToPoint().Y - texture.Height, texture.Width, texture.Height);
             //spriteBatch.Draw(texture, rect, Color.White);
-            for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
-            rect.SetData(data);
+            //for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
+            //rect.SetData(data);
 
-            Vector2 coor = new Vector2(Position.X, Position.Y - 80);
-            spriteBatch.Draw(rect, coor, Color.White);
-
+            //Vector2 coor = new Vector2(Position.X, Position.Y - 80);
+           // spriteBatch.Draw(rect, coor, Color.White);
 
             //spriteBatch.Draw(texture, Position, Color.White);
 
             //spriteBatch.Draw(healthTexture, healthRect, Color.Red);
+
             if (!isThrowing)
             {
                 // Check if current action is ThrowAction
                 if (actionStateMachine.Current is ThrowAction)
                 {
                     // Check if actor is able to throw again according to time delay
-                    if (timeAtThrow == 0 || (g.TotalGameTime.TotalSeconds - timeAtThrow) > 1.5)
+                    if (timeAtThrow == 0 || (gameTime.TotalGameTime.TotalSeconds - timeAtThrow) > 1.5)
                     {
                         // Set time at throw
-                        timeAtThrow = g.TotalGameTime.TotalSeconds;
+                        timeAtThrow = gameTime.TotalGameTime.TotalSeconds;
                         // Save ThrowAction to be able to continue throwing
                         throwAction = (ThrowAction)actionStateMachine.Current;
 
@@ -197,15 +195,15 @@ namespace Water
                 spriteBatch.Draw(throwAction.bottle, throwAction.bottlePosition, Color.White);
 
                 // ------------------------- TEMP -------------------------//
-                spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(200, 300), Color.White);
-                spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(300, 300), Color.White);
+                spriteBatch.DrawString(spriteFont, throwAction.bottlePosition.X.ToString(), new Vector2(500, 100), Color.White);
+                spriteBatch.DrawString(spriteFont, "Y: " + throwAction.bottlePosition.Y.ToString(), new Vector2(600, 00), Color.White);
                 // ------------------------- TEMP -------------------------//
 
                 // According to direction at throw set when to stop / reset the throwaction 
                 if (directionAtThrow == Direction.RIGHT)
                 {
                     // CHANGE TO ON HIT OR ON GROUND
-                    if (throwAction.bottlePosition.X > 1000)
+                    if (throwAction.bottlePosition.X > throwAction.startPosition.X + 400)
                     {
                         throwAction = null;
                         isThrowing = false;

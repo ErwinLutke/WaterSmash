@@ -102,6 +102,7 @@
     <Compile Include="Actor\Action\AttackAction.cs" />
     <Compile Include="Actor\Action\EmptyAction.cs" />
     <Compile Include="Actor\Action\MoveLeftAction.cs" />
+    <Compile Include="Actor\Action\MoveRightAction.cs" />
     <Compile Include="Actor\Boss.cs" />
     <Compile Include="Actor\Action\CrouchAction.cs" />
     <Compile Include="Actor\Enemy.cs" />
@@ -173,6 +174,7 @@
     <Content Include="Content\Images\message.png" />
     <Content Include="Content\Images\sprite.jpg" />
     <Content Include="Content\Images\stages\floor.png" />
+    <Content Include="Content\Images\stages\stage_1\bg.gif" />
     <Content Include="Content\Images\stages\stage_1\map.png" />
     <Content Include="Content\Images\stages\stage_1\worldmap_preview_1.png" />
     <Content Include="Content\Images\stages\stage_1\worldmap_selected_1.png" />
