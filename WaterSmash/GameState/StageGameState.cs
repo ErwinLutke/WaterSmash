@@ -24,6 +24,7 @@ namespace Water
 
         private Vector2 bossSpawnloc;
 
+
         /// <summary>
         /// Camera for following the player around
         /// </summary>
@@ -33,7 +34,7 @@ namespace Water
 
 
         private float totalStageTime;
-
+        SpriteFont timeTextFont;
 
         private bool jumping = false;
 
@@ -94,7 +95,7 @@ namespace Water
             if (args.Length > 0)
             {
                 _currentStage = _stages[args[0].ToString()];
-                player = (Player)args[1];
+                if(player == null) player = (Player)args[1];
             }
             else
             {
@@ -106,6 +107,7 @@ namespace Water
 
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
 
+            timeTextFont = content.Load<SpriteFont>("Font/StageName");
             fader = content.Load<Texture2D>("healthbar");
             enemy = new Enemy();
             enemy.health = 100;
@@ -322,7 +324,7 @@ namespace Water
             { 
                 spriteBatch.Draw(fader, new Rectangle((int)player.Position.X - 2000, 0, graphics.Viewport.Width + 2000, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
             }
-
+            spriteBatch.DrawString(timeTextFont, getPlayTime(), new Vector2(camera.Position.X + 230, 40), Color.White);
             spriteBatch.End();
 
 
@@ -523,7 +525,7 @@ namespace Water
             int milliseconds = (int)((totalStageTime % 1000) / 100);
             int seconds = (int)((totalStageTime / 1000) % 60);
             int minutes = (int)((totalStageTime / (1000 * 60)) % 60);
-            return minutes + "'" + seconds + "\" + milliseconds";
+            return minutes + "'" + seconds + "'" + milliseconds;
         }
 
     }

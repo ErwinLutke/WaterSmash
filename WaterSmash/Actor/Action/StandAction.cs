@@ -43,7 +43,7 @@ namespace Water
             else if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)) // If left or right key is pressed
             {
                 _actionStateMachine.Change("move");
-            }            
+            }
             else if (!_keyLocker.KeyPressed && state.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z))
             {
                 _actionStateMachine.Change("attack");
@@ -55,7 +55,11 @@ namespace Water
                 if (!_actor.isThrowing)
                 {
                     _actionStateMachine.Change("throw", "stand");
-                } 
+                }
+            }
+            else if (state.IsKeyDown(Keys.Down))
+            {
+                _actionStateMachine.Change("crouch");
             }
 
             _keyLocker.CheckInputLock(state, Keys.Space);
