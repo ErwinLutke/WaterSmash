@@ -81,10 +81,10 @@ namespace Water
         /// <summary>
         /// Hold wether boss is defeated or not -> waterDispenser spawns when defeated
         /// </summary>
-        bool bossDefeated = true; // TEMP! MUST BE FALSE
+        bool bossDefeated = false; // TEMP! MUST BE FALSE
 
         /// <summary>
-        /// Hold wether player has finished the staged (interacted with waterDispenser)
+        /// Hold wether player has fnished the staged (interacted with waterDispenser)
         /// </summary>
         bool finished = false;
 
@@ -120,13 +120,17 @@ namespace Water
 
             if (args.Length > 0)
             {
-                _currentStage = _stages[args[0].ToString()];
+                //_currentStage = _stages[args[0].ToString()];
                 player = (Player)args[1];
+                _currentStage = new Stage();
+                _currentStage.loadContent((int)args[0]);
             }
             else
             {
-                _currentStage = new Stage();
                 player = new Player();
+                _currentStage = new Stage();
+                _currentStage.loadContent(1);
+                
             }
 
             loadCameraSettings();
@@ -234,9 +238,9 @@ namespace Water
             camera.Update(gameTime);
             player.Update(gameTime);
             enemy.Update(gameTime);
-
+            checkCollisions();
             // Check if player is finished
-            if(finished)
+            if (finished)
             {
                 // Fade animation and leave stage
                 fadeAndLeave();
@@ -261,104 +265,112 @@ namespace Water
                     waterDispenserLanded = true;
                 }
             }
-        
-            _currentStage.spawnEnemies(player.Position);
-            _currentStage.checkHealth();
-            _currentStage.moveEnemies(player.Position);
-            _currentStage.checkInRange(player.Position);
-            _currentStage.checkProgress();
+            if (_currentStage.enemies != null)
+            {
+                _currentStage.spawnEnemies(player.Position);
+                _currentStage.checkHealth();
+                _currentStage.moveEnemies(player.Position);
+                _currentStage.checkInRange(player.Position);
+                _currentStage.checkProgress();
+            }
             if (_currentStage.killedEnemies >= _currentStage.totalEnemies && end == false)
             {
                 _currentStage.enemies.Clear();
                 spawnBoss();
                 end = true;
+
+                
             }
-        
+            //bossHealth(); 
+
+
             checkWaterCollision();
         }
 
         bool boundingBox = false;
         public void Draw(GameTime gameTime)
         {
-            //cam.Pos = new Vector2(500.0f, 200.0f);
-            // Begin drawing and disable AA for pixally art
-            //spriteBatch.Begin(SpriteSortMode.Deferred,
-            //    BlendState.AlphaBlend,
-            //    SamplerState.PointClamp,
-            //    null, null, null, matrix);
-            // Begin drawing and disable AA for pixally art
-            spriteBatch.Begin(SpriteSortMode.Deferred,
-                            BlendState.AlphaBlend,
-                            SamplerState.PointClamp,
-                            null, null, null, camera.Transform);
-            foreach (GameObject bgitem in _currentStage.bg)
+            if (_currentStage.progressBar != null)
             {
-                bgitem.Draw(spriteBatch, gameTime);
-            }
-            //spriteBatch.Draw(map, map.Bounds, Color.White);
-            //spriteBatch.Draw(_currentStage.stageBackground, _currentStage.stageBackground.Bounds, Color.White);
-
-            //spriteBatch.Draw(rect, coor, Color.White);
-            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Red);
-
-
-            //Draw the box around the health bar
-            spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width/2, 44), Color.White);
-            //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
-            if (_currentStage.killedEnemies < _currentStage.totalEnemies)
-            {
-                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Orange);
-            }
-            if (_currentStage.killedEnemies >= _currentStage.totalEnemies)
-            {
-                spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Green);
-            }
-            spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y -100, player.healthTexture.Width / 4, 10), new Rectangle(0, 45, player.healthTexture.Width / 4, 10), Color.Red);
-            spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, player.healthTexture.Width / 4, 10), new Rectangle(0, 0, player.healthTexture.Width / 4, 10), Color.White);
-            spriteBatch.Draw((player.healthTexture), new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, 0 + (int)(player.health) +20, 10), new Rectangle(0, 45, player.healthTexture.Width / 2, 10), Color.Green);
-
-            foreach (Enemy enemy in _currentStage.enemies)
-            {
-                spriteBatch.Draw(enemy.healthTexture, new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, enemy.healthTexture.Width / 4, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 4, 10), Color.Red);
-                spriteBatch.Draw(enemy.healthTexture, new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, enemy.healthTexture.Width / 4, 10), new Rectangle(0, 0, enemy.healthTexture.Width / 4, 10), Color.White);
-                spriteBatch.Draw((enemy.healthTexture), new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, 0 + (int)(enemy.health) + 20, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 2, 10), Color.Green);
-            }
-
-            player.Draw(spriteBatch, gameTime);
-            //enemy.Draw(spriteBatch);
-            if (boundingBox)
-            {
-                spriteBatch.Draw(pixel, enemy.BoundingBox, Color.White);
-                spriteBatch.Draw(pixel, player.BoundingBox, Color.White);
-                spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
-                spriteBatch.Draw(pixel, waterDispenser.BoundingBox, Color.White);
-            }
-
-            foreach (GameObject obc in _currentStage.GameObjects)
-            {
-                obc.Draw(spriteBatch, gameTime);
-            }
-            if (_currentStage.enemies.Count > 0)
-            {
-                foreach (Enemy enemy in _currentStage.enemies)
+                //cam.Pos = new Vector2(500.0f, 200.0f);
+                // Begin drawing and disable AA for pixally art
+                //spriteBatch.Begin(SpriteSortMode.Deferred,
+                //    BlendState.AlphaBlend,
+                //    SamplerState.PointClamp,
+                //    null, null, null, matrix);
+                // Begin drawing and disable AA for pixally art
+                spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp,
+                                null, null, null, camera.Transform);
+                foreach (GameObject bgitem in _currentStage.bg)
                 {
-                    enemy.Draw(spriteBatch, gameTime);
+                    bgitem.Draw(spriteBatch, gameTime);
                 }
+                //spriteBatch.Draw(map, map.Bounds, Color.White);
+                //spriteBatch.Draw(_currentStage.stageBackground, _currentStage.stageBackground.Bounds, Color.White);
+
+                //spriteBatch.Draw(rect, coor, Color.White);
+                spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Red);
+
+
+                //Draw the box around the health bar
+                spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width / 2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width / 2, 44), Color.White);
+                //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
+                if (_currentStage.killedEnemies < _currentStage.totalEnemies)
+                {
+                    spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Orange);
+                }
+                if (_currentStage.killedEnemies >= _currentStage.totalEnemies)
+                {
+                    spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Green);
+                }
+                spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, player.healthTexture.Width / 4, 10), new Rectangle(0, 45, player.healthTexture.Width / 4, 10), Color.Red);
+                spriteBatch.Draw(player.healthTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, player.healthTexture.Width / 4, 10), new Rectangle(0, 0, player.healthTexture.Width / 4, 10), Color.White);
+                spriteBatch.Draw((player.healthTexture), new Rectangle((int)player.Position.X, (int)player.Position.Y - 100, 0 + (int)(player.health) + 20, 10), new Rectangle(0, 45, player.healthTexture.Width / 2, 10), Color.Green);
+
+                foreach (AActor enemy in _currentStage.enemies)
+                {
+                    spriteBatch.Draw(enemy.healthTexture, new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, enemy.healthTexture.Width / 4, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 4, 10), Color.Red);
+                    spriteBatch.Draw(enemy.healthTexture, new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, enemy.healthTexture.Width / 4, 10), new Rectangle(0, 0, enemy.healthTexture.Width / 4, 10), Color.White);
+                    spriteBatch.Draw((enemy.healthTexture), new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, 0 + (int)(enemy.health) + 20, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 2, 10), Color.Green);
+                }
+
+                player.Draw(spriteBatch, gameTime);
+                //enemy.Draw(spriteBatch);
+                if (boundingBox)
+                {
+                    spriteBatch.Draw(pixel, enemy.BoundingBox, Color.White);
+                    spriteBatch.Draw(pixel, player.BoundingBox, Color.White);
+                    spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
+                    spriteBatch.Draw(pixel, waterDispenser.BoundingBox, Color.White);
+                }
+
+                foreach (GameObject obc in _currentStage.GameObjects)
+                {
+                    obc.Draw(spriteBatch, gameTime);
+                }
+                if (_currentStage.enemies.Count > 0)
+                {
+                    foreach (AActor enemy in _currentStage.enemies)
+                    {
+                        enemy.Draw(spriteBatch, gameTime);
+                    }
+                }
+
+                if (bossDefeated)
+                {
+                    waterDispenser.Draw(spriteBatch, gameTime);
+                }
+
+                if (finished)
+                {
+                    spriteBatch.Draw(fader, new Rectangle(0, 0, graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue, 0, 255)));
+                }
+
+                spriteBatch.End();
+
             }
-
-            if (bossDefeated)
-            {
-                waterDispenser.Draw(spriteBatch, gameTime);
-            }
-
-            if (finished)
-            {
-                spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
-            }
-
-            spriteBatch.End();
-
-
         }
 
         public void Leaving()
@@ -441,7 +453,7 @@ namespace Water
             foreach (GameObject obj in _currentStage.GameObjects)
             {
                 if (player.BoundingBox.Intersects(obj.BoundingBox))
-                foreach (Enemy enemy in _currentStage.enemies)
+                foreach (AActor enemy in _currentStage.enemies)
                 {
                     if (enemy.BoundingBox.Intersects(obj.BoundingBox))
                     {
@@ -459,47 +471,44 @@ namespace Water
         /// </summary>
         private void checkEnemyCollisions()
         {
-            foreach (Enemy enemy in _currentStage.enemies)
+            foreach (AActor enemy in _currentStage.enemies)
             {
                 if (player.BoundingBox.Intersects(enemy.BoundingBox))
                 {
-                    if(enemy.isOnCooldown() == false)
-                    {
                         enemy.actionStateMachine.Change("attack");
                         //enemy.coolDown();
-                    }
-                        if(player.actionStateMachine.Current is AttackAction)
+                    if (player.actionStateMachine.Current is AttackAction)
+                    {
+                        enemy.health = (enemy.health + (enemy.defense * (int)0.5) + 13) - player.attack;// -= player.attack;                           
+                        if (player.health > 100)
                         {
-                            enemy.health = (enemy.health + (enemy.defense *(int)0.5)+13) - player.attack;// -= player.attack;                           
-                            if(player.health >100)
-                            {
-                                player.health = 100;
-                            }
-                            else if(player.health <100)
-                            {
-                                player.health += enemy.defense / 2;
-                            }
+                            player.health = 100;
                         }
-                        else if (enemy.actionStateMachine.Current is AttackAction)
+                        else if (player.health < 100)
                         {
-                            if (player.actionStateMachine.Current is JumpAction) { }
-                            else if (player.actionStateMachine.Current is AttackAction) { enemy.health -= player.attack; }
-                            else
-                            {
-                                //Debug.WriteLine("Ouch!");
-                                //player hurt action moet hier komen
-                                player.health -= enemy.attack;
-                            }
+                            player.health += enemy.defense / 2;
                         }
                     }
+                    else if (enemy.actionStateMachine.Current is AttackAction)
+                    {
+                        if (player.actionStateMachine.Current is JumpAction) { }
+                        else if (player.actionStateMachine.Current is AttackAction) { enemy.health -= player.attack; }
+                        else
+                        {
+                            //Debug.WriteLine("Ouch!");
+                            //player hurt action moet hier komen
+                            player.health -= enemy.attack;
+                        }
+                    }
+                }
 
-                
+
                 else
                 {
                     enemy.actionStateMachine.Change("stand");
                 }
             }
-            
+
         }
 
 
@@ -545,6 +554,19 @@ namespace Water
         {
             Vector2 spawnloc = new Vector2(player.Position.X + 500, player.Position.Y);
             _currentStage.spawnBoss(3, spawnloc);        
+        }
+
+        public void bossHealth()
+        {
+            for (int i = 0; i < _currentStage.enemies.Count; i++)
+            {
+                Boss b = (Boss)_currentStage.enemies[i];
+                if (b.health <= 0)
+                {
+                    bossDefeated = true;
+                }
+            }
+            
         }
 
     }

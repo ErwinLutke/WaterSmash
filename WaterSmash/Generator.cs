@@ -185,7 +185,7 @@ namespace Water
 
             int baseHealth = 100;
             int baseAttack = 12;
-            int baseDefence = 33;
+            int baseDefence = 12;
             int sight = 123 * (dificulty / 2);
 
 
@@ -203,6 +203,30 @@ namespace Water
 
             return spawn;
         }
+        public object bossGenerator(int dificulty, Vector2 pos)
+        {
+
+            int baseHealth = 2;
+            int baseAttack = 12;
+            int baseDefence = 33;
+            int sight = 123 * (dificulty / 2);
+
+
+            AActor spawn = new Boss();
+            spawn.name = "enemieiei";
+            //spawn.inventory = generateInventory();
+            spawn.health = baseHealth * dificulty;
+            spawn.attack = baseAttack * dificulty;
+            spawn.defense = baseDefence * dificulty;
+            // spawn.setSightRange(sight);
+            spawn.Position = pos;
+
+            spawn.spriteAnimations = spriteAnimations["enemy"];
+            spawn.actionStateMachine.Change("stand");
+
+            return spawn;
+        }
+
         /// <summary>
         /// set sprite animations for the enemy.
         /// </summary>
@@ -218,6 +242,7 @@ namespace Water
             spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
             spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
         }
+
 
         /// <summary>
         /// "random" map generator, generates a straight line so far...
@@ -243,9 +268,9 @@ namespace Water
             return GameObjects;
         }
         private List<object> bg = new List<object>();//holds all map blocks
-        public List<object> generateBackground()
+        public List<object> generateBackground(int stage)
         {
-            Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_1/fill");//
+            Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_" +stage +"/fill");//
             int maxBlox = 30;//max amount of blocks in game
             int currentx = 0;
             while (bg.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.

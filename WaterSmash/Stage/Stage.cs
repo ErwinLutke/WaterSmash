@@ -34,14 +34,19 @@ namespace Water
 
         public Stage()
         {
-            stageBackground = content.Load<Texture2D>("Images/stages/stage_1/bg");
-            progressBar = content.Load<Texture2D>("Images/stages/HealthBar2");
-            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
-            enemies = new List<object>();
-            generator = new Generator();
-            GameObjects = generator.generateMap();
-            bg = generator.generateBackground();
+
             //spawnEnemies();
+        }
+
+        public void loadContent(int stage)
+        {
+                stageBackground = content.Load<Texture2D>("Images/stages/stage_"+ stage + "/bg");
+                progressBar = content.Load<Texture2D>("Images/stages/HealthBar2");
+                Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
+                enemies = new List<object>();
+                generator = new Generator();
+                GameObjects = generator.generateMap();
+                bg = generator.generateBackground(stage);
         }
 
         /// <summary>
@@ -68,6 +73,7 @@ namespace Water
             
         
         }
+        
 
         /// <summary>
         /// Methode om de enemies naar de speler te bewegen.
@@ -96,6 +102,7 @@ namespace Water
                 }
             }
         }
+
 
         /// <summary>
         /// checkt of de enemies in range zijn van de speler. als dit zo is call de methode om de isInRange van enemie op true te zetten.
@@ -128,7 +135,7 @@ namespace Water
             //loop door alle enemies
             for (int i = 0; i < enemies.Count(); i++)
             {
-                Enemy e = (Enemy)enemies[i];
+                AActor e = (AActor)enemies[i]; 
                 //check of de health van enemy[i] kleiner is dan 0
                 if (e.health < 0)
                 {
