@@ -303,14 +303,14 @@ namespace Water
                 }
             }
 
-            if(finished)
-            {
-                spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
-            }
-
-            if(bossDefeated)
+            if (bossDefeated)
             {
                 waterDispenser.Draw(spriteBatch, gameTime);
+            }
+
+            if (finished)
+            {
+                spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
             }
 
             spriteBatch.End();
