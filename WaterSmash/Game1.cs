@@ -94,6 +94,8 @@ namespace Water
             // TODO: Add your drawing code here
             base.Draw(gameTime);
             gameStateManager.Draw(gameTime);
-        }
+
+
+        }    // set up the new viewport centered in the ba
     }
 }
