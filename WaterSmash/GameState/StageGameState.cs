@@ -49,6 +49,7 @@ namespace Water
         SpriteBatch spriteBatch;
         Texture2D map;
 
+        GameObject bossDrop;
 
         Point mapSize;
         Matrix matrix;
@@ -228,7 +229,7 @@ namespace Water
             }
         
             _currentStage.spawnEnemies(player.Position);
-            _currentStage.checkHealth(end);
+            _currentStage.checkHealth(end, bossSpawnloc);
             _currentStage.moveEnemies(player.Position);
             _currentStage.checkInRange(player.Position);
             _currentStage.checkProgress();
@@ -314,15 +315,13 @@ namespace Water
 
             if (_currentStage.bossDefeated)
             {
-                _currentStage.waterDispenser.Position += bossSpawnloc;
                 _currentStage.waterDispenser.Draw(spriteBatch, gameTime);
             }
 
             if (finished)
-            {
-                spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
+            { 
+                spriteBatch.Draw(fader, new Rectangle((int)player.Position.X - 2000, 0, graphics.Viewport.Width + 2000, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
             }
-
 
             spriteBatch.End();
 
