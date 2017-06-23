@@ -34,6 +34,7 @@ namespace Water
                 MoveLeft();
             }
 
+
             if (!state.IsKeyDown(Keys.Down))
             {
                 _actionStateMachine.Change("stand");
