@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Media;
 
 namespace Water
 {
@@ -32,6 +33,44 @@ namespace Water
 
         public List<object> enemies;
 
+        public object boss { get; private set; }
+
+        /// <summary>
+        /// Hold wether boss is defeated or not -> waterDispenser spawns when defeated
+        /// </summary>
+        public bool bossDefeated = false; // TEMP! MUST BE FALSE
+
+        /// <summary>
+        /// Holds GameObject waterDispenser
+        /// </summary>
+        public GameObject waterDispenser;
+
+        /// <summary>
+        /// Holds texture of waterDispenser
+        /// </summary>
+        Texture2D waterDispenserTexture;
+
+        /// <summary>
+        /// Holds song for when waterDispenser lands
+        /// </summary>
+        public Song waterDispenserLandingSound;
+
+        /// <summary>
+        /// Hold wether waterDispenser landed or not
+        /// </summary>
+        public bool waterDispenserLanded;
+
+        /// <summary>
+        /// Set waterDispenser dropspeed
+        /// </summary>
+        public float dropSpeed = 5f;
+
+        public Song slurp;
+
+        public Vector2 bossPositionAtDie { get; set; }
+
+        private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
+
         public Stage()
         {
             stageBackground = content.Load<Texture2D>("Images/stages/stage_1/bg");
@@ -42,6 +81,11 @@ namespace Water
             GameObjects = generator.generateMap();
             bg = generator.generateBackground();
             //spawnEnemies();
+
+            waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
+            waterDispenser = new GameObject(waterDispenserTexture, new Vector2(50, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
+            waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
+            slurp = content.Load<Song>("audio/slurp");
         }
 
         /// <summary>
@@ -121,7 +165,7 @@ namespace Water
         /// <summary>
         /// checkt de health van alle enemies, en verwijderd deze als de health kleiner is dan 0
         /// </summary>
-        public void checkHealth()
+        public void checkHealth(bool end)
         {
             //Debug.WriteLine(_currentStage.enemies.Count());
             //Debug.WriteLine(killedEnemies);
@@ -132,12 +176,17 @@ namespace Water
                 //check of de health van enemy[i] kleiner is dan 0
                 if (e.health < 0)
                 {
+                    killedEnemies++;
+                    if(end == true)
+                    {
+                        bossDefeated = true;
+                    }
                     //verwijder de dode enemy uit de lijst met enemies
                     enemies.RemoveAt(i);
-                    killedEnemies++;
                 }
             }
         }
+
         public void checkProgress()
         {
             if(killedEnemies >=totalEnemies)
@@ -148,11 +197,8 @@ namespace Water
 
         public void spawnBoss(int dificulty ,Vector2 pos)
         {
+            //boss = (Enemy)generator.bossGenerator(dificulty, pos);
             enemies.Add(generator.enemyGenerator(dificulty, pos));
         }
-
-
-
-
     }
 }

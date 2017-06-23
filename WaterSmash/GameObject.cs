@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Water
 {
-    class GameObject : IFocusable
+    public class GameObject : IFocusable
     {
         GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
 

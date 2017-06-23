@@ -22,6 +22,8 @@ namespace Water
         private static GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
         private ContentManager content = GameServices.GetService<ContentManager>();
 
+        private Vector2 bossSpawnloc;
+
         /// <summary>
         /// Camera for following the player around
         /// </summary>
@@ -38,33 +40,6 @@ namespace Water
         Texture2D pixel;
         GameObject Floor;
         Enemy enemy;
-
-        /// <summary>
-        /// Holds GameObject waterDispenser
-        /// </summary>
-        GameObject waterDispenser;
-
-        /// <summary>
-        /// Holds texture of waterDispenser
-        /// </summary>
-        Texture2D waterDispenserTexture;
-
-        /// <summary>
-        /// Holds song for when waterDispenser lands
-        /// </summary>
-        Song waterDispenserLandingSound;
-
-        /// <summary>
-        /// Hold wether waterDispenser landed or not
-        /// </summary>
-        bool waterDispenserLanded;
-
-        /// <summary>
-        /// Set waterDispenser dropspeed
-        /// </summary>
-        float dropSpeed = 5f;
-
-        Song slurp;
         
 
         AActor player;
@@ -77,11 +52,6 @@ namespace Water
 
         Point mapSize;
         Matrix matrix;
-
-        /// <summary>
-        /// Hold wether boss is defeated or not -> waterDispenser spawns when defeated
-        /// </summary>
-        bool bossDefeated = true; // TEMP! MUST BE FALSE
 
         /// <summary>
         /// Hold wether player has finished the staged (interacted with waterDispenser)
@@ -132,11 +102,6 @@ namespace Water
             loadCameraSettings();
 
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
-
-            waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
-            waterDispenser = new GameObject(waterDispenserTexture, new Vector2(400, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
-            waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
-            slurp = content.Load<Song>("audio/slurp");
 
             fader = content.Load<Texture2D>("healthbar");
             enemy = new Enemy();
@@ -243,38 +208,39 @@ namespace Water
             }
 
             // Check if boss is defeated for waterDispenser purposes
-            if (bossDefeated)
+            if (_currentStage.bossDefeated)
             {
                 // Land waterDispenser
-                if (waterDispenser.Position.Y + waterDispenser.Size.Y < Floor.Position.Y)
-                { 
-                    waterDispenser.Position = new Vector2(waterDispenser.Position.X, waterDispenser.Position.Y + dropSpeed);
+                if (_currentStage.waterDispenser.Position.Y + _currentStage.waterDispenser.Size.Y < Floor.Position.Y)
+                {
+                    _currentStage.waterDispenser.Position = new Vector2(_currentStage.waterDispenser.Position.X, _currentStage.waterDispenser.Position.Y + _currentStage.dropSpeed);
                 }
                 // Play sound on landing
-                else if (waterDispenser.Position.Y + waterDispenser.Size.Y == Floor.Position.Y)
+                else if (_currentStage.waterDispenser.Position.Y + _currentStage.waterDispenser.Size.Y == Floor.Position.Y)
                 {
-                    if(!waterDispenserLanded)
+                    if(!_currentStage.waterDispenserLanded)
                     {
-                        MediaPlayer.Play(waterDispenserLandingSound);
+                        MediaPlayer.Play(_currentStage.waterDispenserLandingSound);
                         MediaPlayer.IsRepeating = false;
                     }
-                    waterDispenserLanded = true;
+                    _currentStage.waterDispenserLanded = true;
                 }
             }
         
             _currentStage.spawnEnemies(player.Position);
-            _currentStage.checkHealth();
+            _currentStage.checkHealth(end);
             _currentStage.moveEnemies(player.Position);
             _currentStage.checkInRange(player.Position);
             _currentStage.checkProgress();
+           
             if (_currentStage.killedEnemies >= _currentStage.totalEnemies && end == false)
             {
                 _currentStage.enemies.Clear();
                 spawnBoss();
                 end = true;
             }
-        
-            checkWaterCollision();
+
+            checkCollisions();
         }
 
         bool boundingBox = false;
@@ -331,7 +297,7 @@ namespace Water
                 spriteBatch.Draw(pixel, enemy.BoundingBox, Color.White);
                 spriteBatch.Draw(pixel, player.BoundingBox, Color.White);
                 spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
-                spriteBatch.Draw(pixel, waterDispenser.BoundingBox, Color.White);
+                spriteBatch.Draw(pixel, _currentStage.waterDispenser.BoundingBox, Color.White);
             }
 
             foreach (GameObject obc in _currentStage.GameObjects)
@@ -346,15 +312,17 @@ namespace Water
                 }
             }
 
-            if (bossDefeated)
+            if (_currentStage.bossDefeated)
             {
-                waterDispenser.Draw(spriteBatch, gameTime);
+                _currentStage.waterDispenser.Position += bossSpawnloc;
+                _currentStage.waterDispenser.Draw(spriteBatch, gameTime);
             }
 
             if (finished)
             {
                 spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
             }
+
 
             spriteBatch.End();
 
@@ -382,7 +350,7 @@ namespace Water
         /// </summary>
         private void checkWaterCollision()
         {
-            if(player.BoundingBox.Intersects(waterDispenser.BoundingBox))
+            if(player.BoundingBox.Intersects(_currentStage.waterDispenser.BoundingBox))
             {
                 finished = true;
             }
@@ -397,7 +365,7 @@ namespace Water
 
             if(aplhaValue == 100)
             {
-                MediaPlayer.Play(slurp);
+                MediaPlayer.Play(_currentStage.slurp);
                 MediaPlayer.IsRepeating = false;
             }
 
@@ -543,8 +511,8 @@ namespace Water
 
         public void spawnBoss()
         {
-            Vector2 spawnloc = new Vector2(player.Position.X + 500, player.Position.Y);
-            _currentStage.spawnBoss(3, spawnloc);        
+            bossSpawnloc = new Vector2(player.Position.X + 500, player.Position.Y);
+            _currentStage.spawnBoss(3, bossSpawnloc);        
         }
 
     }

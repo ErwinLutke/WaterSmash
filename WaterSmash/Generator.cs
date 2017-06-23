@@ -203,6 +203,30 @@ namespace Water
 
             return spawn;
         }
+
+        public object bossGenerator(int difficulty, Vector2 pos)
+        {
+            int baseHealth = 100;
+            int baseAttack = 12;
+            int baseDefence = 33;
+            int sight = 123 * (difficulty / 2);
+
+
+            Boss spawn = new Boss();
+            spawn.name = "enemieiei";
+            //spawn.inventory = generateInventory();
+            spawn.health = baseHealth * difficulty;
+            spawn.attack = baseAttack * difficulty;
+            spawn.defense = baseDefence * difficulty;
+            // spawn.setSightRange(sight);
+            spawn.Position = pos;
+
+            spawn.spriteAnimations = spriteAnimations["enemy"];
+            spawn.actionStateMachine.Change("stand");
+
+            return spawn;
+        }
+
         /// <summary>
         /// set sprite animations for the enemy.
         /// </summary>
