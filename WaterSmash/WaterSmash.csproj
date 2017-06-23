@@ -172,6 +172,7 @@
     <Content Include="Content\Images\characters\player\spritesheet.png" />
     <Content Include="Content\Images\fog.png" />
     <Content Include="Content\Images\message.png" />
+    <Content Include="Content\Images\road.png" />
     <Content Include="Content\Images\sprite.jpg" />
     <Content Include="Content\Images\stages\floor.png" />
     <Content Include="Content\Images\stages\stage_1\bg.gif" />
