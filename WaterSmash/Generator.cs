@@ -86,7 +86,7 @@ namespace Water
                 inventory.AddInventoryObject(generateEquipable(rnd.Next(2)));
             }
 
-            return null;
+            return inventory;
         }
 
         /// <summary>
@@ -190,8 +190,8 @@ namespace Water
 
 
             Enemy spawn = new Enemy();
+            spawn.inventory = generateInventory();
             spawn.name = "enemieiei";
-            //spawn.inventory = generateInventory();
             spawn.health = baseHealth*dificulty;
             spawn.attack = baseAttack * dificulty;
             spawn.defense = baseDefence * dificulty;
