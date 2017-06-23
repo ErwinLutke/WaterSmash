@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace Water
 {
-    public class GameObject
+    class GameObject : IFocusable
     {
+        GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
 
         protected Texture2D texture;
 

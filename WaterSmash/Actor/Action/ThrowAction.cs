@@ -67,6 +67,7 @@ namespace Water
 
             if (args.Length > 0)
             {
+
                 // Save previous action to switch back to after throw
                 prevAction = args[0].ToString();
             }

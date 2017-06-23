@@ -1,8 +1,16 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace Water
 {
     public class Generator
     {
+        ContentManager content = GameServices.GetService<ContentManager>();
+
         /// <summary>
         /// Userd for generating randoms
         /// </summary>
@@ -44,7 +52,7 @@ namespace Water
             "of the Undertakers' Invocation of Flesh",
         };
 
-        public Generator() { }
+        public Generator() { setSpriteAnimations(); }
         
 
         enum Special
@@ -165,6 +173,91 @@ namespace Water
                 }
             }
             return item;
+        }
+
+        /// <summary>
+        /// Genereer een nieuwe enemy, afhankelijk van de dificulty
+        /// </summary>
+        /// <param name="dificulty">dificulty of the enemy</param>
+        /// <returns>enemy with given dificulty, higher is stronger</returns>
+        public object enemyGenerator(int dificulty, Vector2 pos)
+        {
+
+            int baseHealth = 100;
+            int baseAttack = 12;
+            int baseDefence = 33;
+            int sight = 123 * (dificulty / 2);
+
+
+            Enemy spawn = new Enemy();
+            spawn.name = "enemieiei";
+            //spawn.inventory = generateInventory();
+            spawn.health = baseHealth*dificulty;
+            spawn.attack = baseAttack * dificulty;
+            spawn.defense = baseDefence * dificulty;
+            // spawn.setSightRange(sight);
+            spawn.Position = pos;
+
+            spawn.spriteAnimations = spriteAnimations["enemy"];
+            spawn.actionStateMachine.Change("stand");
+
+            return spawn;
+        }
+        /// <summary>
+        /// set sprite animations for the enemy.
+        /// </summary>
+        Dictionary<string, Dictionary<string, SpriteAnimation>> spriteAnimations;
+        private void setSpriteAnimations()
+        {
+            spriteAnimations = new Dictionary<string, Dictionary<string, SpriteAnimation>>();
+            spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
+            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
+            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/attack"), 1, 15));
+            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
+            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
+            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
+            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
+        }
+
+        /// <summary>
+        /// "random" map generator, generates a straight line so far...
+        /// </summary>
+        /// <returns></returns>
+        /// 
+        private List<object> GameObjects = new List<object>();//holds all map blocks
+        GameObject Floor;
+        int map_x = 0;
+        public List<object> generateMap()
+        { 
+            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
+            int maxBlox = 100;//max amount of blocks in game
+            while (GameObjects.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
+            {
+                Vector2 testvec = new Vector2(map_x, Floor.Position.Y - 20);//
+                Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_1/floor");//
+
+                GameObject test = new GameObject(testobj, testvec);//
+                GameObjects.Add(test);//voeg de vloer toe aan de lijst met objects
+                map_x = map_x + 100;//increment de x waarde van map_x, om het volgende object op de juist plek te spawnen
+            }
+            return GameObjects;
+        }
+        private List<object> bg = new List<object>();//holds all map blocks
+        public List<object> generateBackground()
+        {
+            Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_1/fill");//
+            int maxBlox = 30;//max amount of blocks in game
+            int currentx = 0;
+            while (bg.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
+            {
+                Vector2 testvec = new Vector2(currentx, 0-70);//
+                GameObject test = new GameObject(testobj, testvec);//
+                bg.Add(test);//voeg de vloer toe aan de lijst met objects
+                currentx = currentx + testobj.Width;
+                Debug.WriteLine("wall x :" + currentx);
+            }
+            return bg;
+
         }
 
     }

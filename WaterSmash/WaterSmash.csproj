@@ -110,6 +110,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Camera\Camera2D.cs" />
+    <Compile Include="Camera\IFocusable.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameServices.cs" />
     <Compile Include="GameState\Button.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="GameState\MenuGameState.cs" />
     <Compile Include="GameState\PauseGameState.cs" />
     <Compile Include="GameState\test.cs" />
+    <Compile Include="Camera\ICamera2D.cs" />
     <Compile Include="Inventory\Cap.cs" />
     <Compile Include="GameState\EmptyState.cs" />
     <Compile Include="GamePage.xaml.cs">
@@ -171,6 +174,7 @@
     <Content Include="Content\Images\message.png" />
     <Content Include="Content\Images\sprite.jpg" />
     <Content Include="Content\Images\stages\floor.png" />
+    <Content Include="Content\Images\stages\stage_1\bg.gif" />
     <Content Include="Content\Images\stages\stage_1\map.png" />
     <Content Include="Content\Images\stages\stage_1\worldmap_preview_1.png" />
     <Content Include="Content\Images\stages\stage_1\worldmap_selected_1.png" />
