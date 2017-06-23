@@ -15,7 +15,7 @@ namespace Water
     {
         private Dictionary<String, Stage> _stages;
         private Stage _currentStage;
-        private Generator generator;
+        private Generator generator = new Generator();
 
         private GameStateManager gameStateManager;
         private static GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
@@ -24,14 +24,10 @@ namespace Water
         //RICKS CODE:@:@:@:@
         //
 
-        public GameState.Camera2d cam = new GameState.Camera2d();
 
 
 
         private bool jumping = false;
-        private List<GameObject> GameObjects = new List<GameObject>();//holds all map blocks
-        private List<Enemy> enemies = new List<Enemy>();//holds all enemies
-        private int killedEnemies = 0;//total killed enemies 
 
         //
 
@@ -84,6 +80,7 @@ namespace Water
             }
             else
             {
+                _currentStage = new Stage();
                 player = new Player();
             }
 
@@ -136,12 +133,8 @@ namespace Water
             // TEMP - debugging purpose
             player.load();
             enemy.load();
-            generateMap();
             data = new Color[100 * 10];
-            progressBar();
-
-            x = Floor.Position.X;
-            y = Floor.Position.Y;
+            //progressBar();
 
         }
 
@@ -160,8 +153,9 @@ namespace Water
             if (state.IsKeyUp(Keys.Space))
             {
                 jumping = false;
+                
             }
-            foreach (var map in GameObjects)
+            foreach (var map in _currentStage.GameObjects)
             {
                 if (state.IsKeyUp(Keys.Left))
                 {
@@ -182,25 +176,32 @@ namespace Water
             player.Update(gameTime);
             enemy.Update(gameTime);
             checkCollisions();
-            spawnEnemies();
-            checkHealth();
-            moveEnemies();
-            checkInRange();
+            _currentStage.spawnEnemies();
+            _currentStage.checkHealth();
+            _currentStage.moveEnemies(player.Position);
+            _currentStage.checkInRange(player.Position);
+            
         }
 
         bool boundingBox = false;
         public void Draw(GameTime gameTime)
         {
-            cam.Pos = new Vector2(500.0f, 200.0f);
-            // Begin drawing and disable AA for pixally art
+             // Begin drawing and disable AA for pixally art
             spriteBatch.Begin(SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
                 null, null, null, matrix);
 
             spriteBatch.Draw(map, map.Bounds, Color.White);
+            //spriteBatch.Draw(rect, coor, Color.White);
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20, 30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Red);
 
-            spriteBatch.Draw(rect, coor, Color.White);
+
+            //Draw the box around the health bar
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 0, _currentStage.progressBar.Width, 44), Color.White);
+            //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
+
+            spriteBatch.Draw((_currentStage.progressBar), new Rectangle(20,30, 0 +(int)(_currentStage.killedEnemies) *5, 44),new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Green);
 
             player.Draw(spriteBatch);
             //enemy.Draw(spriteBatch);
@@ -211,13 +212,13 @@ namespace Water
                 spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
             }
 
-            foreach (GameObject obc in GameObjects)
+            foreach (GameObject obc in _currentStage.GameObjects)
             {
                 obc.Draw(spriteBatch);
             }
-            if (enemies.Count > 0)
+            if (_currentStage.enemies.Count > 0)
             {
-                foreach (Enemy enemy in enemies)
+                foreach (Enemy enemy in _currentStage.enemies)
                 {
                     enemy.Draw(spriteBatch);
                 }
@@ -242,24 +243,7 @@ namespace Water
             checkGameObjColl();
 
         }
-        private void checkInRange()
-        {
-            foreach (var enemy in enemies)
-            {
 
-                //if (enemy.Position.X - player.Position.X < enemy.getSightRange())//left
-                // if (player.Position.X - enemy.Position.X < enemy.getSightRange())//right
-                if (player.Position.X - enemy.Position.X < enemy.getSightRange() && enemy.Position.X - player.Position.X < enemy.getSightRange())
-                {
-                    enemy.setInRange(true);
-                }
-                else
-                {
-                    enemy.setInRange(false);
-                }
-                //Debug.WriteLine("difference: " + (enemy.Position.X - player.Position.X));
-            }
-        }
 
         private void checkFloorCollisions()
         {
@@ -283,148 +267,107 @@ namespace Water
             */
 
         }
+        /// <summary>
+        /// methode om the checken of de player en enemies op de game objects bewegen
+        /// </summary>
 
         private void checkGameObjColl()
         {
-            float y = player.Position.Y;
-            foreach (var obj in GameObjects)
+            //float y = player.Position.Y;
+            foreach (GameObject obj in _currentStage.GameObjects)
             {
-                if (player.BoundingBox.Intersects(obj.BoundingBox) && jumping!=true)
+                if (player.BoundingBox.Intersects(obj.BoundingBox))
                 {
-                    Rectangle overlap = Rectangle.Intersect(player.BoundingBox, obj.BoundingBox);
-                    //Debug.WriteLine(overlap);
-                    player.Position = new Vector2(player.Position.X, obj.Position.Y);//- overlap.Height);
-                    //Debug.WriteLine("obj collision");
+                    //Rectangle overlap = Rectangle.Intersect(player.BoundingBox, Floor.BoundingBox);
+
+                    player.Position = new Vector2(player.Position.X, obj.Position.Y);
+
                 }
                 else if (!player.BoundingBox.Intersects(obj.BoundingBox))
                 {
-                    //player.Position = new Vector2(player.Position.X, player.Position.Y+1);
+                    
                 }
-                
-                if (enemy.BoundingBox.Intersects(obj.BoundingBox))
+                else if(player.BoundingBox.Intersects(obj.BoundingBox) && jumping)
                 {
-                    Rectangle overlap = Rectangle.Intersect(enemy.BoundingBox, obj.BoundingBox);
-                    //Debug.WriteLine(overlap);
-                    enemy.Position = new Vector2(enemy.Position.X, obj.Position.Y - overlap.Height);
-                    //Debug.WriteLine("obj collision");
+                    player.actionStateMachine.Change("jump");
                 }
+                else
+                {
+                    Debug.WriteLine("no coll");
+                }
+                foreach (Enemy enemy in _currentStage.enemies)
+                {
+                    if (enemy.BoundingBox.Intersects(obj.BoundingBox))
+                    {
+                        //Rectangle overlap = Rectangle.Intersect(enemy.BoundingBox, obj.BoundingBox);
+                        enemy.Position = new Vector2(enemy.Position.X, obj.Position.Y);
+                    }
+                }
+
+                
             }
         }
 
+        /// <summary>
+        /// methode om te checken of de enemies met de player collision hebben.
+        /// </summary>
         private void checkEnemyCollisions()
         {
-            foreach (var enemy in enemies)
+            foreach (Enemy enemy in _currentStage.enemies)
             {
                 if (player.BoundingBox.Intersects(enemy.BoundingBox))
                 {
-                    //enemy.actionStateMachine.Change("attack");
-                    if (player.actionStateMachine.Current is AttackAction)
+                    if(enemy.isOnCooldown() == false)
                     {
-                        enemy.health += enemy.defense - player.attack;// -= player.attack;
+                        enemy.actionStateMachine.Change("attack");
+                        //enemy.coolDown();
                     }
-                    else if (enemy.actionStateMachine.Current is AttackAction)
-                    {
-                        if (player.actionStateMachine.Current is JumpAction) { }
-                        else if (player.actionStateMachine.Current is AttackAction) { enemy.health -= player.attack; }
-                        else
+                        if(player.actionStateMachine.Current is AttackAction)
                         {
-                            //Debug.WriteLine("Ouch!");
-                            //player.actionStateMachine.Change("jump");
-                            player.health -= enemy.attack;
+                            enemy.health += enemy.defense - player.attack;// -= player.attack;
+                        }
+                        else if (enemy.actionStateMachine.Current is AttackAction)
+                        {
+                            if (player.actionStateMachine.Current is JumpAction) { }
+                            else if (player.actionStateMachine.Current is AttackAction) { enemy.health -= player.attack; }
+                            else
+                            {
+                                //Debug.WriteLine("Ouch!");
+                                //player hurt action moet hier komen
+                                player.health -= enemy.attack;
+                            }
                         }
                     }
 
+                
+                else
+                {
+                    enemy.actionStateMachine.Change("stand");
                 }
             }
             
         }
-        int map_x = 0;
-        private void generateMap()
-        {
-            int maxBlox = 10;//max amount of blocks in game
-            while (GameObjects.Count() < maxBlox)
-            {
-
-                Vector2 testvec = new Vector2(map_x, Floor.Position.Y - 20);
-                if (map_x == 300)
-                {
-                    testvec = new Vector2(map_x, Floor.Position.Y + 40);
-                }
-                Texture2D testobj = content.Load<Texture2D>("Images/stages/testobj");
-                
-                GameObject test = new GameObject(testobj, testvec);
-                GameObjects.Add(test);
-                map_x = map_x + 100;
-
-            }
-        }
-        float y; 
-        float x;
-        private void spawnEnemies()
-        {
-            int totalEnemies = 100;
-            int maxEnemiesInGame = 2;
 
 
-            while (killedEnemies<totalEnemies && enemies.Count()<maxEnemiesInGame)
-            {
-                Enemy dummie = new Enemy();
-                dummie.attack = 10;
-                dummie.defense = 10;
-                dummie.health = 100;
-                dummie.Position = new Vector2(x, y+10);
-                dummie.spriteAnimations = spriteAnimations["enemy"];
-                dummie.actionStateMachine.Change("stand");
-                //y = y +10;
-                x = x +250;
-                //Debug.WriteLine("spawning: at y"+ y + ", x" + x );
-                enemies.Add(dummie);
-               
-            }
-        }
 
-        private void checkHealth()
-        {
-            //Debug.WriteLine("viewport Width: " + graphics.Viewport.Width/2);
-            for (int i = 0; i < enemies.Count(); i++)
-            {
-                if (enemies[i].health < 0)
-                {
-                    //Debug.WriteLine("should die");
-                    enemies.RemoveAt(i);
-                }
-            }
-        }
-
-        public void moveEnemies()
-        {
-            foreach (var enemy in enemies)
-            {
-                if(player.Position.X < enemy.Position.X && enemy.isInRange())
-                {
-                    enemy.HandleInput("moveLeft");//must be replaced with enemy.actionStateMachine.Change("action_here");
-                    //enemy.actionStateMachine.Change("moveLeft");
-                }
-                if(player.Position.X > enemy.Position.X && enemy.isInRange())
-                {
-                    enemy.HandleInput("moveRight");//must be replaced with enemy.actionStateMachine.Change("action_here");
-
-                    //enemy.Position = new Vector2(enemy.Position.X + 1, enemy.Position.Y);//must be replaced with enemy.actionStateMachine.Change("action_here");
-                }
-            }
-        }
-        Texture2D rect = new Texture2D(graphics, 100, 10);
+        //fields voor de progress bar
+        Texture2D rect;
         Color[] data;
-        Vector2 coor = new Vector2(250,10);
+        Vector2 coor;
         
-
+        /// <summary>
+        /// WORK IN PROGRESS!
+        /// Methode om de progress van de game aan te geven. 
+        /// voor elke enemy die gedood is moet de progressbar incrementen, tot het maximale enemies van de stage.
+        /// 
+        /// </summary>
         public void progressBar()
         {
+            //WERKT NOG NIET!!!
+            rect =  new Texture2D(graphics, 100, 10);
+            coor = new Vector2(250, 10);
             for (int i = 0; i < data.Length; ++i) data[i] = Color.Green;
             rect.SetData(data);
-
-            //spriteBatch.Draw(rect, coor, Color.White);
         }
-           
     }
 }

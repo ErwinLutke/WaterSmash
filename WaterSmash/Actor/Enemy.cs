@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace Water
 {
-    class Enemy : AActor
+     class Enemy : AActor
     {
         private bool inRange = false;
         private int sightRange = 50;
+        private bool cooldown = false;
         //private HealthBar healthbar;
         
         public Enemy()
@@ -47,6 +49,30 @@ namespace Water
         public int getSightRange()
         {
             return sightRange;
+        }
+        public bool isOnCooldown()
+        {
+            return cooldown;
+        }
+        /// <summary>
+        /// methode om de enemies niet te laten spammen met attacks
+        /// </summary>
+        public void coolDown()
+        {
+            cooldown = true;
+            double coolDownTime = 5000;
+            GameTime cd = new GameTime();
+            while (cooldown)
+            { 
+                coolDownTime += cd.ElapsedGameTime.TotalMilliseconds;
+                Debug.WriteLine("cooldown Time" + coolDownTime);
+                if (coolDownTime >= 5000)
+                {
+                    cooldown = false;
+                }
+            }
+
+
         }
         
     }
