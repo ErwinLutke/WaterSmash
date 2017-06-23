@@ -14,18 +14,12 @@ namespace Water
 
         public List<Texture2D> slots { get; } // Holds inventory slots
 
-        private ContentManager content = GameServices.GetService<ContentManager>();
+        public int capacity { get; set; }
 
-        public Inventory()
+        public Inventory(int capacity)
         {
+            this.capacity = capacity;
             items = new List<AEquipable>();
-            slots = new List<Texture2D>();
-
-            // ADD EMPTY INVENTORY SLOTS
-            for (int i = 0; i < 30; i++)
-            {
-                slots.Add(content.Load<Texture2D>("inventory\\inventory_slot"));
-            }
         }
 
         public void AddInventoryObject(AEquipable item)

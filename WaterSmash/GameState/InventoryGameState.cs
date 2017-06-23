@@ -22,6 +22,9 @@ namespace Water
         Texture2D textArea; // Holds textarea
         Texture2D slot;
 
+        Point bgSize;
+        Matrix matrix;
+
         //Player player = new Player(); // Player instance used for testing purposes
         Player player;
 
@@ -43,19 +46,23 @@ namespace Water
         /// <param name="gameTime"></param>
         public void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                null, null, null, matrix);
 
             Viewport viewport = graphics.Viewport;
 
             //Draw background full screen
-            spriteBatch.Draw(bg, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+            spriteBatch.Draw(bg, viewport.Bounds, Color.White);
 
             //Draw instruction text for equipping and dropping items
             spriteBatch.DrawString(spriteFont, "Press 'F' to equip", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 5), Color.White);
             spriteBatch.DrawString(spriteFont, "Press 'Del' to drop", new Vector2(viewport.Width / 100 * 10, viewport.Height / 100 * 10), Color.White);
 
             //Draw bottle image
-            spriteBatch.Draw(bottle, new Rectangle((viewport.Width / 100) * 5, (viewport.Height / 100) * 30, bottle.Width, bottle.Height), Color.White);
+            //spriteBatch.Draw(bottle, new Rectangle(viewport.Width / 100 * 10, viewport.Height / 100 * 15, bottle.Width, bottle.Height), Color.White);
+            spriteBatch.Draw(bottle, new Vector2(0,0), bottle.Bounds, Color.White, 0.0f, new Vector2(0, 0), new Vector2(matrix.Scale.X, matrix.Scale.Y), SpriteEffects.None, 0.0f);
 
             //Draw textareas for displaying information about current equipables
             spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 100) * 5, (viewport.Height / 100) * 50, textArea.Width / 2, textArea.Height / 2 + (textArea.Height / 100) * 50), Color.White);
@@ -73,7 +80,7 @@ namespace Water
                 spriteBatch.DrawString(spriteFont, "Level: " + player.equippedCap.level, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedCap.attack, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedCap.defense, new Vector2((viewport.Width / 100) * 5 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
-                spriteBatch.Draw(player.equippedCap.texture, new Rectangle((viewport.Width / 100) * 15 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedCap.texture.Width, player.equippedCap.texture.Height), Color.White);
+                spriteBatch.Draw(content.Load<Texture2D>(player.equippedCap.texture.ToString()), new Rectangle((viewport.Width / 100) * 15 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedCap.texture.Width, player.equippedCap.texture.Height), Color.White);
             }
             //Check if player currently has a label equipped
             if (player.equippedLabel != null)
@@ -83,10 +90,9 @@ namespace Water
                 spriteBatch.DrawString(spriteFont, "Level: " + player.equippedLabel.level, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Attack: " + player.equippedLabel.attack, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 8), Color.Black);
                 spriteBatch.DrawString(spriteFont, "Defense: " + player.equippedLabel.defense, new Vector2((viewport.Width / 100) * 25 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 10), Color.Black);
-                spriteBatch.Draw(player.equippedLabel.texture, new Rectangle((viewport.Width / 100) * 35 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedLabel.texture.Width, player.equippedLabel.texture.Height), Color.White);
+                spriteBatch.Draw(content.Load<Texture2D>(player.equippedLabel.texture.ToString()), new Rectangle((viewport.Width / 100) * 35 + (viewport.Width / 100) * 2, (viewport.Height / 100) * 50 + (viewport.Width / 100) * 6, player.equippedLabel.texture.Width, player.equippedLabel.texture.Height), Color.White);
 
             }
-
 
             // Used for layout inventory slots
             int count = 0;
@@ -97,8 +103,7 @@ namespace Water
             // y position placement for inventory slots
             int y = 40;
 
-            
-            foreach (Texture2D t in inventory.slots)
+            for (int i = 0; i < inventory.capacity; i++)
             {
                 // When 6 inventory slots are placed, start new line
                 if (count == 6)
@@ -125,14 +130,14 @@ namespace Water
                             // Set this item as current.
                             current = inventory.items[itemPointer];
                             // Draw item image with selection (Slightly bigger)
-                            spriteBatch.Draw(inventory.items[itemPointer].texture, new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width + 20, inventory.items[count].texture.Height + 20), Color.White);
+                            spriteBatch.Draw(content.Load<Texture2D>(inventory.items[itemPointer].texture.ToString()), new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width + 20, inventory.items[count].texture.Height + 20), Color.White);
                             // Save on screen location of item
                             inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
                         }
                         else
                         {
                             // Draw item image
-                            spriteBatch.Draw(inventory.items[itemPointer].texture, new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width, inventory.items[count].texture.Height), Color.White);
+                            spriteBatch.Draw(content.Load<Texture2D>(inventory.items[itemPointer].texture.ToString()), new Rectangle(x + 10, y + 10, inventory.items[count].texture.Width, inventory.items[count].texture.Height), Color.White);
                             // Save on screen location of item
                             inventory.items[itemPointer].position = new Vector2(x + 10, y + 10);
                         }
@@ -145,13 +150,13 @@ namespace Water
             }
 
             // Draw textarea to display current information about selected item
-            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), inventory.slots[0].Height * 6, inventory.slots[0].Width * 6, textArea.Height), Color.White);
+            spriteBatch.Draw(textArea, new Rectangle((viewport.Width / 2), slot.Height * 6, slot.Width * 6, textArea.Height), Color.White);
 
             // Draw information about current selected item
-            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
-            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (inventory.slots[0].Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
+            spriteBatch.DrawString(spriteFont, current.name, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 3)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Level: " + current.level, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 5)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Attack: " + current.attack, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 7)), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Defense: " + current.defense, new Vector2((viewport.Width / 2) + (viewport.Width / 100 * 5), (slot.Height * 6) + (viewport.Width / 100 * 9)), Color.Black);
 
             spriteBatch.End();
         }
@@ -174,7 +179,13 @@ namespace Water
             inventory = player.GetInventory();
 
             // Get background image
-            bg = content.Load<Texture2D>("inventory\\bg");
+            bg = content.Load<Texture2D>("inventory\\bg_1920x1080");
+            bgSize = new Point(1920,1080);
+            Point screenSize = graphics.Viewport.Bounds.Size;
+            var scaleX = (float)screenSize.X / bgSize.X;
+            var scaleY = (float)screenSize.Y / bgSize.Y;
+            matrix = Matrix.CreateScale(scaleX, scaleY, 1.0f);
+
             // Get bottle image 
             bottle = content.Load<Texture2D>("inventory\\bottle");
             // Get textarea image

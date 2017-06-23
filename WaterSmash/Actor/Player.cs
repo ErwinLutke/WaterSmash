@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,18 @@ namespace Water
         [DataMember]
         public Label equippedLabel; // Holds current equipped label
 
+        private ContentManager content = GameServices.GetService<ContentManager>(); // TESTING PURPOSES
+
         public Player()
         {
             inventory.AddInventoryObject(new Label(2, 2, 2, 2, 2));
             inventory.AddInventoryObject(new Cap(1, 1, 1, 1, 1));
             inventory.AddInventoryObject(new Label(3, 3, 3, 3, 3));
             inventory.AddInventoryObject(new Cap(4, 4, 4, 4, 4));
+
+            Cap cap = new Water.Cap(5, 5, 5, 5, 5);
+            cap.texture = content.Load<Texture2D>("inventory\\cap_diff");
+            inventory.AddInventoryObject(cap);
         }
 
         /// <summary>
