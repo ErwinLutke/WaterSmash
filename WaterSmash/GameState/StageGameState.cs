@@ -171,6 +171,7 @@ namespace Water
             spriteAnimations["player"].Add("crouch", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/crouch"), 1, 20));
             spriteAnimations["player"].Add("hurt", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/hurt"), 1, 10));
             spriteAnimations["player"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
+            spriteAnimations["player"].Add("moveRight", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
 
             spriteAnimations["player"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
             spriteAnimations["player"]["move"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
@@ -179,6 +180,7 @@ namespace Water
             spriteAnimations["player"]["crouch"].setSpriteSequence(new List<int>() { 0 });
             spriteAnimations["player"]["hurt"].setSpriteSequence(new List<int>() { 0 });
             spriteAnimations["player"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
+            spriteAnimations["player"]["moveRight"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
 
 
             player.spriteAnimations = spriteAnimations["player"];

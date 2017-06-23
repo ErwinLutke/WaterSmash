@@ -102,6 +102,7 @@
     <Compile Include="Actor\Action\AttackAction.cs" />
     <Compile Include="Actor\Action\EmptyAction.cs" />
     <Compile Include="Actor\Action\MoveLeftAction.cs" />
+    <Compile Include="Actor\Action\MoveRightAction.cs" />
     <Compile Include="Actor\Boss.cs" />
     <Compile Include="Actor\Action\CrouchAction.cs" />
     <Compile Include="Actor\Enemy.cs" />

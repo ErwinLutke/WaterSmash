@@ -97,6 +97,7 @@ namespace Water
             actionStateMachine.Add("throw", new ThrowAction(this));
             actionStateMachine.Add("crouch", new CrouchAction(this));
             actionStateMachine.Add("moveLeft",new MoveLeftAction(this));
+            actionStateMachine.Add("moveRight", new MoveRightAction(this));
         }
 
         // TEMP - debugging
