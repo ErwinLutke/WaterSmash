@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Media;
 
 namespace Water
 {
@@ -38,6 +39,34 @@ namespace Water
         GameObject Floor;
         Enemy enemy;
 
+        /// <summary>
+        /// Holds GameObject waterDispenser
+        /// </summary>
+        GameObject waterDispenser;
+
+        /// <summary>
+        /// Holds texture of waterDispenser
+        /// </summary>
+        Texture2D waterDispenserTexture;
+
+        /// <summary>
+        /// Holds song for when waterDispenser lands
+        /// </summary>
+        Song waterDispenserLandingSound;
+
+        /// <summary>
+        /// Hold wether waterDispenser landed or not
+        /// </summary>
+        bool waterDispenserLanded;
+
+        /// <summary>
+        /// Set waterDispenser dropspeed
+        /// </summary>
+        float dropSpeed = 5f;
+
+        Song slurp;
+        
+
         AActor player;
 
         Dictionary<string, Dictionary<string, SpriteAnimation>> spriteAnimations;
@@ -48,6 +77,23 @@ namespace Water
 
         Point mapSize;
         Matrix matrix;
+
+        /// <summary>
+        /// Hold wether boss is defeated or not -> waterDispenser spawns when defeated
+        /// </summary>
+        bool bossDefeated = true; // TEMP! MUST BE FALSE
+
+        /// <summary>
+        /// Hold wether player has finished the staged (interacted with waterDispenser)
+        /// </summary>
+        bool finished = false;
+
+        /// <summary>
+        /// Properties for fading when finished
+        /// </summary>
+        int aplhaValue = 1;
+        int fadeIncrement = 1;
+        Texture2D fader;
 
         private Vector2 startPosition; // Holds player starting position 
 
@@ -85,7 +131,14 @@ namespace Water
 
             loadCameraSettings();
 
-            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 20));
+            Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
+
+            waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
+            waterDispenser = new GameObject(waterDispenserTexture, new Vector2(400, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
+            waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
+            slurp = content.Load<Song>("audio/slurp");
+
+            fader = content.Load<Texture2D>("healthbar");
             enemy = new Enemy();
             enemy.health = 100;
             player.attack = 49;
@@ -121,6 +174,7 @@ namespace Water
             spriteAnimations["player"].Add("crouch", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/crouch"), 1, 20));
             spriteAnimations["player"].Add("hurt", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/hurt"), 1, 10));
             spriteAnimations["player"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
+            spriteAnimations["player"].Add("moveRight", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
 
             spriteAnimations["player"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
             spriteAnimations["player"]["move"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
@@ -129,6 +183,7 @@ namespace Water
             spriteAnimations["player"]["crouch"].setSpriteSequence(new List<int>() { 0 });
             spriteAnimations["player"]["hurt"].setSpriteSequence(new List<int>() { 0 });
             spriteAnimations["player"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
+            spriteAnimations["player"]["moveRight"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
 
 
             player.spriteAnimations = spriteAnimations["player"];
@@ -179,7 +234,34 @@ namespace Water
             camera.Update(gameTime);
             player.Update(gameTime);
             enemy.Update(gameTime);
-            checkCollisions();
+
+            // Check if player is finished
+            if(finished)
+            {
+                // Fade animation and leave stage
+                fadeAndLeave();
+            }
+
+            // Check if boss is defeated for waterDispenser purposes
+            if (bossDefeated)
+            {
+                // Land waterDispenser
+                if (waterDispenser.Position.Y + waterDispenser.Size.Y < Floor.Position.Y)
+                { 
+                    waterDispenser.Position = new Vector2(waterDispenser.Position.X, waterDispenser.Position.Y + dropSpeed);
+                }
+                // Play sound on landing
+                else if (waterDispenser.Position.Y + waterDispenser.Size.Y == Floor.Position.Y)
+                {
+                    if(!waterDispenserLanded)
+                    {
+                        MediaPlayer.Play(waterDispenserLandingSound);
+                        MediaPlayer.IsRepeating = false;
+                    }
+                    waterDispenserLanded = true;
+                }
+            }
+        
             _currentStage.spawnEnemies(player.Position);
             _currentStage.checkHealth();
             _currentStage.moveEnemies(player.Position);
@@ -191,6 +273,8 @@ namespace Water
                 spawnBoss();
                 end = true;
             }
+        
+            checkWaterCollision();
         }
 
         bool boundingBox = false;
@@ -209,7 +293,7 @@ namespace Water
                             null, null, null, camera.Transform);
             foreach (GameObject bgitem in _currentStage.bg)
             {
-                bgitem.Draw(spriteBatch);
+                bgitem.Draw(spriteBatch, gameTime);
             }
             //spriteBatch.Draw(map, map.Bounds, Color.White);
             //spriteBatch.Draw(_currentStage.stageBackground, _currentStage.stageBackground.Bounds, Color.White);
@@ -240,27 +324,36 @@ namespace Water
                 spriteBatch.Draw((enemy.healthTexture), new Rectangle((int)enemy.Position.X, (int)enemy.Position.Y - 100, 0 + (int)(enemy.health) + 20, 10), new Rectangle(0, 45, enemy.healthTexture.Width / 2, 10), Color.Green);
             }
 
-
-
-            player.Draw(spriteBatch);
+            player.Draw(spriteBatch, gameTime);
             //enemy.Draw(spriteBatch);
             if (boundingBox)
             {
                 spriteBatch.Draw(pixel, enemy.BoundingBox, Color.White);
                 spriteBatch.Draw(pixel, player.BoundingBox, Color.White);
                 spriteBatch.Draw(pixel, Floor.BoundingBox, Color.White);
+                spriteBatch.Draw(pixel, waterDispenser.BoundingBox, Color.White);
             }
 
             foreach (GameObject obc in _currentStage.GameObjects)
             {
-                obc.Draw(spriteBatch);
+                obc.Draw(spriteBatch, gameTime);
             }
             if (_currentStage.enemies.Count > 0)
             {
                 foreach (Enemy enemy in _currentStage.enemies)
                 {
-                    enemy.Draw(spriteBatch);
+                    enemy.Draw(spriteBatch, gameTime);
                 }
+            }
+
+            if (bossDefeated)
+            {
+                waterDispenser.Draw(spriteBatch, gameTime);
+            }
+
+            if (finished)
+            {
+                spriteBatch.Draw(fader, new Rectangle(0,0,graphics.Viewport.Width, graphics.Viewport.Height), new Color(0, 0, 0, MathHelper.Clamp(aplhaValue,0,255)));
             }
 
             spriteBatch.End();
@@ -280,7 +373,39 @@ namespace Water
             checkFloorCollisions();
             checkEnemyCollisions();
             checkGameObjColl();
+            checkWaterCollision();
+        }
 
+        /// <summary>
+        /// Check wether player has collision with waterDispenser
+        /// If is -> stage is finished
+        /// </summary>
+        private void checkWaterCollision()
+        {
+            if(player.BoundingBox.Intersects(waterDispenser.BoundingBox))
+            {
+                finished = true;
+            }
+        }
+
+        /// <summary>
+        /// Fade animation for fading out of stage
+        /// </summary>
+        private void fadeAndLeave()
+        {
+            aplhaValue += fadeIncrement;
+
+            if(aplhaValue == 100)
+            {
+                MediaPlayer.Play(slurp);
+                MediaPlayer.IsRepeating = false;
+            }
+
+            // Change to worldmap when fading is max
+            if(aplhaValue >= 255)
+            {
+                gameStateManager.Change("worldmap");
+            }
         }
 
 
