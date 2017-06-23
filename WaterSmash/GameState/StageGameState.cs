@@ -29,9 +29,6 @@ namespace Water
 
         private bool jumping = false;
 
-        private List<Enemy> enemies = new List<Enemy>();//holds all enemies
-        private int killedEnemies = 0;//total killed enemies 
-
         //
 
         Texture2D pixel;
@@ -136,12 +133,8 @@ namespace Water
             // TEMP - debugging purpose
             player.load();
             enemy.load();
-            //generateMap();
             data = new Color[100 * 10];
-            progressBar();
-
-            x = Floor.Position.X;
-            y = Floor.Position.Y;
+            //progressBar();
 
         }
 
@@ -183,10 +176,11 @@ namespace Water
             player.Update(gameTime);
             enemy.Update(gameTime);
             checkCollisions();
-            spawnEnemies();
-            checkHealth();
-            moveEnemies();
-            checkInRange();
+            _currentStage.spawnEnemies();
+            _currentStage.checkHealth();
+            _currentStage.moveEnemies(player.Position);
+            _currentStage.checkInRange(player.Position);
+            
         }
 
         bool boundingBox = false;
@@ -199,8 +193,15 @@ namespace Water
                 null, null, null, matrix);
 
             spriteBatch.Draw(map, map.Bounds, Color.White);
+            //spriteBatch.Draw(rect, coor, Color.White);
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20, 30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Red);
 
-            spriteBatch.Draw(rect, coor, Color.White);
+
+            //Draw the box around the health bar
+            spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 0, _currentStage.progressBar.Width, 44), Color.White);
+            //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
+
+            spriteBatch.Draw((_currentStage.progressBar), new Rectangle(20,30, 0 +(int)(_currentStage.killedEnemies) *5, 44),new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Green);
 
             player.Draw(spriteBatch);
             //enemy.Draw(spriteBatch);
@@ -215,9 +216,9 @@ namespace Water
             {
                 obc.Draw(spriteBatch);
             }
-            if (enemies.Count > 0)
+            if (_currentStage.enemies.Count > 0)
             {
-                foreach (Enemy enemy in enemies)
+                foreach (Enemy enemy in _currentStage.enemies)
                 {
                     enemy.Draw(spriteBatch);
                 }
@@ -242,26 +243,7 @@ namespace Water
             checkGameObjColl();
 
         }
-        /// <summary>
-        /// checkt of de enemies in range zijn van de speler. als dit zo is call de methode om de isInRange van enemie op true te zetten.
-        /// </summary>
-        private void checkInRange()
-        {
-            foreach (var enemy in enemies)
-            {
 
-                //if (enemy.Position.X - player.Position.X < enemy.getSightRange())//left
-                // if (player.Position.X - enemy.Position.X < enemy.getSightRange())//right
-                if (player.Position.X - enemy.Position.X < enemy.getSightRange() && enemy.Position.X - player.Position.X < enemy.getSightRange())
-                {
-                    enemy.setInRange(true);
-                }
-                else
-                {
-                    enemy.setInRange(false);
-                }
-            }
-        }
 
         private void checkFloorCollisions()
         {
@@ -313,7 +295,7 @@ namespace Water
                 {
                     Debug.WriteLine("no coll");
                 }
-                foreach (var enemy in enemies)
+                foreach (Enemy enemy in _currentStage.enemies)
                 {
                     if (enemy.BoundingBox.Intersects(obj.BoundingBox))
                     {
@@ -331,7 +313,7 @@ namespace Water
         /// </summary>
         private void checkEnemyCollisions()
         {
-            foreach (var enemy in enemies)
+            foreach (Enemy enemy in _currentStage.enemies)
             {
                 if (player.BoundingBox.Intersects(enemy.BoundingBox))
                 {
@@ -367,75 +349,6 @@ namespace Water
         }
 
 
-
-        //fields voor spawnen van enemies, X en Y positie
-        float y; 
-        float x;
-        /// <summary>
-        /// spawned alle enemies in de map. zolang er enemies gespawned kunnen worden, wordt een nieuwe enemy gemaakt en aan de list met enemies toevegoegd 
-        /// </summary>
-        private void spawnEnemies()
-        {
-            
-            int totalEnemies = 100;//maximale aantal enemies per stage
-            int maxEnemiesInGame = 2;//maximale aantal enemies die tegelijk in het spel mogen zijn.
-
-            //creer loop om enemies te spawnen. wanneer totale gekillde enemeies kleiner is dan het totale enemies per stage wordt een niewe enemy gespawned.
-            while (killedEnemies<totalEnemies && enemies.Count()<maxEnemiesInGame)
-            {
-                //maken van nieuwe enemy
-                       
-                enemies.Add((Enemy)generator.enemyGenerator(1, new Vector2(125, Floor.Position.Y)));//toevoegen van de enemy aan de enemies list
-               
-            }
-        }
-        /// <summary>
-        /// checkt de health van alle enemies, en verwijderd deze als de health kleiner is dan 0
-        /// </summary>
-        private void checkHealth()
-        {
-            Debug.WriteLine(enemies.Count());
-            Debug.WriteLine(killedEnemies);
-            //loop door alle enemies
-            for (int i = 0; i < enemies.Count(); i++)
-            {
-                //check of de health van enemy[i] kleiner is dan 0
-                if (enemies[i].health < 0)
-                {
-                    //verwijder de dode enemy uit de lijst met enemies
-                    enemies.RemoveAt(i);
-                    killedEnemies++;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Methode om de enemies naar de speler te bewegen.
-        /// checkt of de speler in een bepaalde range is van de enemy, als dit zo is wordt de enemy hier naartoe verplaatst.
-        /// </summary>
-
-        public void moveEnemies()
-        {
-            //loop door de enemies
-            foreach (var enemy in enemies)
-            {
-                //controleer of player.position.X kleiner is dan de enemy.position.x EN de enemy in range is van de speler
-                //dit betekend dat de enemy naar links moet bewegen
-                if(player.Position.X < enemy.Position.X && enemy.isInRange())
-                {
-                    enemy.HandleInput("moveLeft");
-                    //must be replaced with enemy.actionStateMachine.Change("action_here");
-                }
-                //controleer of player.position.X kleiner is dan de enemy.position.x EN de enemy in range is van de speler
-                //dit betekend dat de enemy naar rechts moet bewegen
-                if (player.Position.X > enemy.Position.X && enemy.isInRange())
-                {
-                    enemy.HandleInput("moveRight");
-                    //must be replaced with enemy.actionStateMachine.Change("action_here");
-                    
-                }
-            }
-        }
 
         //fields voor de progress bar
         Texture2D rect;
