@@ -19,6 +19,8 @@ namespace Water
         SpriteBatch spriteBatch;
 
         KeyLocker keyLocker;
+        
+        private bool track = false;
 
         /// <summary>
         /// Which stages are unlocked default is stage 1
@@ -113,6 +115,7 @@ namespace Water
                     stageData[selectedStage - 1].record = (string)args[0];
                     stageData[selectedStage - 1].difficulty++;
                     stageProgress++;
+                    track = true;
                 }
             }
            
@@ -282,8 +285,6 @@ namespace Water
         /// <param name="state">The current state of the keyboard</param>
         private void handleViewPortMovement(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.L)) stageProgress = 2;
-
             if (state.IsKeyDown(Keys.Up)) currentLoc.Y -= 1;
             else if (state.IsKeyDown(Keys.Down)) currentLoc.Y += 1;
             if (state.IsKeyDown(Keys.Left)) currentLoc.X -= 1;
@@ -324,6 +325,10 @@ namespace Water
                     keyLocker.LockKey(Keys.Enter);
                 }
             }
+
+            keyLocker.CheckInputLock(state, Keys.Enter);
+            keyLocker.CheckInputLock(state, Keys.Escape);
+            keyLocker.CheckInputLock(state, Keys.I);
         }
 
     }
