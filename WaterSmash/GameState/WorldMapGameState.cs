@@ -114,8 +114,9 @@ namespace Water
                 {
                     stageData[selectedStage - 1].record = (string)args[0];
                     stageData[selectedStage - 1].difficulty++;
-                    stageProgress++;
+                    if (selectedStage == stageProgress) stageProgress++;
                     track = true;
+                    Debug.WriteLine(stageData[selectedStage - 1].record);
                 }
             }
            

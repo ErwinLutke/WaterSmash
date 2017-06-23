@@ -235,12 +235,12 @@ namespace Water
         {
             spriteAnimations = new Dictionary<string, Dictionary<string, SpriteAnimation>>();
             spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
-            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
-            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/attack"), 1, 15));
-            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
-            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
-            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
-            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
+            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/stand"), 1, 10));
+            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/attack"), 3, 15));
+            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/move"), 2, 20));
+            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 0, 1 });
+            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0 });
+            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0, 1, 2 });
         }
 
         /// <summary>

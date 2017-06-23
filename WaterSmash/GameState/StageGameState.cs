@@ -32,6 +32,9 @@ namespace Water
         bool end = false;
 
 
+        private int totalStageTime;
+        private string timeRecord = "";
+
 
         private bool jumping = false;
 
@@ -123,10 +126,12 @@ namespace Water
             //Debug.WriteLine(player);
 
             spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
-            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
-            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/attack"), 1, 15));
-            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
+            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/stand"), 3, 10));
+            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/attack"), 1, 15));
+            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/move"), 1, 20));
+            spriteAnimations["enemy"].Add("moveRight", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/move"), 1, 20));
             spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
+            spriteAnimations["enemy"]["moveRight"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
             spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
             spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
 
@@ -193,10 +198,12 @@ namespace Water
             }
             player.HandleInput(state);
         }
-
-
+       
+ 
         public void Update(GameTime gameTime)
         {
+            totalStageTime += (gameTime.ElapsedGameTime.Milliseconds * 1000);
+
             camera.Update(gameTime);
             player.Update(gameTime);
             enemy.Update(gameTime);
@@ -363,7 +370,8 @@ namespace Water
             // Change to worldmap when fading is max
             if(aplhaValue >= 255)
             {
-                gameStateManager.Change("worldmap");
+                timeRecord = (totalStageTime / 1000).ToString();
+                gameStateManager.Change("worldmap", timeRecord);
             }
         }
 

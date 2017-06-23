@@ -25,6 +25,15 @@ namespace Water
 
         public void HandleInput(KeyboardState state)
         {
+            if (state.IsKeyDown(Keys.Down) && state.IsKeyDown(Keys.Right))
+            {
+                MoveRight();
+            }
+            if (state.IsKeyDown(Keys.Down) && state.IsKeyDown(Keys.Left))
+            {
+                MoveLeft();
+            }
+
             if (!state.IsKeyDown(Keys.Down))
             {
                 _actionStateMachine.Change("stand");
@@ -32,9 +41,27 @@ namespace Water
 
         }
 
-        public void Update(GameTime gameTime)
+        public void MoveRight()
         {
 
+            _actor.direction = AActor.Direction.RIGHT; // Set facing position to right
+            position.X += 0.7f; // Increment X position (move right)
+
+        }
+
+        public void MoveLeft()
+        {
+            if (position.X <= 255) { }
+            else
+            {
+                _actor.direction = AActor.Direction.LEFT; // Set facing position to left
+                position.X -= 0.7f; // Decrement X position (Move left)
+            }
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            _actor.Position = position;
         }
 
         public void Leaving()
