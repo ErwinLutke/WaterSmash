@@ -15,10 +15,14 @@ namespace Water
         private int sightRange = 500;
         private bool cooldown = false;
         //private HealthBar healthbar;
+
+        private Generator generator = new Generator();
+
+        public new Inventory inventory { get; private set; }
         
         public Enemy()
         {
-
+            inventory =  generator.generateInventory();
         }
         public override void HandleInput(object state)
         {

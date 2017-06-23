@@ -48,7 +48,7 @@ namespace Water
         /// <summary>
         /// Holds texture of waterDispenser
         /// </summary>
-        Texture2D waterDispenserTexture;
+        public Texture2D waterDispenserTexture;
 
         /// <summary>
         /// Holds song for when waterDispenser lands
@@ -67,8 +67,6 @@ namespace Water
 
         public Song slurp;
 
-        public Vector2 bossPositionAtDie { get; set; }
-
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
 
         public Stage()
@@ -83,7 +81,7 @@ namespace Water
             //spawnEnemies();
 
             waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
-            waterDispenser = new GameObject(waterDispenserTexture, new Vector2(50, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
+            waterDispenser = new GameObject(waterDispenserTexture, new Vector2(0, 0));
             waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
             slurp = content.Load<Song>("audio/slurp");
         }
@@ -165,7 +163,7 @@ namespace Water
         /// <summary>
         /// checkt de health van alle enemies, en verwijderd deze als de health kleiner is dan 0
         /// </summary>
-        public void checkHealth(bool end)
+        public void checkHealth(bool end, Vector2 loc)
         {
             //Debug.WriteLine(_currentStage.enemies.Count());
             //Debug.WriteLine(killedEnemies);
@@ -180,6 +178,7 @@ namespace Water
                     if(end == true)
                     {
                         bossDefeated = true;
+                        waterDispenser = new GameObject(waterDispenserTexture, new Vector2(loc.X, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
                     }
                     //verwijder de dode enemy uit de lijst met enemies
                     enemies.RemoveAt(i);
