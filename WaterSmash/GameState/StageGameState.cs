@@ -247,13 +247,7 @@ namespace Water
         bool boundingBox = false;
         public void Draw(GameTime gameTime)
         {
-            //cam.Pos = new Vector2(500.0f, 200.0f);
-            // Begin drawing and disable AA for pixally art
-            //spriteBatch.Begin(SpriteSortMode.Deferred,
-            //    BlendState.AlphaBlend,
-            //    SamplerState.PointClamp,
-            //    null, null, null, matrix);
-            // Begin drawing and disable AA for pixally art
+
             spriteBatch.Begin(SpriteSortMode.Deferred,
                             BlendState.AlphaBlend,
                             SamplerState.PointClamp,
@@ -262,8 +256,6 @@ namespace Water
             {
                 bgitem.Draw(spriteBatch, gameTime);
             }
-            //spriteBatch.Draw(map, map.Bounds, Color.White);
-            //spriteBatch.Draw(_currentStage.stageBackground, _currentStage.stageBackground.Bounds, Color.White);
 
             //spriteBatch.Draw(rect, coor, Color.White);
             spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width/2, 44), Color.Red);
@@ -271,7 +263,6 @@ namespace Water
 
             //Draw the box around the health bar
             spriteBatch.Draw(_currentStage.progressBar, new Rectangle((int)player.Position.X - 40, 30, _currentStage.progressBar.Width/2, 44), new Rectangle(0, 0, _currentStage.progressBar.Width/2, 44), Color.White);
-            //spriteBatch.Draw(_currentStage.progressBar, new Rectangle(20,30, _currentStage.progressBar.Width, 44), new Rectangle(0, 45, _currentStage.progressBar.Width, 44), Color.Gray);
             if (_currentStage.killedEnemies < _currentStage.totalEnemies)
             {
                 spriteBatch.Draw((_currentStage.progressBar), new Rectangle((int)player.Position.X - 40, 30, 0 + (int)(_currentStage.killedEnemies) * 5 / 2, 44), new Rectangle(0, 45, _currentStage.progressBar.Width / 2, 44), Color.Orange);
@@ -292,7 +283,6 @@ namespace Water
             }
 
             player.Draw(spriteBatch, gameTime);
-            //enemy.Draw(spriteBatch);
             if (boundingBox)
             {
                 spriteBatch.Draw(pixel, enemy.BoundingBox, Color.White);
