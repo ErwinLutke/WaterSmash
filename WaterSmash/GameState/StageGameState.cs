@@ -90,16 +90,19 @@ namespace Water
             colourData[0] = Color.Red; //The Colour of the rectangle
             pixel.SetData<Color>(colourData);
 
-
             if (args.Length > 0)
             {
-                _currentStage = _stages[args[0].ToString()];
+                //_currentStage = _stages[args[0].ToString()];
                 player = (Player)args[1];
+                _currentStage = new Stage();
+                _currentStage.loadContent((int)args[0]);
             }
             else
             {
-                _currentStage = new Stage();
                 player = new Player();
+                _currentStage = new Stage();
+                _currentStage.loadContent(1);
+
             }
 
             loadCameraSettings();
@@ -315,7 +318,7 @@ namespace Water
             if (_currentStage.bossDefeated)
             {
                 _currentStage.waterDispenser.Draw(spriteBatch, gameTime);
-                _currentStage.droppedItem.Draw(spriteBatch, gameTime);
+                //_currentStage.droppedItem.Draw(spriteBatch, gameTime);
             }
 
             if (finished)

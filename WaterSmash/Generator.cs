@@ -53,7 +53,7 @@ namespace Water
         };
 
         public Generator() { setSpriteAnimations(); }
-        
+
 
         enum Special
         {
@@ -77,16 +77,16 @@ namespace Water
 
         public Inventory generateInventory()
         {
-            Inventory inventory = new Inventory(4);
+            //Inventory inventory = new Inventory(4);
 
             rnd = new Random(Guid.NewGuid().GetHashCode());
 
-            for (int i = 0; i < inventory.capacity; i++)
-            {
-                inventory.AddInventoryObject(generateEquipable(rnd.Next(2)));
-            }
+            //for(int i = 0; i < inventory.capacity; i++)
+            //{
+            //    inventory.AddInventoryObject(generateEquipable(rnd.Next(2)));
+            //}
 
-            return inventory;
+            return null;
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Water
             rnd = new Random(Guid.NewGuid().GetHashCode());
 
             int type = rnd.Next(2);
-            if(type == 0)
+            if (type == 0)
             {
                 pickup = new Pickup(Pickup.PickupType.HEALTH);
             }
@@ -113,11 +113,11 @@ namespace Water
 
             int amount = rnd.Next(3);
 
-            if(amount == 0)
+            if (amount == 0)
             {
                 pickup.amount = Pickup.Amount.SMALL;
             }
-            else if(amount == 1)
+            else if (amount == 1)
             {
                 pickup.amount = Pickup.Amount.MEDIUM;
             }
@@ -157,7 +157,7 @@ namespace Water
                 else
                 {
                     item.name = itemName + " Cap";
-                }       
+                }
             }
             else
             {
@@ -185,14 +185,14 @@ namespace Water
 
             int baseHealth = 100;
             int baseAttack = 12;
-            int baseDefence = 33;
+            int baseDefence = 12;
             int sight = 123 * (dificulty / 2);
 
 
             Enemy spawn = new Enemy();
-            spawn.inventory = generateInventory();
             spawn.name = "enemieiei";
-            spawn.health = baseHealth*dificulty;
+            //spawn.inventory = generateInventory();
+            spawn.health = baseHealth * dificulty;
             spawn.attack = baseAttack * dificulty;
             spawn.defense = baseDefence * dificulty;
             // spawn.setSightRange(sight);
@@ -203,21 +203,21 @@ namespace Water
 
             return spawn;
         }
-
-        public object bossGenerator(int difficulty, Vector2 pos)
+        public object bossGenerator(int dificulty, Vector2 pos)
         {
-            int baseHealth = 100;
+
+            int baseHealth = 2;
             int baseAttack = 12;
             int baseDefence = 33;
-            int sight = 123 * (difficulty / 2);
+            int sight = 123 * (dificulty / 2);
 
 
-            Boss spawn = new Boss();
+            AActor spawn = new Boss();
             spawn.name = "enemieiei";
             //spawn.inventory = generateInventory();
-            spawn.health = baseHealth * difficulty;
-            spawn.attack = baseAttack * difficulty;
-            spawn.defense = baseDefence * difficulty;
+            spawn.health = baseHealth * dificulty;
+            spawn.attack = baseAttack * dificulty;
+            spawn.defense = baseDefence * dificulty;
             // spawn.setSightRange(sight);
             spawn.Position = pos;
 
@@ -235,13 +235,14 @@ namespace Water
         {
             spriteAnimations = new Dictionary<string, Dictionary<string, SpriteAnimation>>();
             spriteAnimations.Add("enemy", new Dictionary<string, SpriteAnimation>());
-            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/stand"), 1, 10));
-            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/attack"), 3, 15));
-            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/enemy/move"), 2, 20));
-            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 0, 1 });
-            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0 });
-            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0, 1, 2 });
+            spriteAnimations["enemy"].Add("stand", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/stand"), 3, 10));
+            spriteAnimations["enemy"].Add("attack", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/attack"), 1, 15));
+            spriteAnimations["enemy"].Add("moveLeft", new SpriteAnimation(content.Load<Texture2D>("Images/characters/player/move"), 1, 20));
+            spriteAnimations["enemy"]["moveLeft"].setSpriteSequence(new List<int>() { 2, 1, 0, 1, 2, 3, 4, 3 });
+            spriteAnimations["enemy"]["stand"].setSpriteSequence(new List<int>() { 0, 1, 2, 1 });
+            spriteAnimations["enemy"]["attack"].setSpriteSequence(new List<int>() { 0 });
         }
+
 
         /// <summary>
         /// "random" map generator, generates a straight line so far...
@@ -252,7 +253,7 @@ namespace Water
         GameObject Floor;
         int map_x = 0;
         public List<object> generateMap()
-        { 
+        {
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
             int maxBlox = 100;//max amount of blocks in game
             while (GameObjects.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
@@ -267,14 +268,14 @@ namespace Water
             return GameObjects;
         }
         private List<object> bg = new List<object>();//holds all map blocks
-        public List<object> generateBackground()
+        public List<object> generateBackground(int stage)
         {
-            Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_1/fill");//
+            Texture2D testobj = content.Load<Texture2D>("Images/stages/stage_" + stage + "/fill");//
             int maxBlox = 30;//max amount of blocks in game
             int currentx = 0;
             while (bg.Count < maxBlox)//loop als aantal game objects kleiner is dan maximale aantal game objects.
             {
-                Vector2 testvec = new Vector2(currentx, 0-70);//
+                Vector2 testvec = new Vector2(currentx, 0 - 70);//
                 GameObject test = new GameObject(testobj, testvec);//
                 bg.Add(test);//voeg de vloer toe aan de lijst met objects
                 currentx = currentx + testobj.Width;

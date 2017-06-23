@@ -73,15 +73,19 @@ namespace Water
 
         public Stage()
         {
-            stageBackground = content.Load<Texture2D>("Images/stages/stage_1/bg");
+        
+
+        }
+
+        public void loadContent(int stage)
+        {
+            stageBackground = content.Load<Texture2D>("Images/stages/stage_" + stage + "/bg");
             progressBar = content.Load<Texture2D>("Images/stages/HealthBar2");
             Floor = new GameObject(content.Load<Texture2D>("Images/stages/floor"), new Vector2(0, 270));
             enemies = new List<object>();
             generator = new Generator();
             GameObjects = generator.generateMap();
-            bg = generator.generateBackground();
-            //spawnEnemies();
-
+            bg = generator.generateBackground(stage);
             waterDispenserTexture = content.Load<Texture2D>("Images\\stages\\waterdispenser"); // Load waterDispenser texture
             waterDispenser = new GameObject(waterDispenserTexture, new Vector2(0, 0));
             waterDispenserLandingSound = content.Load<Song>("audio/plop"); // Load landing sound 
@@ -182,7 +186,7 @@ namespace Water
                         bossDefeated = true;
                         waterDispenser = new GameObject(waterDispenserTexture, new Vector2(loc.X, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
                         
-                        droppedItem = new GameObject(e.GetInventory().items[0].texture, new Vector2(loc.X - 100, loc.Y - e.GetInventory().items[0].texture.Height));
+                        //droppedItem = new GameObject(e.GetInventory().items[0].texture, new Vector2(loc.X - 100, loc.Y - e.GetInventory().items[0].texture.Height));
                     }
                     //verwijder de dode enemy uit de lijst met enemies
                     enemies.RemoveAt(i);
