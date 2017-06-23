@@ -212,7 +212,7 @@ namespace Water
             if (_currentStage.bossDefeated)
             {
                 // Land waterDispenser
-                if (_currentStage.waterDispenser.Position.Y + _currentStage.waterDispenser.Size.Y < Floor.Position.Y)
+                if (_currentStage.waterDispenser.Position.Y + _currentStage.waterDispenser.Size.Y < Floor.Position.Y - 10)
                 {
                     _currentStage.waterDispenser.Position = new Vector2(_currentStage.waterDispenser.Position.X, _currentStage.waterDispenser.Position.Y + _currentStage.dropSpeed);
                 }
@@ -299,6 +299,7 @@ namespace Water
             {
                 foreach (Enemy enemy in _currentStage.enemies)
                 {
+                    this.enemy = enemy;
                     enemy.Draw(spriteBatch, gameTime);
                 }
             }
@@ -306,6 +307,7 @@ namespace Water
             if (_currentStage.bossDefeated)
             {
                 _currentStage.waterDispenser.Draw(spriteBatch, gameTime);
+                _currentStage.droppedItem.Draw(spriteBatch, gameTime);
             }
 
             if (finished)

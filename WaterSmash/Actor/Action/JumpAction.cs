@@ -90,7 +90,7 @@ namespace Water
             // CHANGE 960 ACCORDING TO HITBOX SHIT
             if (position.Y > 260) // if back on the ground
             {
-                position.Y = 206;
+                position.Y = 260;
                 hasJumped = false; // set hasJumped on false so that player is able to jump again
                 velocity.Y = 0f; // Reset velocity
                 _actionStateMachine.Change("stand");

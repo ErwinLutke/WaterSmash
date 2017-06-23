@@ -18,7 +18,7 @@ namespace Water
         
         Generator generator;
         public int killedEnemies = 0;//total killed enemies
-        public int totalEnemies = 93;//maximale aantal enemies per stage
+        public int totalEnemies = 10;//maximale aantal enemies per stage
         GameObject Floor;
         public String name { get; set; }
 
@@ -68,6 +68,8 @@ namespace Water
         public Song slurp;
 
         private GraphicsDevice graphics = GameServices.GetService<GraphicsDevice>();
+
+        public GameObject droppedItem { get; private set; }
 
         public Stage()
         {
@@ -179,6 +181,8 @@ namespace Water
                     {
                         bossDefeated = true;
                         waterDispenser = new GameObject(waterDispenserTexture, new Vector2(loc.X, -waterDispenserTexture.Height)); // Initialize new GameObject for waterDispenser
+                        
+                        droppedItem = new GameObject(e.GetInventory().items[0].texture, new Vector2(loc.X - 100, loc.Y - e.GetInventory().items[0].texture.Height));
                     }
                     //verwijder de dode enemy uit de lijst met enemies
                     enemies.RemoveAt(i);
